@@ -6,6 +6,8 @@
 
 #include <frc2/command/CommandScheduler.h>
 
+#include "Mandatory.h"
+
 void Robot::RobotInit() {}
 
 /**
@@ -34,11 +36,6 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
-  m_autonomousCommand = m_container.GetAutonomousCommand();
-
-  if (m_autonomousCommand) {
-    m_autonomousCommand->Schedule();
-  }
 }
 
 void Robot::AutonomousPeriodic() {}
@@ -48,9 +45,6 @@ void Robot::TeleopInit() {
   // teleop starts running. If you want the autonomous to
   // continue until interrupted by another command, remove
   // this line or comment it out.
-  if (m_autonomousCommand) {
-    m_autonomousCommand->Cancel();
-  }
 }
 
 /**
