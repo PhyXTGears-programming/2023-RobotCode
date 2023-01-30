@@ -12,7 +12,14 @@ class Drivetrain : public frc2::SubsystemBase {
          * 
          * @param fieldOriented wether the robot should be in field oriented mode (non-functional)
         */
-        Drivetrain(bool fieldOriented = false);
+        Drivetrain(bool fieldOriented);
+
+        /**
+         * Used to have the swerve drive setup with how ever many drive wheels you need without field oriented
+        */
+        Drivetrain();
+
+        ~Drivetrain();
 
         void Periodic() override;
 
@@ -78,7 +85,17 @@ class Drivetrain : public frc2::SubsystemBase {
        double getVelocity();
     
     private:
-        SwerveWheel wheels[Constants::k_NumberOfSwerveModules];
+        void setupWheels();
 
-        int wheelPositions[Constants::k_NumberOfSwerveModules][2];
+        void calculateWheelPositionsAndSpeeds();
+
+        bool m_fieldOriented = false;
+
+        double m_strife = 0;
+        double m_forewards = 0;
+        double m_rotation = 0;
+
+        SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};
+
+        int m_wheelPositions[Constants::k_NumberOfSwerveModules][2] = {};
 };

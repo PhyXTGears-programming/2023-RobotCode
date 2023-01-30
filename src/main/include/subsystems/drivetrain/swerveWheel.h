@@ -3,19 +3,30 @@
 
 #include <frc2/command/SubsystemBase.h>
 
+#include "subsystems/drivetrain/swerveWheelTypes.h"
+
 class SwerveWheel : public frc2::SubsystemBase {
     public:
-        SwerveWheel(double x_pos, double y_pos);
+        /**
+         * code to create a swerve wheel instance
+         * 
+         * @param turnMotorID the CAN ID of the turn motor
+         * @param moveMotorID the CAN ID of the drive motor
+         * @param encoderID the CAN ID of the encoder
+        */
+        SwerveWheel(SwerveWheelTypes::SwerveWheelTypes turnMotor, SwerveWheelTypes::SwerveWheelTypes moveMotor, SwerveWheelTypes::SwerveWheelTypes encoder);
 
-        void setStrife(double x);
+        void setHeading(double r);
 
-        void setForeward(double y);
+        void setVelocity(double s);
 
-        void setRotation(double r);
-
-        void setMotion(double x, double y, double r);
+        void setMotion(double r, double s);
 
         double getHeading();
 
         double getVelocity();
+    private:
+        double m_currentVelocity = 0;
+        double m_currentHeading = 0;
+
 };
