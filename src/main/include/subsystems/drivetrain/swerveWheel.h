@@ -5,6 +5,8 @@
 
 #include "subsystems/drivetrain/swerveWheelTypes.h"
 
+#include "subsystems/drivetrain/motorInterfaces/motorInterfaces.h"
+
 class SwerveWheel : public frc2::SubsystemBase {
     public:
         /**
@@ -29,4 +31,6 @@ class SwerveWheel : public frc2::SubsystemBase {
         double m_currentVelocity = 0;
         double m_currentHeading = 0;
 
+        MotorInterfaces * c_movementMotor = nullptr;
+        MotorInterfaces * c_turningMotor = nullptr;
 };
