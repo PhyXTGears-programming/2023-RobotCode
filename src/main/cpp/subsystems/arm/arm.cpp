@@ -7,7 +7,8 @@
 Point ArmSubsystem::getElbowPos(float angShoulder) {
     Point pt(
         k_bicepLenInches * std::cos(angShoulder),
-        k_bicepLenInches * std::sin(angShoulder)
+        k_bicepLenInches * std::sin(angShoulder),
+        0.0
     );
 
     return pt;
@@ -17,10 +18,11 @@ Point ArmSubsystem::getWristPos(float shoulderAng, float elbowAng) {
     Point elbowPos = getElbowPos(shoulderAng);
     Point pt(
         k_forearmLenInches * std::cos(shoulderAng + elbowAng),
-        k_forearmLenInches * std::sin(shoulderAng + elbowAng)
+        k_forearmLenInches * std::sin(shoulderAng + elbowAng),
+        0.0
     );
 
-    return Point(elbowPos.x + pt.x, elbowPos.y + pt.y);
+    return Point(elbowPos.x + pt.x, elbowPos.y + pt.y, 0.0);
 }
 
 ArmPose ArmSubsystem::getIKJointPoses(Point pt) {

@@ -1,7 +1,8 @@
 class Point {
     public:
-        Point(float x, float y) : x(x), y(y) {}
+        Point(float x, float y, float z) : x(x), y(y), z(z) {}
 
         float x;
         float y;
+        float z;
 };
