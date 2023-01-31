@@ -2,6 +2,7 @@
 #include "subsystems/arm/arm.h"
 
 #include <numbers>
+#include <cmath>
 
 Point ArmSubsystem::getElbowPos(float angShoulder) {
     Point pt(
