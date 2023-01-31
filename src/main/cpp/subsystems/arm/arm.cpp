@@ -4,7 +4,7 @@
 #include <numbers>
 #include <cmath>
 
-Point ArmSubsystem::getElbowPos(float angShoulder) {
+Point ArmSubsystem::calcElbowPos(float angShoulder) {
     Point pt(
         k_bicepLenInches * std::cos(angShoulder),
         k_bicepLenInches * std::sin(angShoulder),
@@ -14,8 +14,8 @@ Point ArmSubsystem::getElbowPos(float angShoulder) {
     return pt;
 }
 
-Point ArmSubsystem::getWristPos(float shoulderAng, float elbowAng) {
-    Point elbowPos = getElbowPos(shoulderAng);
+Point ArmSubsystem::calcWristPos(float shoulderAng, float elbowAng) {
+    Point elbowPos = calcElbowPos(shoulderAng);
     Point pt(
         k_forearmLenInches * std::cos(shoulderAng + elbowAng),
         k_forearmLenInches * std::sin(shoulderAng + elbowAng),
@@ -25,7 +25,7 @@ Point ArmSubsystem::getWristPos(float shoulderAng, float elbowAng) {
     return Point(elbowPos.x + pt.x, elbowPos.y + pt.y, 0.0);
 }
 
-ArmPose ArmSubsystem::getIKJointPoses(Point pt) {
+ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
     float targetLen =  std::sqrt((pt.x * pt.x + pt.y * pt.y)); // Line from shoulder to target
     float targetToXAxisAng = std::atan2(pt.y, pt.x);
 
