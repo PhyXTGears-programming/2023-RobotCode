@@ -51,14 +51,23 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
 
 }
 
-float ArmSubsystem::getShoulderAngle() {
-    return 0; // TODO when we get reading components available
+units::turn_t ArmSubsystem::getShoulderAngle() {
+    return mShoulderAngleSensor.Get();
 }
 
 float ArmSubsystem::getElbowAngle() {
-    return 0; // TODO when we get reading components available
+    return mElbowAngleSensor.Get();
 }
 
 float ArmSubsystem::getTurretAngle() {
-    return 0; // TODO when we get reading components available
+    return mTurretAngleSensor.Get();
 }
+
+float ArmSubsystem::getWristRollAngle() {
+    return mWristAngleSensor.Get();
+}
+
+//     // NOT IMPLEMENTED IN HARDWARE
+// float ArmSubsystem::getWristPitchAngle() {
+//     return 0; // TODO when we get reading components available
+// }

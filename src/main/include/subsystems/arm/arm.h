@@ -7,6 +7,8 @@
 #include <cmath>
 
 #include <frc2/command/SubsystemBase.h>
+#include <frc/AnalogPotentiometer.h>
+#include <frc/DutyCycleEncoder.h>
 
 class ArmSubsystem : public frc2::SubsystemBase {
 public:
@@ -22,12 +24,24 @@ public:
 
 
     // Reading Functions:
-    float getShoulderAngle();
+    float getTurretAngle();
+
+    units::turn_t getShoulderAngle();
 
     float getElbowAngle();
 
-    float getTurretAngle();
+    float getWristRollAngle();
+
+    // float getWristPitchAngle(); // NOT IMPLEMENTED IN HARDWARE
 
 private:
+
+    frc::AnalogPotentiometer mTurretAngleSensor {1, 1.0, 0};
+
+    frc::DutyCycleEncoder mShoulderAngleSensor{1}; // Using Funky Fresh Encoder
+
+    frc::AnalogPotentiometer mElbowAngleSensor {1, 1.0, 0};
+
+    frc::AnalogPotentiometer mWristAngleSensor {1, 1.0, 0};
 
 };
