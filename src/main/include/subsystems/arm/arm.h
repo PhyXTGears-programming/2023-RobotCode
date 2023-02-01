@@ -2,19 +2,31 @@
 
 #include "armPose.h"
 #include "point.h"
+#include "boundary.h"
 
 #include <cmath>
 
 #include <frc2/command/SubsystemBase.h>
 
 class ArmSubsystem : public frc2::SubsystemBase {
-    public:
+public:
 
-        Point getElbowPos(float angShoulder);
+    // Calulating Functions:
+    Point calcElbowPos(float angShoulder);
 
-        Point getWristPos(float shoulderAng, float elbowAng);
+    Point calcWristPos(float shoulderAng, float elbowAng);
 
-        ArmPose getIKJointPoses(Point pt);
+    ArmPose calcIKJointPoses(Point pt);
+
+    bool checkBoundary(Boundary boundary, Point point);
+
+
+    // Reading Functions:
+    float getShoulderAngle();
+
+    float getElbowAngle();
+
+    float getTurretAngle();
 
 private:
 

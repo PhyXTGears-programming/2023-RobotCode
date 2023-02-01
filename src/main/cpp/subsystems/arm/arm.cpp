@@ -50,3 +50,15 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
     return ArmPose(bicepToXAxisAng, bicepToForearmAng);
 
 }
+
+float ArmSubsystem::getShoulderAngle() {
+    return 0; // TODO when we get reading components available
+}
+
+float ArmSubsystem::getElbowAngle() {
+    return 0; // TODO when we get reading components available
+}
+
+float ArmSubsystem::getTurretAngle() {
+    return 0; // TODO when we get reading components available
+}
