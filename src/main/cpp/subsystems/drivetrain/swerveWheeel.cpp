@@ -16,6 +16,7 @@ SwerveWheel::SwerveWheel(SwerveWheelTypes::SwerveWheelTypes turnMotor,
             break;
         case VENDOR_CTRE_FALCON:
             c_movementMotor = new CtreFalcon(moveMotor.ID);
+            break;
     }
 
 
