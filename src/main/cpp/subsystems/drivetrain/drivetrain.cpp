@@ -57,7 +57,8 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
         }
     }
 
-    //make sure the speed does not go above 1 (AKA: max power)
+    // make sure the speed does not go above 1 (AKA: max power);
+    // if above 1, scales the speed down to have the max speed at 1
     if(maxSpeed > 1.0){
         for(int i = 0; i<Constants::k_NumberOfSwerveModules; i+=1){
             motorDirectionAngle[i][1] = motorDirectionAngle[i][1] / maxSpeed;
