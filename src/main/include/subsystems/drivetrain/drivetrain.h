@@ -24,13 +24,13 @@ class Drivetrain : public frc2::SubsystemBase {
         void Periodic() override;
 
         /**
-         * Turns Field Oriented Driving on reguardless of wether it was on or off previously
+         * Turns Field Oriented Driving on regardless of whether it was on or off previously
         */
         void enableFieldCentric();
 
 
         /**
-         * Turns Field Oriented Driving on reguardless of wether it was on or off previously
+         * Turns Field Oriented Driving on regardless of whether it was on or off previously
         */
         void disableFieldCentric();
 
@@ -43,7 +43,7 @@ class Drivetrain : public frc2::SubsystemBase {
         void toggleFieldCentric();
 
         /**
-         * returns current state of Sield Oriented Driving
+         * returns current state of Field Oriented Driving
          * 
          * - if TRUE, then Field Oriented Driving is enabled
          * - if FALSE, then Field Oriented Driving is disabled
@@ -56,9 +56,9 @@ class Drivetrain : public frc2::SubsystemBase {
         void setStrife(double x);
 
         /**
-         * sets the foreward/backwards percentage of the max speed
+         * sets the forward/backwards percentage of the max speed
         */
-        void setForeward(double y);
+        void setForward(double y);
 
         /**
          * sets the percentage of the max rotation speed
@@ -69,7 +69,7 @@ class Drivetrain : public frc2::SubsystemBase {
          * sets all parameters of the robot movement
          * 
          * @param x sets the left/right percentage of the max speed
-         * @param y sets the foreward/backwards percentage of the max speed
+         * @param y sets the forward/backwards percentage of the max speed
          * @param r sets the percentage of the max rotation speed
         */
         void setMotion(double x, double y, double r);
@@ -92,7 +92,7 @@ class Drivetrain : public frc2::SubsystemBase {
         bool m_fieldOriented = false;
 
         double m_strife = 0;
-        double m_forewards = 0;
+        double m_forwards = 0;
         double m_rotation = 0;
 
         SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};

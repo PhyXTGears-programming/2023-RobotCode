@@ -44,14 +44,14 @@ void Drivetrain::calculateWheelPositionsAndSpeeds(){
 
     double maxSpeed;
     for (int i=0; i<Constants::k_NumberOfSwerveModules; i+=1){
-        //combine the movement and turnign vectors
+        //combine the movement and turning vectors
         double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::m_wheelPositions[i][0]) + Drivetrain::m_strife;
-        double verticle_motion = (Drivetrain::m_rotation * Drivetrain::m_wheelPositions[i][1]) + Drivetrain::m_forewards;
+        double vertical_motion = (Drivetrain::m_rotation * Drivetrain::m_wheelPositions[i][1]) + Drivetrain::m_forwards;
 
         // get the final angle of the module
-        motorDirectionAngle[i][0] = atan2(horizontal_motion, verticle_motion);
+        motorDirectionAngle[i][0] = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front
         
-        double speed = std::sqrt(std::pow(horizontal_motion, 2) + std::pow(verticle_motion, 2)); //flipped so that 0 is going towards the front
+        double speed = std::sqrt(std::pow(horizontal_motion, 2) + std::pow(vertical_motion, 2));
         
         motorDirectionAngle[i][1] = speed;
 
@@ -88,8 +88,8 @@ void Drivetrain::setStrife(double x){
     Drivetrain::m_strife = x;
 }
 
-void Drivetrain::setForeward(double y){
-    Drivetrain::m_forewards = y;
+void Drivetrain::setForward(double y){
+    Drivetrain::m_forwards = y;
 }
 
 void Drivetrain::setRotation(double r){
@@ -98,15 +98,15 @@ void Drivetrain::setRotation(double r){
 
 void Drivetrain::setMotion(double x, double y, double r){
     Drivetrain::m_strife = x;
-    Drivetrain::m_forewards = y;
+    Drivetrain::m_forwards = y;
     Drivetrain::m_rotation = r;
 }
 
 double Drivetrain::getHeading(){
-    return atan2(Drivetrain::m_strife, Drivetrain::m_forewards); //swapped x & y so forewards is 0 radians
+    return atan2(Drivetrain::m_strife, Drivetrain::m_forwards); //swapped x & y so forewards is 0 radians
 }
 
 double Drivetrain::getVelocity(){
     //using pythagorean to find the magnitude of the vector components (forewards and strife)
-    return std::sqrt((std::pow(Drivetrain::m_strife, 2)+std::pow(Drivetrain::m_forewards, 2)));
+    return std::sqrt((std::pow(Drivetrain::m_strife, 2)+std::pow(Drivetrain::m_forwards, 2)));
 }
