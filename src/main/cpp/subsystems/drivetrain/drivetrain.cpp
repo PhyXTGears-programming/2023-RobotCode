@@ -36,7 +36,7 @@ void Drivetrain::setupWheels(){
     //setup wheel classes with correct motors from toml file
 }
 
-void Drivetrain::calculateWheelPositionsAndSpeeds(){
+void Drivetrain::calculateWheelAnglesAndSpeeds(){
     double motorDirectionAngle[Constants::k_NumberOfSwerveModules][2]; // index 0 is angle and index 1 is speed
 
     double maxSpeed;
@@ -83,20 +83,24 @@ bool Drivetrain::getFieldCentric(){
 
 void Drivetrain::setStrife(double x){
     Drivetrain::m_strife = x;
+    calculateWheelAnglesAndSpeeds();
 }
 
 void Drivetrain::setForward(double y){
     Drivetrain::m_forwards = y;
+    calculateWheelAnglesAndSpeeds();
 }
 
 void Drivetrain::setRotation(double r){
     Drivetrain::m_rotation = r;
+    calculateWheelAnglesAndSpeeds();
 }
 
 void Drivetrain::setMotion(double x, double y, double r){
     Drivetrain::m_strife = x;
     Drivetrain::m_forwards = y;
     Drivetrain::m_rotation = r;
+    calculateWheelAnglesAndSpeeds();
 }
 
 double Drivetrain::getHeading(){

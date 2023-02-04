@@ -87,7 +87,7 @@ class Drivetrain : public frc2::SubsystemBase {
     private:
         void setupWheels();
 
-        void calculateWheelPositionsAndSpeeds();
+        void calculateWheelAnglesAndSpeeds();
 
         bool m_fieldOriented = false;
 
