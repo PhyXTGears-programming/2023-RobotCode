@@ -1,3 +1,5 @@
+#pragma once
+
 #include "arm.h"
 
 #include <vector>

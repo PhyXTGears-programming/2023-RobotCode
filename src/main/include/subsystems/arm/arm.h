@@ -40,7 +40,6 @@ public:
     void setWristRollAngle(float angle);
 
 private:
-
     // Arm Diagram:
     // 1: Turret, 2: Shoulder, 3: Elbow, 4: Wrist
     //
