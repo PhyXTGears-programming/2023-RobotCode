@@ -67,7 +67,23 @@ float ArmSubsystem::getWristRollAngle() {
     return mWristAngleSensor.Get();
 }
 
-//     // NOT IMPLEMENTED IN HARDWARE
+void ArmSubsystem::setTurretAngle(float angle) {
+    //NOT YET IMPLEMENTED
+}
+
+void ArmSubsystem::setShoulderAngle(float angle) {
+    //NOT YET IMPLEMENTED
+}
+
+void ArmSubsystem::setElbowAngle(float angle) {
+    //NOT YET IMPLEMENTED
+}
+
+void ArmSubsystem::setWristRollAngle(float angle) {
+    //you get the gist
+}
+
+//          NOT IMPLEMENTED IN HARDWARE
 // float ArmSubsystem::getWristPitchAngle() {
 //     return 0; // TODO when we get reading components available
 // }

@@ -34,7 +34,23 @@ public:
 
     // float getWristPitchAngle(); // NOT IMPLEMENTED IN HARDWARE
 
+    void setTurretAngle(float angle);
+    void setShoulderAngle(float angle);
+    void setElbowAngle(float angle);
+    void setWristRollAngle(float angle);
+
 private:
+
+    // Arm Diagram:
+    // 1: Turret, 2: Shoulder, 3: Elbow, 4: Wrist
+    //
+    //           (3)---(4){
+    //          /
+    //        [2]
+    //        (1)
+    //  [=====1720=====]
+    //     O        O
+    // **Not to scale
 
     frc::AnalogPotentiometer mTurretAngleSensor {1, 1.0, 0};
 
@@ -42,6 +58,6 @@ private:
 
     frc::AnalogPotentiometer mElbowAngleSensor {1, 1.0, 0};
 
-    frc::AnalogPotentiometer mWristAngleSensor {1, 1.0, 0};
+    frc::AnalogPotentiometer mWristRollAngleSensor {1, 1.0, 0};
 
 };
