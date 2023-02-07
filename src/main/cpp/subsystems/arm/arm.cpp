@@ -64,7 +64,7 @@ float ArmSubsystem::getTurretAngle() {
 }
 
 float ArmSubsystem::getWristRollAngle() {
-    return mWristAngleSensor.Get();
+    return mWristRollAngleSensor.Get();
 }
 
 void ArmSubsystem::setTurretAngle(float angle) {
