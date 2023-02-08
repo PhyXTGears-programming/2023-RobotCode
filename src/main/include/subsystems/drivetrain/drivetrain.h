@@ -4,6 +4,7 @@
 #include <frc2/command/SubsystemBase.h>
 
 #include "subsystems/drivetrain/swerveWheel.h"
+#include "util/point.h"
 
 class Drivetrain : public frc2::SubsystemBase {
     public:
@@ -97,5 +98,5 @@ class Drivetrain : public frc2::SubsystemBase {
 
         SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};
 
-        int m_wheelPositions[Constants::k_NumberOfSwerveModules][2] = {};
+        Point m_wheelPositions[Constants::k_NumberOfSwerveModules];
 };

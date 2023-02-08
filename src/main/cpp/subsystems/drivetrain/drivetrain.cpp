@@ -2,6 +2,8 @@
 #include "Mandatory.h"
 
 #include <math.h>
+#include "util/point.h"
+#include "util/polar.h"
 /*
 NOTE ON UNITS:
 
@@ -23,8 +25,8 @@ Drivetrain::~Drivetrain(){
     // cleanup classes and prevent memory leaks
     for(int i=0; i<Constants::k_NumberOfSwerveModules;i+=1){
         delete c_wheels[i];
-        m_wheelPositions[i][0] = 0;
-        m_wheelPositions[i][1] = 0;
+        m_wheelPositions[i].x = 0;
+        m_wheelPositions[i].y = 0;
     }
 }
 
@@ -37,20 +39,20 @@ void Drivetrain::setupWheels(){
 }
 
 void Drivetrain::calculateWheelAnglesAndSpeeds(){
-    double motorDirectionAngle[Constants::k_NumberOfSwerveModules][2]; // index 0 is angle and index 1 is speed
+    Polar motorDirectionAngle[Constants::k_NumberOfSwerveModules]; // index 0 is angle and index 1 is speed
 
     double maxSpeed;
     for (int i=0; i<Constants::k_NumberOfSwerveModules; i+=1){
         //combine the movement and turning vectors
-        double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::m_wheelPositions[i][0]) + Drivetrain::m_strife;
-        double vertical_motion = (Drivetrain::m_rotation * Drivetrain::m_wheelPositions[i][1]) + Drivetrain::m_forwards;
+        double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::m_wheelPositions[i].x) + Drivetrain::m_strife;
+        double vertical_motion = (Drivetrain::m_rotation * Drivetrain::m_wheelPositions[i].y) + Drivetrain::m_forwards;
 
         // get the final angle of the module
-        motorDirectionAngle[i][0] = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front
+        motorDirectionAngle[i].radian = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front
         
         double speed = std::sqrt(std::pow(horizontal_motion, 2) + std::pow(vertical_motion, 2));
         
-        motorDirectionAngle[i][1] = speed;
+        motorDirectionAngle[i].magnitude = speed;
 
         if(speed > maxSpeed){
             maxSpeed = speed;
@@ -61,7 +63,7 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
     // if above 1, scales the speed down to have the max speed at 1
     if(maxSpeed > 1.0){
         for(int i = 0; i<Constants::k_NumberOfSwerveModules; i+=1){
-            motorDirectionAngle[i][1] = motorDirectionAngle[i][1] / maxSpeed;
+            motorDirectionAngle[i].magnitude = motorDirectionAngle[i].magnitude / maxSpeed;
         }
     }
 }
