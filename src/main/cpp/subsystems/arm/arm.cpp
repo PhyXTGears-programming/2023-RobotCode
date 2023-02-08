@@ -47,9 +47,13 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
             + targetLen * targetLen)
             / (2.0 * k_forearmLenInches * targetLen));
 
-    return ArmPose(bicepToXAxisAng, bicepToForearmAng);
+    float turretToXZAng = std::atan2(pt.z, pt.x);
+
+    return ArmPose(turretToXZAng, bicepToXAxisAng, bicepToForearmAng);
 
 }
+
+// Getting and setting arm angles:
 
 units::turn_t ArmSubsystem::getShoulderAngle() {
     return mShoulderAngleSensor.Get();
