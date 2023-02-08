@@ -105,10 +105,10 @@ void Drivetrain::setMotion(double x, double y, double r){
 }
 
 double Drivetrain::getHeading(){
-    return atan2(Drivetrain::m_strife, Drivetrain::m_forwards); //swapped x & y so forewards is 0 radians
+    return atan2(Drivetrain::m_strife, Drivetrain::m_forwards); //swapped x & y so forwards is 0 radians
 }
 
 double Drivetrain::getVelocity(){
-    //using pythagorean to find the magnitude of the vector components (forewards and strife)
+    //using pythagorean to find the magnitude of the vector components (forwards and strife)
     return std::sqrt((std::pow(Drivetrain::m_strife, 2)+std::pow(Drivetrain::m_forwards, 2)));
 }
