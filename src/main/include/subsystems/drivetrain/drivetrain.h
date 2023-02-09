@@ -99,4 +99,7 @@ class Drivetrain : public frc2::SubsystemBase {
         SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};
 
         Point c_wheelPositions[Constants::k_NumberOfSwerveModules];
+
+        // class-wide so we can optimize turning path
+        Polar m_motorDirectionAngleSpeed[Constants::k_NumberOfSwerveModules];
 };

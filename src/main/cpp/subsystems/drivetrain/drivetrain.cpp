@@ -39,8 +39,6 @@ void Drivetrain::setupWheels(){
 }
 
 void Drivetrain::calculateWheelAnglesAndSpeeds(){
-    Polar motorDirectionAngle[Constants::k_NumberOfSwerveModules]; // index 0 is angle and index 1 is speed
-
     double maxSpeed;
     for (int i=0; i<Constants::k_NumberOfSwerveModules; i+=1){
         //combine the movement and turning vectors
@@ -48,11 +46,11 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
         double vertical_motion = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].y) + Drivetrain::m_forwards;
 
         // get the final angle of the module
-        motorDirectionAngle[i].radian = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front
+        m_motorDirectionAngleSpeed[i].radian = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front
         
         double speed = std::sqrt(std::pow(horizontal_motion, 2) + std::pow(vertical_motion, 2));
         
-        motorDirectionAngle[i].magnitude = speed;
+        m_motorDirectionAngleSpeed[i].magnitude = speed;
 
         if(speed > maxSpeed){
             maxSpeed = speed;
@@ -63,7 +61,7 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
     // if above 1, scales the speed down to have the max speed at 1
     if(maxSpeed > 1.0){
         for(int i = 0; i<Constants::k_NumberOfSwerveModules; i+=1){
-            motorDirectionAngle[i].magnitude = motorDirectionAngle[i].magnitude / maxSpeed;
+            m_motorDirectionAngleSpeed[i].magnitude = m_motorDirectionAngleSpeed[i].magnitude / maxSpeed;
         }
     }
 }
