@@ -25,8 +25,8 @@ Drivetrain::~Drivetrain(){
     // cleanup classes and prevent memory leaks
     for(int i=0; i<Constants::k_NumberOfSwerveModules;i+=1){
         delete c_wheels[i];
-        m_wheelPositions[i].x = 0;
-        m_wheelPositions[i].y = 0;
+        c_wheelPositions[i].x = 0;
+        c_wheelPositions[i].y = 0;
     }
 }
 
@@ -44,8 +44,8 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
     double maxSpeed;
     for (int i=0; i<Constants::k_NumberOfSwerveModules; i+=1){
         //combine the movement and turning vectors
-        double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::m_wheelPositions[i].x) + Drivetrain::m_strife;
-        double vertical_motion = (Drivetrain::m_rotation * Drivetrain::m_wheelPositions[i].y) + Drivetrain::m_forwards;
+        double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].x) + Drivetrain::m_strife;
+        double vertical_motion = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].y) + Drivetrain::m_forwards;
 
         // get the final angle of the module
         motorDirectionAngle[i].radian = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front

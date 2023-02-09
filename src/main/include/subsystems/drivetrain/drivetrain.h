@@ -98,5 +98,5 @@ class Drivetrain : public frc2::SubsystemBase {
 
         SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};
 
-        Point m_wheelPositions[Constants::k_NumberOfSwerveModules];
+        Point c_wheelPositions[Constants::k_NumberOfSwerveModules];
 };
