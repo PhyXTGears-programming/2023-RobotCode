@@ -39,7 +39,7 @@ void Drivetrain::setupWheels(){
 }
 
 void Drivetrain::calculateWheelAnglesAndSpeeds(){
-    double maxSpeed;
+    double maxSpeed = 0.0;
     for (int i=0; i<Constants::k_NumberOfSwerveModules; i+=1){
         //combine the movement and turning vectors
         double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].x) + Drivetrain::m_strife;
