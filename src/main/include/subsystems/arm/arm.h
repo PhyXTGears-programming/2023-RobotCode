@@ -14,9 +14,9 @@ class ArmSubsystem : public frc2::SubsystemBase {
 public:
 
     // Calulating Functions:
-    Point calcElbowPos(float angShoulder);
+    Point calcElbowPos(float turretAng, float angShoulder);
 
-    Point calcWristPos(float shoulderAng, float elbowAng);
+    Point calcWristPos(float turretAng, float shoulderAng, float elbowAng);
 
     ArmPose calcIKJointPoses(Point pt);
 

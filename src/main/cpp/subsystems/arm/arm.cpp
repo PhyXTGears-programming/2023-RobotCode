@@ -4,30 +4,34 @@
 #include <numbers>
 #include <cmath>
 
-Point ArmSubsystem::calcElbowPos(float angShoulder) {
+Point ArmSubsystem::calcElbowPos(float turretAng, float shoulderAng) {
     Point pt(
-        k_bicepLenInches * std::cos(angShoulder),
-        k_bicepLenInches * std::sin(angShoulder),
-        0.0
+        k_bicepLenInches * std::cos(shoulderAng) * std::cos(turretAng),
+        k_bicepLenInches * std::cos(shoulderAng) * std::sin(turretAng),
+        k_bicepLenInches * std::sin(shoulderAng),
     );
 
     return pt;
 }
 
-Point ArmSubsystem::calcWristPos(float shoulderAng, float elbowAng) {
+Point ArmSubsystem::calcWristPos(
+    float turretAng,
+    float shoulderAng,
+    float elbowAng
+) {
     Point elbowPos = calcElbowPos(shoulderAng);
     Point pt(
-        k_forearmLenInches * std::cos(shoulderAng + elbowAng),
-        k_forearmLenInches * std::sin(shoulderAng + elbowAng),
-        0.0
+        k_forearmLenInches * std::cos(shoulderAng + elbowAng) * std::cos(turretAng),
+        k_forearmLenInches * std::cos(shoulderAng + elbowAng) * std::sin(turretAng),
+        k_forearmLenInches * std::sin(shoulderAng + elbowAng)
     );
 
-    return Point(elbowPos.x + pt.x, elbowPos.y + pt.y, 0.0);
+    return Point(elbowPos.x + pt.x, elbowPos.y + pt.y, elbowPos.z + pt.z);
 }
 
 ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
-    float targetLen =  std::sqrt((pt.x * pt.x + pt.y * pt.y)); // Line from shoulder to target
-    float targetToXAxisAng = std::atan2(pt.y, pt.x);
+    float targetLen =  std::sqrt((std::pow(pt.x, 2) + std::pow(pt.y, 2) + std::pow(pt.z, 2))); // Line from shoulder to target
+    float targetToXAxisAng = atan2(pt.z, std::sqrt(pt.x * pt.x + pt.y * pt.y));
 
     float targetToBicepAng = std::acos(
         (k_forearmLenInches * k_forearmLenInches 
