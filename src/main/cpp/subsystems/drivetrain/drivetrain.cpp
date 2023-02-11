@@ -40,6 +40,13 @@ void Drivetrain::setupWheels(){
 }
 
 void Drivetrain::calculateWheelAnglesAndSpeeds(){
+    if((Drivetrain::m_strife == 0) && (Drivetrain::m_forwards)){
+        for(int i=0;i<Constants::k_NumberOfSwerveModules;i++){
+            Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = 0;
+        }
+        return;
+    }
+
     double maxSpeed = 0.0;
     for (int i=0; i<Constants::k_NumberOfSwerveModules; i+=1){
         //combine the movement and turning vectors
