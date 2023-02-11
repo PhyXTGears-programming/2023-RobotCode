@@ -5,6 +5,7 @@
 
 #include "subsystems/drivetrain/swerveWheel.h"
 #include "util/point.h"
+#include "util/polar.h"
 
 class Drivetrain : public frc2::SubsystemBase {
     public:
