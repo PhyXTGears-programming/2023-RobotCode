@@ -55,7 +55,7 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
 
         // calculate the change in radians
         double newRadians = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front
-        double radiansChanged = newRadians - m_motorDirectionAngleSpeed[i].radian;
+        double radiansChanged = newRadians - Drivetrain::m_motorDirectionAngleSpeed[i].radian;
 
         // get the final angle of the module
         // if change is greater than 3pi/2 (270 degrees); just turn the other way to go 360 degrees away from it
@@ -85,12 +85,12 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
         }
         // using the previous radians
         // add the new angle delta to the current quarter turn
-        m_motorDirectionAngleSpeed[i].radian = m_motorDirectionAngleSpeed[i].radian + directionDelta;
+        Drivetrain::m_motorDirectionAngleSpeed[i].radian = Drivetrain::m_motorDirectionAngleSpeed[i].radian + directionDelta;
         
         //reverse the speed in the event speedReversed is true
         double speed = std::sqrt(std::pow(horizontal_motion, 2) + std::pow(vertical_motion, 2)) * (speedReversed?-1:1);
         
-        m_motorDirectionAngleSpeed[i].magnitude = speed;
+        Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = speed;
 
         //absolute value to prevent random reversing of the wheels (and to make it the magnitude instead of the raw value)
         if(abs(speed) > maxSpeed){
