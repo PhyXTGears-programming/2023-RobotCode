@@ -1,6 +1,7 @@
 #include "subsystems/drivetrain/drivetrain.h"
 #include "Mandatory.h"
 
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include "util/point.h"
 #include "util/polar.h"
@@ -45,10 +46,42 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
         double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].x) + Drivetrain::m_strife;
         double vertical_motion = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].y) + Drivetrain::m_forwards;
 
+        // calculate the change in radians
+        double newRadians = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front
+        double radiansChanged = newRadians - m_motorDirectionAngleSpeed[i].radian;
+
         // get the final angle of the module
-        m_motorDirectionAngleSpeed[i].radian = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front
+        // if change is greater than 3pi/2 (270 degrees); just turn the other way to go 360 degrees away from it
+        // if change is greater than pi (180 degrees); turn to be 180 degrees from it, and reverse wheel
+        // if change is greater than pi/2 (90 degrees); turn other way to go 360 degrees away from it and reverse wheel
+        // if change is anything else (>0 degrees); turn like normal
+
+        // NOTE: this is split into 2 first (<pi and >pi) then split a second time (>3pi/2 and <3pi/2 OR >pi/2 and <pi/2) for performance reasons
+        bool speedReversed = false;
+        double directionDelta = 0;
+        if (radiansChanged >= M_PI){ //>=pi
+            if(radiansChanged >= (1.5*M_PI)) { //>=3pi/2
+                speedReversed = false;
+                directionDelta = radiansChanged - (2*M_PI); // will be <0
+            } else { //<3pi/2 and >pi
+                speedReversed = true;
+                directionDelta = radiansChanged - M_PI; // will be >0
+            }
+        } else { //<pi
+            if(radiansChanged >= (0.5*M_PI)){ //>=pi/2 and <pi
+                speedReversed = true;
+                directionDelta = radiansChanged - M_PI; // will be <0
+            } else { //<pi/2
+                speedReversed = false;
+                directionDelta = radiansChanged; // will be >0
+            }
+        }
+        // using the previous radians
+        // add the new angle delta to the current quarter turn
+        m_motorDirectionAngleSpeed[i].radian = m_motorDirectionAngleSpeed[i].radian + directionDelta;
         
-        double speed = std::sqrt(std::pow(horizontal_motion, 2) + std::pow(vertical_motion, 2));
+        //reverse the speed in the event speedReversed is true
+        double speed = std::sqrt(std::pow(horizontal_motion, 2) + std::pow(vertical_motion, 2)) * (speedReversed?-1:1);
         
         m_motorDirectionAngleSpeed[i].magnitude = speed;
 
