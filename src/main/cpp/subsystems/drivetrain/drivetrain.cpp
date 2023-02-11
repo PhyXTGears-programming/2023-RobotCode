@@ -52,8 +52,9 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
         
         m_motorDirectionAngleSpeed[i].magnitude = speed;
 
-        if(speed > maxSpeed){
-            maxSpeed = speed;
+        //absolute value to prevent random reversing of the wheels (and to make it the magnitude instead of the raw value)
+        if(abs(speed) > maxSpeed){
+            maxSpeed = abs(speed);
         }
     }
 
