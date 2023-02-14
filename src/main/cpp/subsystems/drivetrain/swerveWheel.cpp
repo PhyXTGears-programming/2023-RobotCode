@@ -37,7 +37,12 @@ SwerveWheel::SwerveWheel(
     }
 }
 
-void SwerveWheel::setVelocity(double s) {
+void SwerveWheel::Periodic(){
+    c_turningMotor->Periodic();
+    c_movementMotor->Periodic();
+}
+
+void SwerveWheel::setVelocity(double s){
     m_currentVelocity = s;
     c_movementMotor->setMotion(s);
 }

@@ -31,6 +31,8 @@ class SwerveWheel : public frc2::SubsystemBase {
         double getHeading();
 
         double getVelocity();
+
+        void Periodic() override;
     private:
         double m_currentVelocity = 0;
         double m_currentHeading = 0;
