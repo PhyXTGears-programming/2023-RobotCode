@@ -14,12 +14,25 @@ class CtreFalcon : public MotorInterfaces {
         */
         CtreFalcon(int canID);
 
+        CtreFalcon(int motorCanID, int encoderCanID);
+
+        void Periodic() override;
+
         /**
-         * this is a function that will make it in reference to power (aka between -1 and 1)
+         * this is a function that will tell the motor to move in reference to power (aka between -1 and 1)
          * 
          * @param speed a percentage of the motor power
         */
         void setMotion(double speed) override;
+
+        /**
+         * this will have the motor use PID to maintain a specific angle (requires absolute encoder)
+         * 
+         * @param radians the radian number to set the 
+        */
+       void setRotation(double radians) override;
     private:
-        ctre::phoenix::motorcontrol::can::TalonFX * motor = nullptr;
+        double m_currentSpeedPercentage = 0;
+
+        ctre::phoenix::motorcontrol::can::TalonFX * c_motor = nullptr;
 };

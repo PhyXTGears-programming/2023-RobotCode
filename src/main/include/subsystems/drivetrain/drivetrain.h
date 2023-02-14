@@ -7,6 +7,15 @@
 #include "util/point.h"
 #include "util/polar.h"
 
+/*
+NOTE ON UNITS:
+
+all math in here is based on the units of meters, radians and seconds.
+
+there should not be any other units in here, so if there turns out to be,
+it should be removed or put in a debug preprocessor.
+*/
+
 class Drivetrain : public frc2::SubsystemBase {
     public:
         /**
@@ -91,6 +100,8 @@ class Drivetrain : public frc2::SubsystemBase {
 
         void calculateWheelAnglesAndSpeeds();
 
+        void sendToSwerveModules();
+
         bool m_fieldOriented = false;
 
         double m_strife = 0;
@@ -99,7 +110,12 @@ class Drivetrain : public frc2::SubsystemBase {
 
         SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};
 
-        Point c_wheelPositions[Constants::k_NumberOfSwerveModules];
+        Point c_wheelPositions[Constants::k_NumberOfSwerveModules] = {
+            Point{/*x=*/(float)(-0.4445/2), /*y=*/(float)( 0.4953/2), /*z=*/0.0F}, // -8.75in, 9.75in
+            Point{/*x=*/(float)( 0.4445/2), /*y=*/(float)( 0.4953/2), /*z=*/0.0F}, // 8.75in, 9.75in
+            Point{/*x=*/(float)( 0.4445/2), /*y=*/(float)(-0.4953/2), /*z=*/0.0F}, // 8.75in, -9.75in
+            Point{/*x=*/(float)(-0.4445/2), /*y=*/(float)(-0.4953/2), /*z=*/0.0F} // -8.75in, -9.75in
+        };
 
         // class-wide so we can optimize turning path
         Polar m_motorDirectionAngleSpeed[Constants::k_NumberOfSwerveModules];

@@ -6,6 +6,11 @@
 
 #include "util/point.h"
 #include "util/polar.h"
+
+#include "subsystems/drivetrain/swerveWheel.h"
+#include "subsystems/drivetrain/swerveWheelTypes.h"
+
+
 /*
 NOTE ON UNITS:
 
@@ -17,10 +22,12 @@ it should be removed or put in a debug preprocessor.
 
 Drivetrain::Drivetrain(bool fieldOriented) {
     this->m_fieldOriented = fieldOriented;
+    Drivetrain::setupWheels();
 }
 
 Drivetrain::Drivetrain() {
     this->m_fieldOriented = false;
+    Drivetrain::setupWheels();
 }
 
 Drivetrain::~Drivetrain() {
@@ -33,18 +40,42 @@ Drivetrain::~Drivetrain() {
 }
 
 void Drivetrain::Periodic() {
-    //dont do anything. this is class is just a calculator and dispatcher
+    //just tell the motor abstractions to pet the watchdog and update the motors
+    for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
+        Drivetrain::c_wheels[i]->Periodic();
+    }
 }
 
 void Drivetrain::setupWheels() {
     //setup wheel classes with correct motors from toml file
+    Drivetrain::c_wheels[0] = new SwerveWheel(
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 5,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 1,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 21, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+    );
+    Drivetrain::c_wheels[1] = new SwerveWheel(
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 6,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 2,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 22, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+    );
+    Drivetrain::c_wheels[2] = new SwerveWheel(
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 7,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 3,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 23, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+    );
+    Drivetrain::c_wheels[3] = new SwerveWheel(
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 8,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 4,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = 24, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+    );
 }
 
 void Drivetrain::calculateWheelAnglesAndSpeeds() {
-    if ((Drivetrain::m_strife == 0) && (Drivetrain::m_forwards)) {
+    if ((abs(Drivetrain::m_strife) <= 0.001) && (abs(Drivetrain::m_forwards) <= 0.001)) {
         for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
             Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = 0;
         }
+        Drivetrain::sendToSwerveModules();
         return;
     }
 
@@ -76,7 +107,7 @@ void Drivetrain::calculateWheelAnglesAndSpeeds() {
                 directionDelta = radiansChanged - M_PI; // will be >0
             }
         } else { //<pi
-            if (radiansChanged >= (0.5 * M_PI)){ //>=pi/2 and <pi
+            if (radiansChanged >= (0.5 * M_PI)) { //>=pi/2 and <pi
                 speedReversed = true;
                 directionDelta = radiansChanged - M_PI; // will be <0
             } else { //<pi/2
@@ -86,10 +117,13 @@ void Drivetrain::calculateWheelAnglesAndSpeeds() {
         }
         // using the previous radians
         // add the new angle delta to the current quarter turn
-        Drivetrain::m_motorDirectionAngleSpeed[i].radian = Drivetrain::m_motorDirectionAngleSpeed[i].radian + directionDelta;
+        Drivetrain::m_motorDirectionAngleSpeed[i].radian =
+            Drivetrain::m_motorDirectionAngleSpeed[i].radian + directionDelta;
 
         //reverse the speed in the event speedReversed is true
-        double speed = std::sqrt(std::pow(horizontal_motion, 2) + std::pow(vertical_motion, 2)) * (speedReversed ? -1 : 1);
+        double speed =
+            std::sqrt(std::pow(horizontal_motion, 2) + std::pow(vertical_motion, 2))
+            * (speedReversed ? -1 : 1);
 
         Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = speed;
 
@@ -106,6 +140,7 @@ void Drivetrain::calculateWheelAnglesAndSpeeds() {
             m_motorDirectionAngleSpeed[i].magnitude = m_motorDirectionAngleSpeed[i].magnitude / maxSpeed;
         }
     }
+    Drivetrain::sendToSwerveModules();
 }
 
 void Drivetrain::enableFieldCentric() {
@@ -153,4 +188,13 @@ double Drivetrain::getHeading() {
 double Drivetrain::getVelocity() {
     //using pythagorean to find the magnitude of the vector components (forwards and strife)
     return std::sqrt((std::pow(Drivetrain::m_strife, 2) + std::pow(Drivetrain::m_forwards, 2)));
+}
+
+void Drivetrain::sendToSwerveModules() {
+    for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
+        c_wheels[i]->setMotion(
+            m_motorDirectionAngleSpeed[i].magnitude,
+            m_motorDirectionAngleSpeed[i].radian
+        );
+    }
 }
