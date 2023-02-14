@@ -66,10 +66,9 @@ void Drivetrain::setupWheels() {
         SwerveWheelTypes::SwerveWheelTypes{ .ID = 24, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
 }
-
-void Drivetrain::calculateWheelAnglesAndSpeeds() {
-    if ((Drivetrain::m_strife == 0) && (Drivetrain::m_forwards)) {
-        for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
+void Drivetrain::calculateWheelAnglesAndSpeeds(){
+    if((abs(Drivetrain::m_strife) <= 0.001) && (abs(Drivetrain::m_forwards) <= 0.001)){
+        for(int i=0;i<Constants::k_NumberOfSwerveModules;i++){
             Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = 0;
         }
         return;
