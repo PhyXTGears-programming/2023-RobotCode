@@ -6,12 +6,18 @@
 #include <frc/controller/PIDController.h>
 
 
-RevSparkMaxBrushless::RevSparkMaxBrushless(int canID){
-    c_motor = new rev::CANSparkMax(canID, rev::CANSparkMax::MotorType::kBrushless);
+RevSparkMaxBrushless::RevSparkMaxBrushless(int canID) {
+    c_motor = new rev::CANSparkMax(
+        canID,
+        rev::CANSparkMax::MotorType::kBrushless
+    );
 }
 
-RevSparkMaxBrushless::RevSparkMaxBrushless(int motorCanID, int encoderCanID, frc2::PIDController pid){
-    c_motor = new rev::CANSparkMax(motorCanID, rev::CANSparkMax::MotorType::kBrushless);
+RevSparkMaxBrushless::RevSparkMaxBrushless(int motorCanID, int encoderCanID, frc2::PIDController pid) {
+    c_motor = new rev::CANSparkMax(
+        motorCanID,
+        rev::CANSparkMax::MotorType::kBrushless
+    );
 
     RevSparkMaxBrushless::c_pidController = pid;
     RevSparkMaxBrushless::c_pidController.SetTolerance(0.1);
@@ -22,12 +28,15 @@ RevSparkMaxBrushless::RevSparkMaxBrushless(int motorCanID, int encoderCanID, frc
     // RevSparkMaxBrushless::c_absoluteOffset = c_canCoder->GetAbsolutePosition();
 }
 
-void RevSparkMaxBrushless::Periodic(){
-    if(RevSparkMaxBrushless::c_pidControlled){
-        if(RevSparkMaxBrushless::c_pidController.AtSetpoint()){
+void RevSparkMaxBrushless::Periodic() {
+    if (RevSparkMaxBrushless::c_pidControlled) {
+        if (RevSparkMaxBrushless::c_pidController.AtSetpoint()) {
             RevSparkMaxBrushless::c_motor->Set(0);
         } else {
-            double out = RevSparkMaxBrushless::c_pidController.Calculate(RevSparkMaxBrushless::c_canCoder->GetPosition()-RevSparkMaxBrushless::c_absoluteOffset);
+            double out = RevSparkMaxBrushless::c_pidController.Calculate(
+                RevSparkMaxBrushless::c_canCoder->GetPosition()
+                - RevSparkMaxBrushless::c_absoluteOffset
+            );
             RevSparkMaxBrushless::c_motor->Set(-std::clamp(out, -0.5, 0.5)); //negative because the modules were going the wrong way. Should fix in the encoder firmware
         }
     } else {
@@ -35,11 +44,12 @@ void RevSparkMaxBrushless::Periodic(){
     }
 }
 
-void RevSparkMaxBrushless::setMotion(double speed){
+void RevSparkMaxBrushless::setMotion(double speed) {
     RevSparkMaxBrushless::m_currentSpeedPercentage = speed;
 }
 
-void RevSparkMaxBrushless::setRotation(double radians){
-    if(RevSparkMaxBrushless::c_pidControlled)
+void RevSparkMaxBrushless::setRotation(double radians) {
+    if (RevSparkMaxBrushless::c_pidControlled) {
         RevSparkMaxBrushless::c_pidController.SetSetpoint(radians);
+    }
 }

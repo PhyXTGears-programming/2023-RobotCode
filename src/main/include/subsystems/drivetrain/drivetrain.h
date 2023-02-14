@@ -111,9 +111,9 @@ class Drivetrain : public frc2::SubsystemBase {
         SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};
 
         Point c_wheelPositions[Constants::k_NumberOfSwerveModules] = {
-            Point{/*x=*/(float)(-0.4445/2), /*y=*/(float)(0.4953/2), /*z=*/0.0F}, // -8.75in, 9.75in
-            Point{/*x=*/(float)(0.4445/2), /*y=*/(float)(0.4953/2), /*z=*/0.0F}, // 8.75in, 9.75in
-            Point{/*x=*/(float)(0.4445/2), /*y=*/(float)(-0.4953/2), /*z=*/0.0F}, // 8.75in, -9.75in
+            Point{/*x=*/(float)(-0.4445/2), /*y=*/(float)( 0.4953/2), /*z=*/0.0F}, // -8.75in, 9.75in
+            Point{/*x=*/(float)( 0.4445/2), /*y=*/(float)( 0.4953/2), /*z=*/0.0F}, // 8.75in, 9.75in
+            Point{/*x=*/(float)( 0.4445/2), /*y=*/(float)(-0.4953/2), /*z=*/0.0F}, // 8.75in, -9.75in
             Point{/*x=*/(float)(-0.4445/2), /*y=*/(float)(-0.4953/2), /*z=*/0.0F} // -8.75in, -9.75in
         };
 

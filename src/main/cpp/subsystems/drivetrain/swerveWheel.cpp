@@ -10,11 +10,10 @@
 
 
 SwerveWheel::SwerveWheel(
-                        SwerveWheelTypes::SwerveWheelTypes turnMotor,
-                        SwerveWheelTypes::SwerveWheelTypes moveMotor,
-                        SwerveWheelTypes::SwerveWheelTypes encoder
+    SwerveWheelTypes::SwerveWheelTypes turnMotor,
+    SwerveWheelTypes::SwerveWheelTypes moveMotor,
+    SwerveWheelTypes::SwerveWheelTypes encoder
 ) {
-  
     switch (moveMotor.Vendor){
         case VENDOR_REV_SPARKMAX:
             c_movementMotor = new RevSparkMaxBrushless(moveMotor.ID);
@@ -27,7 +26,11 @@ SwerveWheel::SwerveWheel(
 
     switch (turnMotor.Vendor) {
         case VENDOR_REV_SPARKMAX:
-            c_turningMotor = new RevSparkMaxBrushless(turnMotor.ID, encoder.ID, frc2::PIDController{0.2, 0, 0});
+            c_turningMotor = new RevSparkMaxBrushless(
+                turnMotor.ID,
+                encoder.ID,
+                frc2::PIDController{0.2, 0, 0}
+            );
             break;
     }
 
@@ -37,22 +40,22 @@ SwerveWheel::SwerveWheel(
     }
 }
 
-void SwerveWheel::Periodic(){
+void SwerveWheel::Periodic() {
     c_turningMotor->Periodic();
     c_movementMotor->Periodic();
 }
 
-void SwerveWheel::setVelocity(double s){
+void SwerveWheel::setVelocity(double s) {
     m_currentVelocity = s;
     c_movementMotor->setMotion(s);
 }
 
-void SwerveWheel::setHeading(double r){
+void SwerveWheel::setHeading(double r) {
     m_currentHeading = r;
     c_turningMotor->setRotation(r);
 }
 
-void SwerveWheel::setMotion(double s, double r){
+void SwerveWheel::setMotion(double s, double r) {
     m_currentHeading = r;
     m_currentVelocity = s;
     c_movementMotor->setMotion(s);
