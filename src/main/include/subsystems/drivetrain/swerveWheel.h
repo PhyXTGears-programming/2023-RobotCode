@@ -26,7 +26,7 @@ class SwerveWheel : public frc2::SubsystemBase {
 
         void setVelocity(double s);
 
-        void setMotion(double r, double s);
+        void setMotion(double s, double r);
 
         double getHeading();
 
