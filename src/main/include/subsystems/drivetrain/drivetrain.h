@@ -7,6 +7,15 @@
 #include "util/point.h"
 #include "util/polar.h"
 
+/*
+NOTE ON UNITS:
+
+all math in here is based on the units of meters, radians and seconds.
+
+there should not be any other units in here, so if there turns out to be,
+it should be removed or put in a debug preprocessor.
+*/
+
 class Drivetrain : public frc2::SubsystemBase {
     public:
         /**
