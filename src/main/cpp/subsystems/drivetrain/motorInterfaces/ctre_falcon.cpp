@@ -9,8 +9,12 @@ CtreFalcon::CtreFalcon(int canID) {
     CtreFalcon::c_motor = new ctre::phoenix::motorcontrol::can::TalonFX(canID);
 }
 
+void CtreFalcon::Periodic(){
+    CtreFalcon::c_motor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, CtreFalcon::m_currentSpeedPercentage);
+}
+
 void CtreFalcon::setMotion(double speed){
-    CtreFalcon::c_motor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, speed);
+    CtreFalcon::m_currentSpeedPercentage = speed;
 }
 
 void CtreFalcon::setRotation(double radians){

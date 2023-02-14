@@ -4,6 +4,7 @@
 #include "motorInterfaces.h"
 
 #include <rev/CANSparkMax.h>
+#include <frc/controller/PIDController.h>
 #include <ctre/phoenix/sensors/CANCoder.h>
 
 class RevSparkMaxBrushless : public MotorInterfaces {
@@ -20,6 +21,11 @@ class RevSparkMaxBrushless : public MotorInterfaces {
         RevSparkMaxBrushless(int motorCanID, int encoderCanID, frc2::PIDController pid);
 
         /**
+         * periodic function to update motors and pet the watchdog
+        */
+        void Periodic() override;
+
+        /**
          * this is a function that will tell the motor to move in reference to power (aka between -1 and 1)
          * 
          * @param speed a percentage of the motor power
@@ -33,6 +39,10 @@ class RevSparkMaxBrushless : public MotorInterfaces {
         */
        void setRotation(double radians) override;
     private:
+        double m_currentSpeedPercentage = 0;
+        bool c_pidControlled = false;
+        double c_absoluteOffset = 0;
+
 
         rev::CANSparkMax * c_motor = nullptr;
         frc2::PIDController c_pidController = frc2::PIDController{0,0,0};

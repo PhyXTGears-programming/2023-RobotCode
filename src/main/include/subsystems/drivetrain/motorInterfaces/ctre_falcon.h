@@ -16,6 +16,8 @@ class CtreFalcon : public MotorInterfaces {
 
         CtreFalcon(int motorCanID, int encoderCanID);
 
+        void Periodic() override;
+
         /**
          * this is a function that will tell the motor to move in reference to power (aka between -1 and 1)
          * 
@@ -30,6 +32,7 @@ class CtreFalcon : public MotorInterfaces {
         */
        void setRotation(double radians) override;
     private:
+        double m_currentSpeedPercentage = 0;
 
         ctre::phoenix::motorcontrol::can::TalonFX * c_motor = nullptr;
 };
