@@ -39,8 +39,11 @@ Drivetrain::~Drivetrain() {
     }
 }
 
-void Drivetrain::Periodic() {
-    //dont do anything. this is class is just a calculator and dispatcher
+void Drivetrain::Periodic(){
+    //just tell the motor abstractions to pet the watchdog and update the motors
+    for(int i=0;i<Constants::k_NumberOfSwerveModules;i++){
+        Drivetrain::c_wheels[i]->Periodic();
+    }
 }
 
 void Drivetrain::setupWheels() {
@@ -66,11 +69,13 @@ void Drivetrain::setupWheels() {
         SwerveWheelTypes::SwerveWheelTypes{ .ID = 24, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
 }
+
 void Drivetrain::calculateWheelAnglesAndSpeeds(){
     if((abs(Drivetrain::m_strife) <= 0.001) && (abs(Drivetrain::m_forwards) <= 0.001)){
         for(int i=0;i<Constants::k_NumberOfSwerveModules;i++){
             Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = 0;
         }
+        Drivetrain::sendToSwerveModules();
         return;
     }
 
@@ -132,6 +137,7 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
             m_motorDirectionAngleSpeed[i].magnitude = m_motorDirectionAngleSpeed[i].magnitude / maxSpeed;
         }
     }
+    Drivetrain::sendToSwerveModules();
 }
 
 void Drivetrain::enableFieldCentric() {
@@ -179,4 +185,10 @@ double Drivetrain::getHeading() {
 double Drivetrain::getVelocity() {
     //using pythagorean to find the magnitude of the vector components (forwards and strife)
     return std::sqrt((std::pow(Drivetrain::m_strife, 2) + std::pow(Drivetrain::m_forwards, 2)));
+}
+
+void Drivetrain::sendToSwerveModules(){
+    for(int i=0;i<Constants::k_NumberOfSwerveModules;i++){
+        c_wheels[i]->setMotion(m_motorDirectionAngleSpeed[i].magnitude, m_motorDirectionAngleSpeed[i].radian);
+    }
 }

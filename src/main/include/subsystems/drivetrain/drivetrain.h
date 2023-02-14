@@ -100,6 +100,8 @@ class Drivetrain : public frc2::SubsystemBase {
 
         void calculateWheelAnglesAndSpeeds();
 
+        void sendToSwerveModules();
+
         bool m_fieldOriented = false;
 
         double m_strife = 0;
