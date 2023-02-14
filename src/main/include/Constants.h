@@ -1,6 +1,5 @@
 #pragma once
-#include "Interfaces.h"
 
-namespace Constants{
+namespace Constants {
     const int k_NumberOfSwerveModules = 4;
 };
