@@ -120,8 +120,10 @@ void Drivetrain::calculateWheelAnglesAndSpeeds(){
         Drivetrain::m_motorDirectionAngleSpeed[i].radian = Drivetrain::m_motorDirectionAngleSpeed[i].radian + directionDelta;
 
         //reverse the speed in the event speedReversed is true
-        double speed = std::sqrt(std::pow(horizontal_motion, 2) + std::pow(vertical_motion, 2)) * (speedReversed ? -1 : 1);
-
+        double speed = 
+            std::sqrt(std::pow(horizontal_motion, 2) + std::pow(vertical_motion, 2))
+            * (speedReversed?-1:1);
+        
         Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = speed;
 
         //absolute value to prevent random reversing of the wheels (and to make it the magnitude instead of the raw value)
