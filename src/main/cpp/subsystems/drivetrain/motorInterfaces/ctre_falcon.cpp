@@ -6,9 +6,14 @@
 #include <ctre/phoenix/motorcontrol/ControlMode.h>
 
 CtreFalcon::CtreFalcon(int canID) {
-    motor = new ctre::phoenix::motorcontrol::can::TalonFX(canID);
+    CtreFalcon::c_motor = new ctre::phoenix::motorcontrol::can::TalonFX(canID);
 }
 
 void CtreFalcon::setMotion(double speed){
-    motor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, speed);
+    CtreFalcon::c_motor->Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, speed);
+}
+
+void CtreFalcon::setRotation(double radians){
+    // do nothing :)
+    // at least for now...
 }
