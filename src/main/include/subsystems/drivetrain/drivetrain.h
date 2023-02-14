@@ -85,7 +85,7 @@ class Drivetrain : public frc2::SubsystemBase {
          * @returns velocity of movement
         */
        double getVelocity();
-    
+
     private:
         void setupWheels();
 

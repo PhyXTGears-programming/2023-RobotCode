@@ -1,5 +1,5 @@
 #pragma once
 
-namespace Constants{
+namespace Constants {
     const int k_NumberOfSwerveModules = 4;
 };

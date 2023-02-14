@@ -8,10 +8,10 @@ class MotorInterfaces {
          * 
          * @param speed a percentage of the motor power
         */
-        virtual void setMotion(double speed){};
+        virtual void setMotion(double speed) {};
 
         // have to have constructor and descructor for parent classes. set to nothing because they dont need anything
         // this is just so we can be assured that there are certain defined functions
-        virtual ~MotorInterfaces(){};
-        MotorInterfaces(){};
+        virtual ~MotorInterfaces() {};
+        MotorInterfaces() {};
 };

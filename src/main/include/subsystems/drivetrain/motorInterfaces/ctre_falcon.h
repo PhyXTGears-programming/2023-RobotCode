@@ -5,7 +5,7 @@
 
 #include <ctre/phoenix/motorcontrol/can/TalonFX.h>
 
-class CtreFalcon : public MotorInterfaces{
+class CtreFalcon : public MotorInterfaces {
     public:
         /**
          * creates and abstraction for the CTRE Falcon using CAN mode
