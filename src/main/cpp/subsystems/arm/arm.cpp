@@ -19,7 +19,7 @@ Point ArmSubsystem::calcWristPos(
     double shoulderAng,
     double elbowAng
 ) {
-    Point elbowPos = calcElbowPos(shoulderAng);
+    Point elbowPos = calcElbowPos(turretAng, shoulderAng);
     Point pt(
         Constants::Arm::k_forearmLenInches * std::cos(shoulderAng + elbowAng) * std::cos(turretAng),
         Constants::Arm::k_forearmLenInches * std::cos(shoulderAng + elbowAng) * std::sin(turretAng),
