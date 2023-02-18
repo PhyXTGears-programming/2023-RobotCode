@@ -6,9 +6,9 @@
 
 Point ArmSubsystem::calcElbowPos(double turretAng, double shoulderAng) {
     Point pt(
-        k_bicepLenInches * std::cos(shoulderAng) * std::cos(turretAng),
-        k_bicepLenInches * std::cos(shoulderAng) * std::sin(turretAng),
-        k_bicepLenInches * std::sin(shoulderAng),
+        Constants::Arm::k_bicepLenInches * std::cos(shoulderAng) * std::cos(turretAng),
+        Constants::Arm::k_bicepLenInches * std::cos(shoulderAng) * std::sin(turretAng),
+        Constants::Arm::k_bicepLenInches * std::sin(shoulderAng),
     );
 
     return pt;
@@ -21,9 +21,9 @@ Point ArmSubsystem::calcWristPos(
 ) {
     Point elbowPos = calcElbowPos(shoulderAng);
     Point pt(
-        k_forearmLenInches * std::cos(shoulderAng + elbowAng) * std::cos(turretAng),
-        k_forearmLenInches * std::cos(shoulderAng + elbowAng) * std::sin(turretAng),
-        k_forearmLenInches * std::sin(shoulderAng + elbowAng)
+        Constants::Arm::k_forearmLenInches * std::cos(shoulderAng + elbowAng) * std::cos(turretAng),
+        Constants::Arm::k_forearmLenInches * std::cos(shoulderAng + elbowAng) * std::sin(turretAng),
+        Constants::Arm::k_forearmLenInches * std::sin(shoulderAng + elbowAng)
     );
 
     return Point(elbowPos.x + pt.x, elbowPos.y + pt.y, elbowPos.z + pt.z);
@@ -34,10 +34,10 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
     double targetToXAxisAng = atan2(pt.z, std::sqrt(pt.x * pt.x + pt.y * pt.y));
 
     double targetToBicepAng = std::acos(
-        (k_forearmLenInches * k_forearmLenInches 
-        - k_bicepLenInches * k_bicepLenInches
+        (Constants::Arm::k_forearmLenInches * Constants::Arm::k_forearmLenInches
+        - Constants::Arm::k_bicepLenInches * Constants::Arm::k_bicepLenInches
         + targetLen * targetLen)
-        / (2.0 * k_forearmLenInches * targetLen)
+        / (2.0 * Constants::Arm::k_forearmLenInches * targetLen)
     );
 
     // Solve IK:
@@ -46,10 +46,10 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
     double bicepToForearmAng =
         (std::numbers::pi / 2.0)
         - std::acos(
-            (k_forearmLenInches * k_forearmLenInches
-            - k_bicepLenInches * k_bicepLenInches
+            (Constants::Arm::k_forearmLenInches * Constants::Arm::k_forearmLenInches
+            - Constants::Arm::k_bicepLenInches * Constants::Arm::k_bicepLenInches
             + targetLen * targetLen)
-            / (2.0 * k_forearmLenInches * targetLen));
+            / (2.0 * Constants::Arm::k_forearmLenInches * targetLen));
 
     double turretToXZAng = std::atan2(pt.z, pt.x);
 
