@@ -60,19 +60,19 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
 // Getting and setting arm angles:
 
 units::turn_t ArmSubsystem::getShoulderAngle() {
-    return mShoulderAngleSensor.Get();
+    return m_ShoulderAngleSensor.Get();
 }
 
 double ArmSubsystem::getElbowAngle() {
-    return mElbowAngleSensor.Get();
+    return m_ElbowAngleSensor.Get();
 }
 
 double ArmSubsystem::getTurretAngle() {
-    return mTurretAngleSensor.Get();
+    return m_TurretAngleSensor.Get();
 }
 
 double ArmSubsystem::getWristRollAngle() {
-    return mWristRollAngleSensor.Get();
+    return m_WristRollAngleSensor.Get();
 }
 
 void ArmSubsystem::setTurretAngle(double angle) {

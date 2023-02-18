@@ -90,10 +90,10 @@ private:
 class NotBoundary : public Boundary {
 public:
 
-    NotBoundary(std::unique_ptr<Boundary> boundary) : mBound(std::move(boundary)) {}
+    NotBoundary(std::unique_ptr<Boundary> boundary) : m_Bound(std::move(boundary)) {}
 
     bool isInside(Point pt) override {
-        return mBound->isOutside(pt);
+        return m_Bound->isOutside(pt);
     }
 
     bool isOutside(Point pt) override {
@@ -101,5 +101,5 @@ public:
     }
 
 private:
-    std::unique_ptr<Boundary> mBound;
+    std::unique_ptr<Boundary> m_Bound;
 };

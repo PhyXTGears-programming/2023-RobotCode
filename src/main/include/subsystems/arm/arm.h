@@ -51,12 +51,12 @@ private:
     //     O        O
     // **Not to scale
 
-    frc::AnalogPotentiometer mTurretAngleSensor {1, 1.0, 0};
+    frc::AnalogPotentiometer m_TurretAngleSensor {1, 1.0, 0};
 
-    frc::DutyCycleEncoder mShoulderAngleSensor{1}; // Using Funky Fresh Encoder
+    frc::DutyCycleEncoder m_ShoulderAngleSensor{1}; // Using Funky Fresh Encoder
 
-    frc::AnalogPotentiometer mElbowAngleSensor {1, 1.0, 0};
+    frc::AnalogPotentiometer m_ElbowAngleSensor {1, 1.0, 0};
 
-    frc::AnalogPotentiometer mWristRollAngleSensor {1, 1.0, 0};
+    frc::AnalogPotentiometer m_WristRollAngleSensor {1, 1.0, 0};
 
 };
