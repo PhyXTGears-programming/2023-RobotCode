@@ -14,9 +14,9 @@ class ArmSubsystem : public frc2::SubsystemBase {
 public:
 
     // Calulating Functions:
-    Point calcElbowPos(float turretAng, float angShoulder);
+    Point calcElbowPos(double turretAng, double angShoulder);
 
-    Point calcWristPos(float turretAng, float shoulderAng, float elbowAng);
+    Point calcWristPos(double turretAng, double shoulderAng, double elbowAng);
 
     ArmPose calcIKJointPoses(Point pt);
 
@@ -24,20 +24,20 @@ public:
 
 
     // Reading Functions:
-    float getTurretAngle();
+    double getTurretAngle();
 
     units::turn_t getShoulderAngle();
 
-    float getElbowAngle();
+    double getElbowAngle();
 
-    float getWristRollAngle();
+    double getWristRollAngle();
 
-    // float getWristPitchAngle(); // NOT IMPLEMENTED IN HARDWARE
+    // double getWristPitchAngle(); // NOT IMPLEMENTED IN HARDWARE
 
-    void setTurretAngle(float angle);
-    void setShoulderAngle(float angle);
-    void setElbowAngle(float angle);
-    void setWristRollAngle(float angle);
+    void setTurretAngle(double angle);
+    void setShoulderAngle(double angle);
+    void setElbowAngle(double angle);
+    void setWristRollAngle(double angle);
 
 private:
     // Arm Diagram:

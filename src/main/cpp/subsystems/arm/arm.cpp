@@ -4,7 +4,7 @@
 #include <numbers>
 #include <cmath>
 
-Point ArmSubsystem::calcElbowPos(float turretAng, float shoulderAng) {
+Point ArmSubsystem::calcElbowPos(double turretAng, double shoulderAng) {
     Point pt(
         k_bicepLenInches * std::cos(shoulderAng) * std::cos(turretAng),
         k_bicepLenInches * std::cos(shoulderAng) * std::sin(turretAng),
@@ -15,9 +15,9 @@ Point ArmSubsystem::calcElbowPos(float turretAng, float shoulderAng) {
 }
 
 Point ArmSubsystem::calcWristPos(
-    float turretAng,
-    float shoulderAng,
-    float elbowAng
+    double turretAng,
+    double shoulderAng,
+    double elbowAng
 ) {
     Point elbowPos = calcElbowPos(shoulderAng);
     Point pt(
@@ -30,10 +30,10 @@ Point ArmSubsystem::calcWristPos(
 }
 
 ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
-    float targetLen =  std::sqrt((std::pow(pt.x, 2) + std::pow(pt.y, 2) + std::pow(pt.z, 2))); // Line from shoulder to target
-    float targetToXAxisAng = atan2(pt.z, std::sqrt(pt.x * pt.x + pt.y * pt.y));
+    double targetLen =  std::sqrt((std::pow(pt.x, 2) + std::pow(pt.y, 2) + std::pow(pt.z, 2))); // Line from shoulder to target
+    double targetToXAxisAng = atan2(pt.z, std::sqrt(pt.x * pt.x + pt.y * pt.y));
 
-    float targetToBicepAng = std::acos(
+    double targetToBicepAng = std::acos(
         (k_forearmLenInches * k_forearmLenInches 
         - k_bicepLenInches * k_bicepLenInches
         + targetLen * targetLen)
@@ -41,9 +41,9 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
     );
 
     // Solve IK:
-    float bicepToXAxisAng = targetToBicepAng + targetToXAxisAng;
+    double bicepToXAxisAng = targetToBicepAng + targetToXAxisAng;
 
-    float bicepToForearmAng =
+    double bicepToForearmAng =
         (std::numbers::pi / 2.0)
         - std::acos(
             (k_forearmLenInches * k_forearmLenInches
@@ -51,7 +51,7 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point pt) {
             + targetLen * targetLen)
             / (2.0 * k_forearmLenInches * targetLen));
 
-    float turretToXZAng = std::atan2(pt.z, pt.x);
+    double turretToXZAng = std::atan2(pt.z, pt.x);
 
     return ArmPose(turretToXZAng, bicepToXAxisAng, bicepToForearmAng);
 
@@ -63,31 +63,31 @@ units::turn_t ArmSubsystem::getShoulderAngle() {
     return mShoulderAngleSensor.Get();
 }
 
-float ArmSubsystem::getElbowAngle() {
+double ArmSubsystem::getElbowAngle() {
     return mElbowAngleSensor.Get();
 }
 
-float ArmSubsystem::getTurretAngle() {
+double ArmSubsystem::getTurretAngle() {
     return mTurretAngleSensor.Get();
 }
 
-float ArmSubsystem::getWristRollAngle() {
+double ArmSubsystem::getWristRollAngle() {
     return mWristRollAngleSensor.Get();
 }
 
-void ArmSubsystem::setTurretAngle(float angle) {
+void ArmSubsystem::setTurretAngle(double angle) {
     //NOT YET IMPLEMENTED
 }
 
-void ArmSubsystem::setShoulderAngle(float angle) {
+void ArmSubsystem::setShoulderAngle(double angle) {
     //NOT YET IMPLEMENTED
 }
 
-void ArmSubsystem::setElbowAngle(float angle) {
+void ArmSubsystem::setElbowAngle(double angle) {
     //NOT YET IMPLEMENTED
 }
 
-void ArmSubsystem::setWristRollAngle(float angle) {
+void ArmSubsystem::setWristRollAngle(double angle) {
     //you get the gist
 }
 
