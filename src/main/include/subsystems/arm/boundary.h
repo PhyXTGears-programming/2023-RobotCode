@@ -89,6 +89,9 @@ private:
 
 class NotBoundary : public Boundary {
 public:
+
+    NotBoundary(std::unique_ptr<Boundary> boundary) : mBound(std::move(boundary)) {}
+
     bool isInside(Point pt) override {
         return mBound->isOutside(pt);
     }
