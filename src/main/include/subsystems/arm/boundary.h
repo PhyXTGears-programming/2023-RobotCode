@@ -6,8 +6,8 @@
 
 class Boundary {
     public:
-        bool isInside(Point pt);
-        bool isOutside(Point pt);
+        virtual bool isInside(Point pt);
+        virtual bool isOutside(Point pt);
 };
 
 class BoxBoundary : public Boundary {
@@ -21,13 +21,13 @@ public:
         float zHi)
     : xLo(xLo), xHi(xHi), yLo(yLo), yHi(yHi), zLo(zLo), zHi(zHi) { }
     
-    bool isInside(Point pt) {
+    bool isInside(Point pt) override {
         return (xLo < pt.x && pt.x < xHi)
             && (yLo < pt.y && pt.y < yHi)
             && (zLo < pt.z && pt.z < zHi);
     }
 
-    bool isOutside(Point pt) {
+    bool isOutside(Point pt) override {
         return !isInside(pt);
     }
 
@@ -44,7 +44,7 @@ class SphereBoundary : public Boundary {
 public:
     SphereBoundary(Point center, float radius) : center(center), radius(radius) { }
 
-    bool isInside(Point pt) {
+    bool isInside(Point pt) override {
         Point offset((center.x - pt.x), (center.y - pt.y), (center.z - pt.z));
 
         float dist =
@@ -55,7 +55,7 @@ public:
         return (dist < radius * radius);
     }
 
-    bool isOutside(Point pt) {
+    bool isOutside(Point pt) override {
         return !isInside(pt);
     }
 
@@ -69,7 +69,7 @@ public:
     ComposeBoundary(std::vector<std::unique_ptr<Boundary>> boundaries)
         : boundaries(boundaries) { }
 
-    bool isInsideBounds(Point pt) {
+    bool isInside(Point pt) override {
         for (auto& bound : boundaries) {
             if (bound->isOutside(pt)) {
                 return false;
@@ -79,8 +79,8 @@ public:
         return true;
     }
 
-    bool isOutsideBounds(Point pt) {
-        return !isInsideBounds(pt);
+    bool isOutside(Point pt) override {
+        return !isInside(pt);
     }
 
 private:
@@ -89,12 +89,12 @@ private:
 
 class NotBoundary : public Boundary {
 public:
-    bool isInsideBounds(Point pt) {
+    bool isInside(Point pt) override {
         return mBound->isOutside(pt);
     }
 
-    bool isOutsideBounds(Point pt) {
-        return !isInsideBounds(pt);
+    bool isOutside(Point pt) override {
+        return !isInside(pt);
     }
 
 private:
