@@ -51,7 +51,6 @@ void Drivetrain::Periodic(){
     //just tell the motor abstractions to pet the watchdog and update the motors
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
         Drivetrain::c_wheels[i]->Periodic();
-        c_wheels[i]->setHeadingOffset(m_fieldOrientedOffset);
     }
 }
 
