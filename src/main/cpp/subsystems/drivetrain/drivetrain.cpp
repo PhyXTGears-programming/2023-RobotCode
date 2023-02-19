@@ -49,24 +49,24 @@ void Drivetrain::Periodic() {
 void Drivetrain::setupWheels() {
     //setup wheel classes with correct motors from toml file
     Drivetrain::c_wheels[0] = new SwerveWheel(
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 5,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 1,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 21, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontLeftSteer,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontLeftDrive,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontLeftEncoder, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
     Drivetrain::c_wheels[1] = new SwerveWheel(
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 6,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 2,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 22, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontRightSteer,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontRightDrive,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontRightEncoder, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
     Drivetrain::c_wheels[2] = new SwerveWheel(
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 7,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 3,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 23, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackRightSteer,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackRightDrive,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackRightEncoder, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
     Drivetrain::c_wheels[3] = new SwerveWheel(
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 8,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 4,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 24, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackLeftSteer,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackLeftDrive,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackLeftEncoder, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
 }
 
