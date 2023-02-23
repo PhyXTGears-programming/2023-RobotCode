@@ -89,4 +89,18 @@ namespace Interfaces
         const int k_AIR7 = 7;
     }
 
+    const int k_drivetrainFrontLeftDrive = k_CAN01;
+    const int k_drivetrainFrontRightDrive = k_CAN02;
+    const int k_drivetrainBackRightDrive = k_CAN03;
+    const int k_drivetrainBackLeftDrive = k_CAN04;
+
+    const int k_drivetrainFrontLeftSteer = k_CAN05;
+    const int k_drivetrainFrontRightSteer = k_CAN06;
+    const int k_drivetrainBackRightSteer = k_CAN07;
+    const int k_drivetrainBackLeftSteer = k_CAN08;
+
+    const int k_drivetrainFrontLeftEncoder = k_CAN21;
+    const int k_drivetrainFrontRightEncoder = k_CAN22;
+    const int k_drivetrainBackRightEncoder = k_CAN23;
+    const int k_drivetrainBackLeftEncoder = k_CAN24;
 }
