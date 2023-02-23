@@ -11,6 +11,8 @@
 #include "subsystems/drivetrain/swerveWheelTypes.h"
 
 
+#define DEGREES_TO_RADIANS(deg) ((deg/180.0)*M_PI)
+#include <AHRS.h>
 /*
 NOTE ON UNITS:
 
@@ -23,11 +25,13 @@ it should be removed or put in a debug preprocessor.
 Drivetrain::Drivetrain(bool fieldOriented) {
     this->m_fieldOriented = fieldOriented;
     Drivetrain::setupWheels();
+    Drivetrain::resetNavxHeading();
 }
 
 Drivetrain::Drivetrain() {
     this->m_fieldOriented = false;
     Drivetrain::setupWheels();
+    Drivetrain::resetNavxHeading();
 }
 
 Drivetrain::~Drivetrain() {
@@ -39,7 +43,11 @@ Drivetrain::~Drivetrain() {
     }
 }
 
-void Drivetrain::Periodic() {
+void Drivetrain::Periodic(){
+    if(m_fieldOriented){
+        //gets the current angle of the NavX (reported in degrees, converted to radians)
+        m_fieldOrientedOffset = DEGREES_TO_RADIANS(m_navX->GetYaw())+M_PI;
+    }
     //just tell the motor abstractions to pet the watchdog and update the motors
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
         Drivetrain::c_wheels[i]->Periodic();
@@ -72,18 +80,29 @@ void Drivetrain::setupWheels() {
 
 void Drivetrain::calculateWheelAnglesAndSpeeds() {
     if ((abs(Drivetrain::m_strife) <= 0.001) && (abs(Drivetrain::m_forwards) <= 0.001)) {
-        for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
-            Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = 0;
+        if(abs(Drivetrain::m_rotation) <= 0.001){
+            for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
+                Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = 0;
+            }
+            Drivetrain::sendToSwerveModules();
+            return;
         }
-        Drivetrain::sendToSwerveModules();
-        return;
     }
 
     double maxSpeed = 0.0;
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i += 1) {
         //combine the movement and turning vectors
-        double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].x) + Drivetrain::m_strife;
-        double vertical_motion   = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].y) + Drivetrain::m_forwards;
+        double strife;
+        double forwards;
+        if(m_fieldOriented){
+            strife = -m_forwards*sin(m_fieldOrientedOffset) + m_strife*cos(m_fieldOrientedOffset);
+            forwards = m_forwards*cos(m_fieldOrientedOffset) + m_strife*sin(m_fieldOrientedOffset);
+        } else {
+            strife = m_strife;
+            forwards = m_forwards;
+        }
+        double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].x) + strife;
+        double vertical_motion   = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].y) + forwards;
 
         // calculate the change in radians
         double newRadians = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front
@@ -152,7 +171,11 @@ void Drivetrain::disableFieldCentric() {
 }
 
 void Drivetrain::toggleFieldCentric() {
-    Drivetrain::m_fieldOriented = !Drivetrain::m_fieldOriented;
+    if(m_fieldOriented){
+        m_fieldOriented = false;
+    } else {
+        m_fieldOriented = true;
+    }
 }
 
 bool Drivetrain::getFieldCentric() {
@@ -197,4 +220,8 @@ void Drivetrain::sendToSwerveModules() {
             m_motorDirectionAngleSpeed[i].radian
         );
     }
+}
+
+void Drivetrain::resetNavxHeading(){
+    Drivetrain::m_navX->ZeroYaw();
 }
