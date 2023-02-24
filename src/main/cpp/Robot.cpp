@@ -8,7 +8,27 @@
 
 #include "Mandatory.h"
 
-void Robot::RobotInit() {}
+#include "subsystems/drivetrain/drivetrain.h"
+#include "subsystems/drivetrain/swerveWheel.h"
+#include "subsystems/drivetrain/swerveWheelTypes.h"
+#include <frc/XboxController.h>
+
+#include <math.h>
+
+Drivetrain * m_drivetrain = nullptr;
+SwerveWheel * wheel = nullptr;
+frc::XboxController control{0};
+
+
+void Robot::RobotInit() {
+  m_drivetrain = new Drivetrain(false);
+    // int i = 1;
+    // wheel = new SwerveWheel(
+    //     SwerveWheelTypes::SwerveWheelTypes{ .ID = i+4, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+    //     SwerveWheelTypes::SwerveWheelTypes{ .ID = i, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+    //     SwerveWheelTypes::SwerveWheelTypes{ .ID = i+20, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+    // );
+}
 
 /**
  * This function is called every 20 ms, no matter the mode. Use
@@ -19,7 +39,7 @@ void Robot::RobotInit() {}
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
-  frc2::CommandScheduler::GetInstance().Run();
+  // frc2::CommandScheduler::GetInstance().Run();
 }
 
 /**
@@ -50,7 +70,11 @@ void Robot::TeleopInit() {
 /**
  * This function is called periodically during operator control.
  */
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  m_drivetrain->Periodic();
+  // wheel->setMotion(0, atan2(control.GetRightX(), control.GetRightY()));
+  // wheel->Periodic();
+}
 
 /**
  * This function is called periodically during test mode.

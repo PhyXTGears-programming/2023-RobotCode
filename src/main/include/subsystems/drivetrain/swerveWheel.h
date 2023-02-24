@@ -28,6 +28,11 @@ class SwerveWheel : public frc2::SubsystemBase {
 
         void setMotion(double s, double r);
 
+        /**
+         * used for the NavX global offset
+        */
+        void setHeadingOffset(double offset);
+
         double getHeading();
 
         double getVelocity();
@@ -36,6 +41,7 @@ class SwerveWheel : public frc2::SubsystemBase {
     private:
         double m_currentVelocity = 0;
         double m_currentHeading = 0;
+        double m_headingOffset = 0; //used with the NavX
 
         MotorInterfaces * c_movementMotor = nullptr;
         MotorInterfaces * c_turningMotor = nullptr;

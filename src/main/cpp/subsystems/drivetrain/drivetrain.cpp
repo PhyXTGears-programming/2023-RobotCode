@@ -13,6 +13,18 @@
 
 #define DEGREES_TO_RADIANS(deg) ((deg/180.0)*M_PI)
 #include <AHRS.h>
+
+#include <iostream>
+
+#define JOYSTICK_DEADZONE 0.1
+// #define MAKE_VALUE_FULL_RANGE(deadzonedInput) (1/ (1 - JOYSTICK_DEADZONE) * (deadzonedInput - std::copysign(JOYSTICK_DEADZONE, deadzonedInput)))
+#define DEADZONE(input) ((fabs(input) < JOYSTICK_DEADZONE) ? 0.0 : input)
+
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableEntry.h>
+#include <networktables/NetworkTableInstance.h>
+
+std::shared_ptr<nt::NetworkTable> gyro = nt::NetworkTableInstance::GetDefault().GetTable("datatable");
 /*
 NOTE ON UNITS:
 
@@ -44,6 +56,16 @@ Drivetrain::~Drivetrain() {
 }
 
 void Drivetrain::Periodic(){
+    #ifdef DEBUG_MODE
+    double limiter = (4-(control.GetRightTriggerAxis())*3);
+    Drivetrain::setMotion(-DEADZONE(control.GetLeftX())/limiter, DEADZONE(control.GetLeftY())/limiter, DEADZONE(control.GetRightX()));
+    if(control.GetBButtonPressed()){
+        Drivetrain::resetNavxHeading();
+    }
+    if(control.GetAButtonPressed()){
+        Drivetrain::toggleFieldCentric();
+    }
+    #endif
     if(m_fieldOriented){
         //gets the current angle of the NavX (reported in degrees, converted to radians)
         m_fieldOrientedOffset = DEGREES_TO_RADIANS(m_navX->GetYaw())+M_PI;
@@ -173,8 +195,10 @@ void Drivetrain::disableFieldCentric() {
 void Drivetrain::toggleFieldCentric() {
     if(m_fieldOriented){
         m_fieldOriented = false;
+        std::cout << "toggled off\n";
     } else {
         m_fieldOriented = true;
+        std::cout << "toggled on\n";
     }
 }
 

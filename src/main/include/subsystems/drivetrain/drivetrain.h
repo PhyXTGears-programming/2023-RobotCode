@@ -9,6 +9,11 @@
 
 #include <AHRS.h>
 #include <frc/SPI.h>
+
+#ifdef DEBUG_MODE
+#include <frc/XboxController.h>
+#endif
+
 /*
 NOTE ON UNITS:
 
@@ -126,4 +131,8 @@ class Drivetrain : public frc2::SubsystemBase {
 
         // class-wide so we can optimize turning path
         Polar m_motorDirectionAngleSpeed[Constants::k_NumberOfSwerveModules];
+
+        #ifdef DEBUG_MODE
+        frc::XboxController control{0};
+        #endif
 };

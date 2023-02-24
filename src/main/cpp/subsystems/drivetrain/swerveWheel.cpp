@@ -61,3 +61,7 @@ void SwerveWheel::setMotion(double s, double r) {
     c_movementMotor->setMotion(s);
     c_turningMotor->setRotation(r);
 }
+
+void SwerveWheel::setHeadingOffset(double offset) {
+    m_headingOffset = offset;
+}
