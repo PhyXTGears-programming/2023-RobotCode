@@ -93,9 +93,28 @@ class Drivetrain : public frc2::SubsystemBase {
         double getCalculatedHeading();
 
         /**
-        * @returns velocity of movement (this is a calculation based on controller inputs)
-       */
+         * @returns the field heading from the NavX
+        */
+       double getFieldHeading();
+
+        /**
+         * @returns velocity of movement (this is a calculation based on controller inputs)
+        */
        double getCalculatedVelocity();
+       
+        /**
+         * @param module the module to get the heading from
+         * 
+         * @returns the field heading from the modules
+        */
+       double getMovementHeading(int module);
+
+        /**
+         * @param module the module to get the heading from
+         * 
+         * @returns velocity of movement calculated from the Talon built-in encoders
+        */
+       double getMovementVelocity(int module);
 
     private:
         void setupWheels();

@@ -225,3 +225,15 @@ void Drivetrain::sendToSwerveModules() {
 void Drivetrain::resetNavxHeading(){
     Drivetrain::m_navX->ZeroYaw();
 }
+
+double Drivetrain::getFieldHeading(){
+    return m_fieldOrientedOffset;
+}
+
+double Drivetrain::getMovementHeading(int module){
+    return c_wheels[module]->getHeading();
+}
+
+double Drivetrain::getMovementVelocity(int module){
+    return c_wheels[module]->getVelocity();
+}
