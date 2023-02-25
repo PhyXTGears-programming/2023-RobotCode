@@ -11,10 +11,14 @@ class Odometry : frc2::SubsystemBase {
         Odometry(Drivetrain* drivetrain);
         ~Odometry();
         void Periodic() override;
+        void disableCalculation();
+        void enableCalculation();
+        bool calculationEnabled();
         Point getPosition();
         void setPosition(double x, double y);
     private:
         Drivetrain * m_drivetrain = nullptr;
+        bool m_calculate = true;
         Point m_position;
         double m_previousTime = 0;
 };

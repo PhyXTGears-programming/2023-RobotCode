@@ -22,6 +22,18 @@ Point Odometry::getPosition(){
     return m_position;
 }
 
+void Odometry::disableCalculation(){
+    m_calculate = false;
+}
+
+void Odometry::enableCalculation(){
+    m_calculate = true;
+}
+
+bool Odometry::calculationEnabled(){
+    return m_calculate;
+}
+
 void Odometry::Periodic(){
     //init strife and forwards to 0
     double s = 0.0;
