@@ -1,3 +1,5 @@
+# DO NOT MERGE TO MASTER. BAD CODING CONVENTIONS!!!!!
+
 # 2023 Robot Code
 ### Code for the Charged up season by 1720
 
