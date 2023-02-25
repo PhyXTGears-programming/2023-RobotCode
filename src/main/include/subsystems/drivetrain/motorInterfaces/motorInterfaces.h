@@ -18,6 +18,13 @@ class MotorInterfaces {
         virtual void setRotation(double radians){};
 
         /**
+         * this will output the velocity that the motor is going at in radians/second
+        */
+        virtual double getSensorVelocity(){return 0.0;};
+
+        virtual double getSensorHeading(){return 0.0;};
+
+        /**
          * periodic function to update motors and pet the watchdog
         */
         virtual void Periodic(){};
