@@ -11,6 +11,13 @@
 
 #include "Mandatory.h"
 
+#include <frc/XboxController.h>
+
+#include "subsystems/drivetrain/drivetrain.h"
+#include "subsystems/drivetrain/odometry.h"
+
+#include "external/cpptoml.h"
+
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
@@ -30,4 +37,15 @@ class Robot : public frc::TimedRobot {
   // doesn't have undefined behavior and potentially crash.
   std::optional<frc2::CommandPtr> m_autonomousCommand;
 
+  std::shared_ptr<cpptoml::table> c_toml;
+
+  //HIDs
+  frc::XboxController* c_driverController;
+  frc::XboxController* c_operatorController;
+
+  //Subsystems
+  Drivetrain* c_drivetrain = nullptr;
+  Odometry* c_odometry = nullptr;
+
+  //Commands
 };
