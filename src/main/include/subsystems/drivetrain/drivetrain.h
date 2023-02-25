@@ -116,10 +116,13 @@ class Drivetrain : public frc2::SubsystemBase {
         */
        double getMovementVelocity(int module);
 
+        /**
+         * resets the yaw to be 0 in the NavX (parallel to the field floor)
+        */
+        void resetNavxHeading();
+
     private:
         void setupWheels();
-
-        void resetNavxHeading();
 
         void calculateWheelAnglesAndSpeeds();
 
