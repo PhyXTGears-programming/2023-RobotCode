@@ -28,8 +28,14 @@ class SwerveWheel : public frc2::SubsystemBase {
 
         void setMotion(double s, double r);
 
+        /**
+         * @returns the module heading in radians
+        */
         double getHeading();
 
+        /**
+         * @returns the wheel linear velocity in meters/second
+        */
         double getVelocity();
 
         void Periodic() override;
