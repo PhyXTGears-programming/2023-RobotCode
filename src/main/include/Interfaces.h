@@ -89,6 +89,9 @@ namespace Interfaces
         const int k_AIR7 = 7;
     }
 
+    const int k_driverXboxController = k_USB00;
+    const int k_operatorXboxController = k_USB01;
+
     const int k_drivetrainFrontLeftDrive = k_CAN01;
     const int k_drivetrainFrontRightDrive = k_CAN02;
     const int k_drivetrainBackRightDrive = k_CAN03;
