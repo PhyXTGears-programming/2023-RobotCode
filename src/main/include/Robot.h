@@ -15,6 +15,7 @@
 
 #include "subsystems/drivetrain/drivetrain.h"
 #include "subsystems/drivetrain/odometry.h"
+#include "commands/drivetrain/driveTeleopCommand.h"
 
 #include "external/cpptoml.h"
 
@@ -48,4 +49,5 @@ class Robot : public frc::TimedRobot {
   Odometry* c_odometry = nullptr;
 
   //Commands
+  DriveTeleopCommand* c_driveTeleopCommand = nullptr;
 };

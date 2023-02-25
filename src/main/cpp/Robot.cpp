@@ -14,6 +14,7 @@
 
 #include "subsystems/drivetrain/drivetrain.h"
 #include "subsystems/drivetrain/odometry.h"
+#include "commands/drivetrain/driveTeleopCommand.h"
 
 #include "external/cpptoml.h"
 
@@ -33,6 +34,7 @@ void Robot::RobotInit() {
   c_odometry = new Odometry(c_drivetrain);
 
   //Commands
+  c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
 }
 
 /**
@@ -66,10 +68,7 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {
-  // This makes sure that the autonomous stops running when
-  // teleop starts running. If you want the autonomous to
-  // continue until interrupted by another command, remove
-  // this line or comment it out.
+  c_driveTeleopCommand->Schedule();
 }
 
 /**
