@@ -18,9 +18,17 @@ void DriveTeleopCommand::Initialize(){
 }
 
 void DriveTeleopCommand::Execute(){
-    //default 30% speed, but can go to 60% with full Right trigger press or 15% for full Left trigger press
-    double limiter = (1+c_driverController->GetRightTriggerAxis())*(1/(1+c_driverController->GetLeftTriggerAxis()))*0.3;
-    c_drivetrain->setMotion(-DEADZONE(c_driverController->GetLeftX())*limiter, DEADZONE(c_driverController->GetLeftY())*limiter, DEADZONE(c_driverController->GetRightX()));
+    // compresses the range of the driving speed to be within the max speed and the minimum, but have the normal speed
+    // be the default if no trigger is being pressed (so both register 0)
+    // 
+    // NOTE: no trigger takes priority of the other, so if both pressed, they will cancel each other
+    double reduce = c_driverController->GetRightTriggerAxis() * (Constants::k_normalDriveSpeed - Constants::k_minDriveSpeed);
+    double gain = c_driverController->GetLeftTriggerAxis() * (Constants::k_maxDriveSpeed - Constants::k_normalDriveSpeed);
+
+    double speedFactor = Constants::k_normalDriveSpeed + gain - reduce;
+
+    // the rotation limit is there in case the driver does not want to spin as fast while driving (specifically limiting the controller input)
+    c_drivetrain->setMotion(-DEADZONE(c_driverController->GetLeftX())*speedFactor, DEADZONE(c_driverController->GetLeftY())*speedFactor, DEADZONE(c_driverController->GetRightX())*Constants::k_maxSpinSpeed);
 }
 
 void DriveTeleopCommand::End(bool interrupted){
