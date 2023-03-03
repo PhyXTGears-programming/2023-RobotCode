@@ -9,7 +9,7 @@ Odometry::Odometry(Drivetrain* drivetrain){
     m_position.x = 0;
     m_position.y = 0;
     m_position.z = 0;
-    m_drivetrain = drivetrain;
+    c_drivetrain = drivetrain;
     m_previousTime = 0;
 }
 
@@ -39,11 +39,11 @@ void Odometry::Periodic(){
     double s = 0.0;
     double f = 0.0;
 
-    double navxHeading = m_drivetrain->getFieldHeading();
+    double navxHeading = c_drivetrain->getFieldHeading();
     //go through each module and get the velocity vectors, then add them to the accumulator
     for(int i = 0; i<Constants::k_NumberOfSwerveModules;i++){
-        s+=cos(m_drivetrain->getMovementHeading(i)+navxHeading)*m_drivetrain->getMovementVelocity(i);
-        f+=sin(m_drivetrain->getMovementHeading(i)+navxHeading)*m_drivetrain->getMovementVelocity(i);
+        s+=cos(c_drivetrain->getMovementHeading(i)+navxHeading)*c_drivetrain->getMovementVelocity(i);
+        f+=sin(c_drivetrain->getMovementHeading(i)+navxHeading)*c_drivetrain->getMovementVelocity(i);
     }
 
     //divide the vectors by the number of modules to remove rotation vector 

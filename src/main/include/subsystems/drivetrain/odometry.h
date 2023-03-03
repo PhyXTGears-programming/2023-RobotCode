@@ -17,7 +17,7 @@ class Odometry : frc2::SubsystemBase {
         Point getPosition();
         void setPosition(double x, double y);
     private:
-        Drivetrain * m_drivetrain = nullptr;
+        Drivetrain * c_drivetrain = nullptr;
         bool m_calculate = true;
         Point m_position;
         double m_previousTime = 0;
