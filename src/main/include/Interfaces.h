@@ -82,11 +82,34 @@ namespace Interfaces
         const int k_DIO8 = 8;
         const int k_DIO9 = 9;
 
+        // AIO
+        const int k_AIO0 = 0;
+        const int k_AIO1 = 1;
+        const int k_AIO2 = 2;
+        const int k_AIO3 = 3;
+
         // Solenoids
         const int k_AIR0 = 0;
         const int k_AIR1 = 1;
         const int k_AIR6 = 6;
         const int k_AIR7 = 7;
+    }
+
+    namespace Arm {
+
+        // Arm subsystem
+        const int k_TurretMotor = k_CAN10;
+        const int k_LowJointMotor = k_CAN11;
+        const int k_MidJointMotor = k_CAN12;
+        const int k_GripperRotateMotor = k_CAN13;
+        const int k_GripperGraspMotor = k_CAN14;
+
+        const int k_TurretSensor = k_AIO0; // FIX VALS LATER
+        const int k_ElbowSensor = k_AIO1;
+        const int k_WristRollSensor = k_AIO2;
+        const int k_GripSensor = k_AIO3;
+
+        const int k_ShoulderSensor = k_DIO0;
     }
 
 }
