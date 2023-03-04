@@ -5,8 +5,11 @@
 #include "Robot.h"
 
 #include <frc2/command/CommandScheduler.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/XboxController.h>
 
 #include "Mandatory.h"
+#include "subsystems/arm/arm.h"
 
 #include <frc/Filesystem.h>
 
@@ -125,19 +128,78 @@ void Robot::TeleopInit() {
  * This function is called periodically during operator control.
  */
 void Robot::TeleopPeriodic() {
-  // Driver A button -> toggle field centric.
-  if (c_driverController->GetAButtonPressed()) {
-    c_drivetrain->toggleFieldCentric();
-  }
+  static const double DEAD_ZONE = 0.05;
 
-  // Driver B button -> reset navx heading.
-  if (c_driverController->GetBButtonPressed()) {
-    c_drivetrain->resetNavxHeading();
-  }
+  double leftX = c_driverController->GetLeftX();
+  double leftY = c_driverController->GetLeftY();
 
-  if(c_driverController->GetXButtonPressed()) {
-    c_drivetrain->lockMovement(false);
-  }
+  // 1. Run first
+  frc::SmartDashboard::PutNumber("Left X", leftX);
+  frc::SmartDashboard::PutNumber("Left Y", leftY);
+  frc::SmartDashboard::PutNumber("Left Trigger", c_driverController->GetLeftTriggerAxis());
+
+
+  // 2. Test Turret
+  //    - Invert direction (CW +):    ??
+  //    - Zero offset:    ??
+  //    - -90 (left):     ??
+  //    -  90 (right):    ??
+  //    - left max:       ??
+  //    - right max:      ??
+  // if (abs(leftX) < DEAD_ZONE) {
+  //   arm->setTurretSpeed(0.0);
+  // } else {
+  //   arm->setTurretSpeed(0.1 * leftX);
+  // }
+
+  // 3. Test Shoulder
+  //    - Invert direction (up is z+):  ??
+  //    - Zero offset (z+):   ??
+  //    - -45 deg (down):     ??
+  //    - down max:           ??
+  //    - up max:             ??
+  // if (abs(leftY) < DEAD_ZONE) {
+  //   arm->setShoulderSpeed(0.0);
+  // } else {
+  //   arm->setShoulderSpeed(0.1 * leftY);
+  // }
+
+
+  // 4. Test Elbow
+  //    - Invert direction (up is z+):  ??
+  //    - Zero offset (z+):   ??
+  //    - 90 deg (up):     ??
+  //    - down max:           ??
+  //    - up max:             ??
+  // if (abs(leftY) < DEAD_ZONE) {
+  //   arm->setElbowSpeed(0.0);
+  // } else {
+  //   arm->setElbowSpeed(0.1 * leftY);
+  // }
+
+  // 5. Test Wrist Roll
+  //    - Invert direction (cw is +):  ??
+  //    - Zero offset (min ccw):       ??
+  //    - 180 deg (cw):       ??
+  //    - down max:           ??
+  //    - up max:             ??
+  // if (abs(leftX) < DEAD_ZONE) {
+  //   arm->setWristRollSpeed(0.0);
+  // } else {
+  //   arm->setWristRollSpeed(0.1 * leftX);
+  // }
+
+  // 6. Test Grip
+  //    - Invert direction (open is +):  ??
+  //    - Zero offset (closed):   ??
+  //    - open distance (m):      ??
+  //    - down max:               ??
+  //    - up max:                 ??
+  // if (abs(leftX) < DEAD_ZONE) {
+  //   arm->setGripperGraspSpeed(0.0);
+  // } else {
+  //   arm->setGripperGraspSpeed(0.1 * leftX);
+  // }
 }
 
 /**

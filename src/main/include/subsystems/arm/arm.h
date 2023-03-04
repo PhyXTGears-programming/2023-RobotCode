@@ -66,6 +66,12 @@ public:
     void setWristRollAngle(double angle);
     void setGrip(double grip); // hehe grippy grabby hand
 
+    void setTurretSpeed(double speed);
+    void setShoulderSpeed(double speed);
+    void setElbowSpeed(double speed);
+    void setWristRollSpeed(double speed);
+    void setGripSpeed(double speed);
+
     /**
      * Given a target position, compute necessary joint angles, and move joints
      * of arm toward target.  Will NOT stop on its own.  Must call this method
