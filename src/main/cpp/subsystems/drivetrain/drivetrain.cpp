@@ -66,12 +66,19 @@ void Drivetrain::Periodic(){
     }
     #ifdef DEBUG_MODE
     double limiter = (4-(control.GetRightTriggerAxis())*3);
-    Drivetrain::setMotion(-DEADZONE(control.GetLeftX())/limiter, DEADZONE(control.GetLeftY())/limiter, DEADZONE(control.GetRightX()));
+    Drivetrain::setMotion(-DEADZONE(control.GetLeftX())/limiter, DEADZONE(control.GetLeftY())/limiter, DEADZONE((m_invert ? -1 : 1)*control.GetRightX()));
     if(control.GetBButtonPressed()){
         Drivetrain::resetNavxHeading();
     }
     if(control.GetAButtonPressed()){
         Drivetrain::toggleFieldCentric();
+    }
+    if(control.GetStartButtonPressed()){
+        if(m_invert){
+            m_invert = false;
+        } else {
+            m_invert = true;
+        }
     }
     #endif
 }

@@ -118,6 +118,8 @@ class Drivetrain : public frc2::SubsystemBase {
         double m_forwards = 0;
         double m_rotation = 0;
 
+        bool m_invert = true;
+
         SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};
 
         Point c_wheelPositions[Constants::k_NumberOfSwerveModules] = {
