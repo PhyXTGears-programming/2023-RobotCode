@@ -9,6 +9,7 @@ from sympy import *
 import json
 import toml
 import os
+import sys
 
 script_dir = os.path.dirname(__file__)
 
@@ -21,6 +22,9 @@ max_speed = 4
 file = open("{}/test.json".format(script_dir), "r")
 data = json.load(file)
 
+if(os.path.exists("{}/out.json".format(script_dir))): #remove the file if it exists
+    os.remove("{}/out.json".format(script_dir))
+output = open("{}/out.json".format(script_dir), "x")
 
 def doNothing(): # in python you cannot have a try without a catch, this is here just do do nothing :)
     return
@@ -64,7 +68,6 @@ def start():
     for i in range(len(data["segments"])):
         seg = data["segments"][i]
         out.append(calculate(seg[0][0], seg[0][1], seg[1][0], seg[1][1], seg[2][0], seg[2][1], seg[3][0], seg[3][1])) # get the lengths of the bezier curves and append the output to the out array
-    print(out)
     json_output = ""
     json_output+='{{"type":"point", "time":{}, "points":[{{"x":{}, "y":{}}}, {{"x":{}, "y":{}}}, {{"x":{}, "y":{}}}, {{"x":{}, "y":{}}}]}}\n'.format(out[0], data["segments"][0][0][0], data["segments"][0][0][1], data["segments"][0][1][0], data["segments"][0][1][1], data["segments"][0][2][0], data["segments"][0][2][1], data["segments"][0][3][0], data["segments"][0][3][1])
     for i in range(len(data["waypoints"])):
@@ -72,16 +75,15 @@ def start():
         if(waypoint["shallHalt"] == True):
             json_output+='{"type":"commands", "length":1, "commands":["halt"]}\n'
         if(waypoint["commands"]["kind"]=="command"):
-            print(waypoint["commands"]["children"])
+            print("ERROR: should not have commands here, should be a group", file=sys.stderr)
         else:
             if(len(waypoint["commands"]["children"]) > 0):
                 commands = []
                 for x in range(len(waypoint["commands"]["children"])):
                     if(waypoint["commands"]["children"][x]["kind"] == "command"):
-                        print("Command {}: {}".format(x, waypoint["commands"]["children"][x]["name"]))
                         commands.append(waypoint["commands"]["children"][x]["name"])
                     else:
-                        print("Command group {}: {}".format(x, [z["name"] for z in waypoint["commands"]["children"][x]["children"]]))
+                        doNothing()
                 if(len(commands)>0):
                     json_output+='{{"type":"commands", "length":{}, "commands":["{}"]}}\n'.format(len(commands), '", "'.join(commands))
             else:
@@ -90,5 +92,5 @@ def start():
             json_output+='{{"type":"point", "time":{}, "points":[{{"x":{}, "y":{}}}, {{"x":{}, "y":{}}}, {{"x":{}, "y":{}}}, {{"x":{}, "y":{}}}]}}\n'.format(out[i+1], data["segments"][i+1][0][0], data["segments"][i+1][0][1], data["segments"][i+1][1][0], data["segments"][i+1][1][1], data["segments"][i+1][2][0], data["segments"][i+1][2][1], data["segments"][i+1][3][0], data["segments"][i+1][3][1])
         except IndexError:
             doNothing()
-    print(json_output)
+    output.write(json_output[:-1]) #remove the final line break at the end to prevent blank line errors in the c++ code
 start()
