@@ -37,7 +37,7 @@ class RevSparkMaxBrushless : public MotorInterfaces {
          * 
          * @param radians the radian number to set the 
         */
-       void setRotation(double radians) override;
+        void setRotation(double radians) override;
 
         /**
          * gets the current angle of the encoder
