@@ -8,7 +8,34 @@
 
 #include "Mandatory.h"
 
-void Robot::RobotInit() {}
+#include <frc/Filesystem.h>
+
+#include <iostream>
+
+#include "subsystems/drivetrain/drivetrain.h"
+#include "subsystems/drivetrain/odometry.h"
+#include "commands/drivetrain/driveTeleopCommand.h"
+
+#include "external/cpptoml.h"
+
+void Robot::RobotInit() {
+  try{
+    c_toml = cpptoml::parse_file(frc::filesystem::GetDeployDirectory()+"/config.toml");
+  } catch (cpptoml::parse_exception ex){
+    std::cerr << "Unable to open file: config.toml" << std::endl;
+  }
+  
+  //HIDs
+  c_driverController = new frc::XboxController(Interfaces::k_driverXboxController);
+  c_operatorController = new frc::XboxController(Interfaces::k_operatorXboxController);
+
+  //Subsystems
+  c_drivetrain = new Drivetrain(false);
+  c_odometry = new Odometry(c_drivetrain);
+
+  //Commands
+  c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
+}
 
 /**
  * This function is called every 20 ms, no matter the mode. Use
@@ -41,16 +68,20 @@ void Robot::AutonomousInit() {
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {
-  // This makes sure that the autonomous stops running when
-  // teleop starts running. If you want the autonomous to
-  // continue until interrupted by another command, remove
-  // this line or comment it out.
+  c_driveTeleopCommand->Schedule();
 }
 
 /**
  * This function is called periodically during operator control.
  */
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  if(c_driverController->GetAButtonPressed()){
+    c_drivetrain->toggleFieldCentric();
+  }
+  if(c_driverController->GetBButtonPressed()){
+    c_drivetrain->resetNavxHeading();
+  }
+}
 
 /**
  * This function is called periodically during test mode.

@@ -88,19 +88,41 @@ class Drivetrain : public frc2::SubsystemBase {
         void setMotion(double x, double y, double r);
 
         /**
-         * @returns direction of movement
+         * @returns direction of movement (this is a calculation based on controller inputs)
         */
-        double getHeading();
+        double getCalculatedHeading();
 
         /**
-         * @returns velocity of movement
+         * @returns the field heading from the NavX
         */
-       double getVelocity();
+       double getFieldHeading();
+
+        /**
+         * @returns velocity of movement (this is a calculation based on controller inputs)
+        */
+       double getCalculatedVelocity();
+       
+        /**
+         * @param module the module to get the heading from
+         * 
+         * @returns the field heading from the modules
+        */
+       double getMovementHeading(int module);
+
+        /**
+         * @param module the module to get the heading from
+         * 
+         * @returns velocity of movement calculated from the Talon built-in encoders
+        */
+       double getMovementVelocity(int module);
+
+        /**
+         * resets the yaw to be 0 in the NavX (parallel to the field floor)
+        */
+        void resetNavxHeading();
 
     private:
         void setupWheels();
-
-        void resetNavxHeading();
 
         void calculateWheelAnglesAndSpeeds();
 

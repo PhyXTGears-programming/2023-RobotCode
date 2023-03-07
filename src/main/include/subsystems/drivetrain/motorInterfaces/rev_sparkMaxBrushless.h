@@ -38,6 +38,11 @@ class RevSparkMaxBrushless : public MotorInterfaces {
          * @param radians the radian number to set the 
         */
        void setRotation(double radians) override;
+
+        /**
+         * gets the current angle of the encoder
+        */
+       double getSensorHeading() override;
     private:
         double m_currentSpeedPercentage = 0;
         bool c_pidControlled = false;

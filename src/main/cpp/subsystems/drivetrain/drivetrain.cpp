@@ -46,7 +46,7 @@ Drivetrain::~Drivetrain() {
 void Drivetrain::Periodic(){
     if(m_fieldOriented){
         //gets the current angle of the NavX (reported in degrees, converted to radians)
-        m_fieldOrientedOffset = DEGREES_TO_RADIANS(m_navX->GetYaw())+M_PI;
+        m_fieldOrientedOffset = DEGREES_TO_RADIANS(m_navX->GetYaw());
     }
     //just tell the motor abstractions to pet the watchdog and update the motors
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
@@ -204,11 +204,11 @@ void Drivetrain::setMotion(double x, double y, double r) {
     calculateWheelAnglesAndSpeeds();
 }
 
-double Drivetrain::getHeading() {
+double Drivetrain::getCalculatedHeading() {
     return atan2(Drivetrain::m_strife, Drivetrain::m_forwards); //swapped x & y so forwards is 0 radians
 }
 
-double Drivetrain::getVelocity() {
+double Drivetrain::getCalculatedVelocity() {
     //using pythagorean to find the magnitude of the vector components (forwards and strife)
     return std::sqrt((std::pow(Drivetrain::m_strife, 2) + std::pow(Drivetrain::m_forwards, 2)));
 }
@@ -224,4 +224,16 @@ void Drivetrain::sendToSwerveModules() {
 
 void Drivetrain::resetNavxHeading(){
     Drivetrain::m_navX->ZeroYaw();
+}
+
+double Drivetrain::getFieldHeading(){
+    return m_fieldOrientedOffset;
+}
+
+double Drivetrain::getMovementHeading(int module){
+    return c_wheels[module]->getHeading();
+}
+
+double Drivetrain::getMovementVelocity(int module){
+    return c_wheels[module]->getVelocity();
 }

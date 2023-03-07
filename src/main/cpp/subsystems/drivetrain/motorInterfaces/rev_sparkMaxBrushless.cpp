@@ -53,3 +53,7 @@ void RevSparkMaxBrushless::setRotation(double radians) {
         RevSparkMaxBrushless::c_pidController.SetSetpoint(radians);
     }
 }
+
+double RevSparkMaxBrushless::getSensorHeading(){
+    return c_canCoder->GetPosition();
+}
