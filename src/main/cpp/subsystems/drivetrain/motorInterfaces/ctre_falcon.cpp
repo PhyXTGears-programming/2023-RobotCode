@@ -34,3 +34,7 @@ double CtreFalcon::getSensorVelocity() {
     // https://v5.docs.ctr-electronics.com/en/latest/ch14_MCSensor.html#sensor-resolution
     return (c_motor->GetSelectedSensorVelocity()/2048) * 2 * M_PI;
 }
+
+void CtreFalcon::enableContinuousInput() {
+    // Not implemented.
+}

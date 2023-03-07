@@ -31,6 +31,7 @@ SwerveWheel::SwerveWheel(
                 encoder.ID,
                 frc2::PIDController{0.2, 0, 0}
             );
+            c_turningMotor->enableContinuousInput();
             break;
     }
 

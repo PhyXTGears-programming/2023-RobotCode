@@ -25,6 +25,11 @@ class MotorInterfaces {
         virtual double getSensorHeading(){return 0.0;};
 
         /**
+         * Enable continous input on PID so motors (like steering) can turn full circle without reversing.
+        */
+        virtual void enableContinuousInput(){};
+
+        /**
          * periodic function to update motors and pet the watchdog
         */
         virtual void Periodic(){};

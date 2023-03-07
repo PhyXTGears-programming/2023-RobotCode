@@ -37,6 +37,10 @@ class CtreFalcon : public MotorInterfaces {
         */
         double getSensorVelocity() override;
 
+        /**
+         * Enable continous input on PID so motors (like steering) can turn full circle without reversing.
+         */
+        void enableContinuousInput() override;
     private:
         double m_currentSpeedPercentage = 0;
 
