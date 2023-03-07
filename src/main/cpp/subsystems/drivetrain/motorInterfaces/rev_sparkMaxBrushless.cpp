@@ -21,7 +21,6 @@ RevSparkMaxBrushless::RevSparkMaxBrushless(int motorCanID, int encoderCanID, frc
 
     RevSparkMaxBrushless::c_pidController = pid;
     RevSparkMaxBrushless::c_pidController.SetTolerance(0.1);
-    // RevSparkMaxBrushless::c_pidController.EnableContinuousInput(-M_PI,M_PI);
     RevSparkMaxBrushless::c_pidControlled = true;
 
     RevSparkMaxBrushless::c_canCoder = new ctre::phoenix::sensors::CANCoder(encoderCanID);
@@ -52,4 +51,8 @@ void RevSparkMaxBrushless::setRotation(double radians) {
     if (RevSparkMaxBrushless::c_pidControlled) {
         RevSparkMaxBrushless::c_pidController.SetSetpoint(radians);
     }
+}
+
+void RevSparkMaxBrushless::enableContinuousInput() {
+    c_pidController.EnableContinuousInput(-M_PI, M_PI);
 }
