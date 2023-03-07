@@ -64,11 +64,13 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
+  // TODO: Make sure to cancel autonomous command in teleop init.
 }
 
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {
+  // TODO: Make sure autonomous command is canceled first.
   c_driveTeleopCommand->Schedule();
 }
 
@@ -76,9 +78,12 @@ void Robot::TeleopInit() {
  * This function is called periodically during operator control.
  */
 void Robot::TeleopPeriodic() {
+  // Driver A button -> toggle field centric.
   if(c_driverController->GetAButtonPressed()){
     c_drivetrain->toggleFieldCentric();
   }
+
+  // Driver B button -> reset navx heading.
   if(c_driverController->GetBButtonPressed()){
     c_drivetrain->resetNavxHeading();
   }
