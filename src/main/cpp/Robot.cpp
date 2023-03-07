@@ -21,7 +21,7 @@
 void Robot::RobotInit() {
   try{
     c_toml = cpptoml::parse_file(frc::filesystem::GetDeployDirectory()+"/config.toml");
-  } catch (cpptoml::parse_exception ex){
+  } catch (cpptoml::parse_exception & ex){
     std::cerr << "Unable to open file: config.toml" << std::endl;
   }
   
