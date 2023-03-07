@@ -11,6 +11,8 @@
 DriveTeleopCommand::DriveTeleopCommand(Drivetrain* drivetrain, frc::XboxController* driverController){
     c_driverController = driverController;
     c_drivetrain = drivetrain;
+
+    AddRequirements(c_drivetrain);
 }
 
 void DriveTeleopCommand::Initialize(){
