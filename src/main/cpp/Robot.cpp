@@ -79,12 +79,12 @@ void Robot::TeleopInit() {
  */
 void Robot::TeleopPeriodic() {
   // Driver A button -> toggle field centric.
-  if(c_driverController->GetAButtonPressed()){
+  if (c_driverController->GetAButtonPressed()) {
     c_drivetrain->toggleFieldCentric();
   }
 
   // Driver B button -> reset navx heading.
-  if(c_driverController->GetBButtonPressed()){
+  if (c_driverController->GetBButtonPressed()) {
     c_drivetrain->resetNavxHeading();
   }
 }
