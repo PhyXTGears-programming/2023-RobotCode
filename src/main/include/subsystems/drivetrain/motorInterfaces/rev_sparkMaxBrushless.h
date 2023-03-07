@@ -40,11 +40,11 @@ class RevSparkMaxBrushless : public MotorInterfaces {
         void setRotation(double radians) override;
 
         /**
-         * gets the current angle of the encoder
+         * @return rotation of motor in radians.
         */
        double getSensorHeading() override;
-        /**
 
+        /**
          * Enable continous input on PID so motors (like steering) can turn full circle without reversing.
         */
         void enableContinuousInput() override;

@@ -27,12 +27,16 @@ void CtreFalcon::setRotation(double radians) {
     // at least for now...
 }
 
-double CtreFalcon::getSensorVelocity() {
     // GetSelectedSensorVelocity will output the number of encoder tick per second.
+double CtreFalcon::getSensorVelocity() {
     // Falcon has 2048 Encoder ticks per revolution
     //
     // https://v5.docs.ctr-electronics.com/en/latest/ch14_MCSensor.html#sensor-resolution
     return (c_motor->GetSelectedSensorVelocity()/2048) * 2 * M_PI;
+}
+
+double CtreFalcon::getSensorHeading() {
+    return 0.0;
 }
 
 void CtreFalcon::enableContinuousInput() {

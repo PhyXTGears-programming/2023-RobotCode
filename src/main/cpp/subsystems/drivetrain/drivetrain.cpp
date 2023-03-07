@@ -76,6 +76,11 @@ void Drivetrain::setupWheels() {
         SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackLeftDrive,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
         SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackLeftEncoder, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
+
+    // Initialize direction with current heading of wheel, so that wheels do not swivel to 0 deg when robot enables.
+    for (int i = 0; i < Constants::k_NumberOfSwerveModules; i += 1) {
+        m_motorDirectionAngleSpeed[i].radian = c_wheels[i]->getHeading();
+    }
 }
 
 void Drivetrain::calculateWheelAnglesAndSpeeds() {

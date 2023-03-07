@@ -53,8 +53,12 @@ void RevSparkMaxBrushless::setRotation(double radians) {
     }
 }
 
-double RevSparkMaxBrushless::getSensorHeading(){
-    return c_canCoder->GetPosition();
+double RevSparkMaxBrushless::getSensorHeading() {
+    if (nullptr == c_canCoder) {
+        return 0.0;
+    } else {
+        return c_canCoder->GetPosition();
+    }
 }
 
 void RevSparkMaxBrushless::enableContinuousInput() {

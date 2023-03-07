@@ -22,6 +22,9 @@ class MotorInterfaces {
         */
         virtual double getSensorVelocity(){return 0.0;};
 
+        /**
+         * @return rotation of motor in radians.
+         */
         virtual double getSensorHeading(){return 0.0;};
 
         /**
