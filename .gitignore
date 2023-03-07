@@ -139,6 +139,9 @@ $RECYCLE.BIN/
 .gradle
 /build/
 
+# Ignore user local overrides
+gradle.properties
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
