@@ -24,8 +24,8 @@ void DriveTeleopCommand::Execute(){
     // be the default if no trigger is being pressed (so both register 0)
     // 
     // NOTE: no trigger takes priority of the other, so if both pressed, they will cancel each other
-    double reduce = c_driverController->GetRightTriggerAxis() * (Constants::k_normalDriveSpeed - Constants::k_minDriveSpeed);
-    double gain = c_driverController->GetLeftTriggerAxis() * (Constants::k_maxDriveSpeed - Constants::k_normalDriveSpeed);
+    double reduce = c_driverController->GetLeftTriggerAxis() * (Constants::k_normalDriveSpeed - Constants::k_minDriveSpeed);
+    double gain = c_driverController->GetRightTriggerAxis() * (Constants::k_maxDriveSpeed - Constants::k_normalDriveSpeed);
 
     double speedFactor = Constants::k_normalDriveSpeed + gain - reduce;
 
