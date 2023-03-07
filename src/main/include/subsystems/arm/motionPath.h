@@ -1,7 +1,8 @@
 #pragma once
 
 #include "util/point.h"
-#include "subsystems/arm/arm.h"
+
+#include <vector>
 
 class MotionPath {
 public:
