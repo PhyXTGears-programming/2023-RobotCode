@@ -53,6 +53,14 @@ void RevSparkMaxBrushless::setRotation(double radians) {
     }
 }
 
+double RevSparkMaxBrushless::getRotation() {
+    if (nullptr == c_canCoder) {
+        return 0.0;
+    } else {
+        return c_canCoder->GetPosition();
+    }
+}
+
 void RevSparkMaxBrushless::enableContinuousInput() {
     c_pidController.EnableContinuousInput(-M_PI, M_PI);
 }

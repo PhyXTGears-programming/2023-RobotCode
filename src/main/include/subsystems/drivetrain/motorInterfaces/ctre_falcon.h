@@ -33,6 +33,11 @@ class CtreFalcon : public MotorInterfaces {
         void setRotation(double radians) override;
 
         /**
+         * @return rotation of motor in radians.
+         */
+        double getRotation() override;
+
+        /**
          * Enable continous input on PID so motors (like steering) can turn full circle without reversing.
          */
         void enableContinuousInput() override;

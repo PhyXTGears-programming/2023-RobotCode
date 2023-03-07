@@ -18,6 +18,11 @@ class MotorInterfaces {
         virtual void setRotation(double radians){};
 
         /**
+         * @return rotation of motor in radians.
+         */
+        virtual double getRotation(){ return 0.0; }
+
+        /**
          * Enable continous input on PID so motors (like steering) can turn full circle without reversing.
         */
         virtual void enableContinuousInput(){};

@@ -25,6 +25,10 @@ void CtreFalcon::setRotation(double radians) {
     // at least for now...
 }
 
+double CtreFalcon::getRotation() {
+    return 0.0;
+}
+
 void CtreFalcon::enableContinuousInput() {
     // Not implemented.
 }
