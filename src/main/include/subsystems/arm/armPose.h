@@ -2,9 +2,12 @@
 
 class ArmPose {
     public:
-        ArmPose(float turretAng, float shoulderAng, float elbowAng) : turretAng(turretAng), shoulderAng(shoulderAng), elbowAng(elbowAng) {}
+        ArmPose(float turretAngle, float shoulderAngle, float elbowAngle)
+            : turretAngle(turretAngle),
+            shoulderAngle(shoulderAngle),
+            elbowAngle(elbowAngle) {}
 
-        float turretAng;
-        float shoulderAng;
-        float elbowAng;
+        float turretAngle;
+        float shoulderAngle;
+        float elbowAngle;
 };
