@@ -94,11 +94,10 @@ public:
 
     bool isInside(Point const & pt) override {
         // Check XY plane
-        Point offset((center.x - pt.x), (center.y - pt.y), (center.z - pt.z));
+        Point offset((center.x - pt.x), (center.y - pt.y), 0.0);
         double dist =
           (offset.x * offset.x)
-        + (offset.y * offset.y)
-        + (offset.z * offset.z);
+        + (offset.y * offset.y);
 
         if (dist < radius * radius) {
             return zLo < pt.z && pt.z < zHi;
