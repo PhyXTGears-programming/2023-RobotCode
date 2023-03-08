@@ -201,6 +201,8 @@ Point const & ArmSubsystem::getSafetyPoint(Point pt) {
 }
 
 void ArmSubsystem::setTurretAngle(double angle) {
+    angle = std::clamp(angle, config.turret.limit.lo, config.turret.limit.hi);
+
     double da = angle - getTurretAngle();
     if (isNearZero(da)) {
         m_turretMotor.Set(0.0);
@@ -210,6 +212,8 @@ void ArmSubsystem::setTurretAngle(double angle) {
 }
 
 void ArmSubsystem::setShoulderAngle(double angle) {
+    angle = std::clamp(angle, config.shoulder.limit.lo, config.shoulder.limit.hi);
+
     double da = angle - getShoulderAngle();
     if (isNearZero(da)) {
         m_lowJointMotor.Set(0.0);
@@ -219,6 +223,8 @@ void ArmSubsystem::setShoulderAngle(double angle) {
 }
 
 void ArmSubsystem::setElbowAngle(double angle) {
+    angle = std::clamp(angle, config.elbow.limit.lo, config.elbow.limit.hi);
+
     double da = angle - getElbowAngle();
     if (isNearZero(da)) {
         m_midJointMotor.Set(0.0);
@@ -228,6 +234,8 @@ void ArmSubsystem::setElbowAngle(double angle) {
 }
 
 void ArmSubsystem::setWristRollAngle(double angle) {
+    angle = std::clamp(angle, config.wrist.limit.lo, config.wrist.limit.hi);
+
     double da = angle - getWristRollAngle();
     if (isNearZero(da)) {
         m_gripperRotateMotor.Set(0.0);
@@ -237,6 +245,8 @@ void ArmSubsystem::setWristRollAngle(double angle) {
 }
 
 void ArmSubsystem::setGrip(double grip) {
+    grip = std::clamp(grip, config.grip.limit.lo, config.grip.limit.hi);
+
     double dx = grip - getGrip();
     if (isNearZero(dx)) {
         m_gripperGraspMotor.Set(0.0);
