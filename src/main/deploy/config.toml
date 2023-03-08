@@ -1,0 +1,33 @@
+
+[arm]
+    # Limits are in raw sensors units
+    turret.limit.lo = 0
+    turret.limit.hi = 0
+    turret.zeroOffsetRadians = 0
+    turret.sensorToRadians = 0
+
+    # Limits are in raw sensors units
+    shoulder.limit.lo = 0
+    shoulder.limit.hi = 0
+    shoulder.zeroOffsetRadians = 0
+
+    # Limits are in raw sensors units
+    elbow.limit.lo = 0
+    elbow.limit.hi = 0
+    elbow.zeroOffsetRadians = 0
+    elbow.sensorToRadians = 0
+
+    # Limits are in raw sensors units
+    wrist.limit.lo = 0
+    wrist.limit.hi = 0
+    wrist.zeroOffsetRadians = 0
+    wrist.sensorToRadians = 0
+
+    # Limits are in raw sensors units
+    grip.limit.lo = 0
+    grip.limit.hi = 0
+    # Grip closed is considered 0 meters.
+    grip.zeroOffsetMeters = 0
+    grip.sensorToMeters = 0
+    grip.setpoint.open = 0
+    grip.setpoint.close = 0

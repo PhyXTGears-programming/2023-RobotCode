@@ -6,6 +6,8 @@
 #include "subsystems/arm/motionPath.h"
 #include "util/point.h"
 
+#include "external/cpptoml.h"
+
 #include <cmath>
 #include <memory>
 
@@ -19,7 +21,7 @@ using namespace Interfaces::Arm;
 
 class ArmSubsystem : public frc2::SubsystemBase {
 public:
-    ArmSubsystem();
+    ArmSubsystem(std::shared_ptr<cpptoml::table> toml);
 
     void Periodic() override;
 
@@ -64,6 +66,8 @@ public:
     void setGrip(double grip); // hehe grippy grabby hand
 
 private:
+    void loadConfig(std::shared_ptr<cpptoml::table> toml);
+
     // Arm Diagram:
     // 1: Turret, 2: Shoulder, 3: Elbow, 4: Wrist
     //
@@ -109,6 +113,62 @@ private:
     Point m_safetyPointGrid{-0.2540, 0.0, 0.9144};
     Point m_safetyPointCenter{0.0, 0.254, 0.8635};
     Point m_safetyPointIntake{0.254, 0.0, -0.8128};
+
+    struct {
+        struct {
+            struct {
+                double lo;
+                double hi;
+            } limit;
+
+            double zeroOffset;
+            double sensorToRadians;
+        } turret;
+
+        struct {
+            struct {
+                double lo;
+                double hi;
+            } limit;
+
+            double zeroOffset;
+        } shoulder;
+
+        struct {
+            struct {
+                double lo;
+                double hi;
+            } limit;
+
+            double zeroOffset;
+            double sensorToRadians;
+        } elbow;
+
+        struct {
+            struct {
+                double lo;
+                double hi;
+            } limit;
+
+            double zeroOffset;
+            double sensorToRadians;
+        } wrist;
+
+        struct {
+            struct {
+                double lo;
+                double hi;
+            } limit;
+
+            double zeroOffset;
+            double sensorToMeters;
+
+            struct {
+                double open;
+                double close;
+            } setpoint;
+        } grip;
+    } config;
 
 public:
     // Other Points
