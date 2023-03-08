@@ -163,23 +163,23 @@ Point const & ArmSubsystem::getHighShelfPoint() {// | High Shelf
 // Getting and setting arm angles:
 
 double ArmSubsystem::getTurretAngle() {
-    return m_turretAngleSensor.Get();
+    return m_turretAngleSensor.Get() * config.turret.sensorToRadians + config.turret.zeroOffset;
 }
 
 double ArmSubsystem::getShoulderAngle() {
-    return m_shoulderAngleSensor.Get().value() * M_2_PI;
+    return m_shoulderAngleSensor.Get().value() * M_2_PI + config.shoulder.zeroOffset;
 }
 
 double ArmSubsystem::getElbowAngle() {
-    return m_elbowAngleSensor.Get();
+    return m_elbowAngleSensor.Get() * config.elbow.sensorToRadians + config.elbow.zeroOffset;
 }
 
 double ArmSubsystem::getWristRollAngle() {
-    return m_wristRollAngleSensor.Get();
+    return m_wristRollAngleSensor.Get() * config.wrist.sensorToRadians + config.wrist.zeroOffset;
 }
 
 double ArmSubsystem::getGrip() {
-    return m_gripSensor.Get();
+    return m_gripSensor.Get() * config.grip.sensorToMeters + config.grip.zeroOffset;
 }
 
 Point ArmSubsystem::getWristPoint() {
