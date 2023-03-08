@@ -60,10 +60,32 @@ void ArmSubsystem::initialiseBoundary() {
         )
     });
 
-    //std::unique_ptr<> turretNoGoZone = std::make_unique<>
+    std::shared_ptr<Boundary> cannotReachNoGoBounds = std::make_shared<NotBoundary>(
+        std::make_unique<SphereBoundary>(
+            Point { 0.0, 0.0, k_ChassisZSize }, /* center of turret */
+            (Constants::Arm::k_forearmLenMeters
+                + Constants::Arm::k_bicepLenMeters
+            ) * 0.95 /* 95% of max length of arm */
+        )
+    );
+
+    std::shared_ptr<Boundary> turretNoGoZone = std::make_shared<CylinderBoundary>(
+        Point { 0.0, 0.0, 0.0 },
+        0.08, /* radius meters */
+        0.0, 1.0
+    );
+
+    std::shared_ptr<Boundary> floorNoGoZone = std::make_shared<BoxBoundary>(
+        -5.0,     5.0,
+        -5.0,     5.0,
+         0.0254, -5.0   /* keep gripper 1 inch from floor */
+    );
 
     std::shared_ptr<ComposeBoundary> defNoGoZone = std::make_shared<ComposeBoundary>(std::vector{
-        std::move(chassisNoGoBounds)
+        std::move(cannotReachNoGoBounds),
+        std::move(chassisNoGoBounds),
+        std::move(turretNoGoZone),
+        std::move(floorNoGoZone),
     });
 
     m_noGoZone = std::move(defNoGoZone);
