@@ -29,6 +29,15 @@ void ArmSubsystem::Periodic() {
 }
 
 void ArmSubsystem::initialiseBoundary() {
+    // Geometric Conventions:
+    //  x-axis 0 :: center of arm turret.
+    //  y-axis 0 :: center of arm turret.
+    //  z-axis 0 :: floor.
+    //
+    //  x+ :: robot right side (with pickup gap in bumpers).
+    //  y+ :: robot front (furthest side from turret).
+    //  z+ :: up.
+
     // Only create boundaries for no-go zones.
     // Otherwise, the code gets really complicated later
     // to check for collisions.
