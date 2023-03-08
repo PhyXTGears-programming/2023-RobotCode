@@ -43,8 +43,8 @@ Drivetrain::~Drivetrain() {
     }
 }
 
-void Drivetrain::Periodic(){
-    if(m_fieldOriented){
+void Drivetrain::Periodic() {
+    if (m_fieldOriented) {
         //gets the current angle of the NavX (reported in degrees, converted to radians)
         m_fieldOrientedOffset = DEGREES_TO_RADIANS(m_navX->GetYaw());
     }

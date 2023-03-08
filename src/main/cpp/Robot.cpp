@@ -21,8 +21,9 @@
 void Robot::RobotInit() {
   try{
     c_toml = cpptoml::parse_file(frc::filesystem::GetDeployDirectory()+"/config.toml");
-  } catch (cpptoml::parse_exception ex){
+  } catch (cpptoml::parse_exception & ex){
     std::cerr << "Unable to open file: config.toml" << std::endl;
+    exit(1);
   }
   
   //HIDs
@@ -63,11 +64,13 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
+  // TODO: Make sure to cancel autonomous command in teleop init.
 }
 
 void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {
+  // TODO: Make sure autonomous command is canceled first.
   c_driveTeleopCommand->Schedule();
 }
 
@@ -75,10 +78,13 @@ void Robot::TeleopInit() {
  * This function is called periodically during operator control.
  */
 void Robot::TeleopPeriodic() {
-  if(c_driverController->GetAButtonPressed()){
+  // Driver A button -> toggle field centric.
+  if (c_driverController->GetAButtonPressed()) {
     c_drivetrain->toggleFieldCentric();
   }
-  if(c_driverController->GetBButtonPressed()){
+
+  // Driver B button -> reset navx heading.
+  if (c_driverController->GetBButtonPressed()) {
     c_drivetrain->resetNavxHeading();
   }
 }
