@@ -61,3 +61,20 @@ void SwerveWheel::setMotion(double s, double r) {
     c_movementMotor->setMotion(s);
     c_turningMotor->setRotation(r);
 }
+
+double SwerveWheel::getHeading(){
+    return c_turningMotor->getSensorHeading();
+}
+
+double SwerveWheel::getVelocity(){
+    /*
+    6.12:1 drive motor to wheel gearing ratio
+    4 in wheel diameter (0.1016 meters)
+    converted to radius because:
+    if w is the speed of the wheel in radians/second
+    and r is the radius of the wheel
+    anv v is the linear speed (how fast it is moving on the ground)
+    v=wr
+    */
+    return (c_movementMotor->getSensorVelocity() / 6.12) * (0.1016/2);
+}

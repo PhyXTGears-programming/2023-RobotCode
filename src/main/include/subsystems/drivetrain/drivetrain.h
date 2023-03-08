@@ -7,6 +7,8 @@
 #include "util/point.h"
 #include "util/polar.h"
 
+#include <AHRS.h>
+#include <frc/SPI.h>
 /*
 NOTE ON UNITS:
 
@@ -86,14 +88,38 @@ class Drivetrain : public frc2::SubsystemBase {
         void setMotion(double x, double y, double r);
 
         /**
-         * @returns direction of movement
+         * @returns direction of movement (this is a calculation based on controller inputs)
         */
-        double getHeading();
+        double getCalculatedHeading();
 
         /**
-         * @returns velocity of movement
+         * @returns the field heading from the NavX
         */
-       double getVelocity();
+       double getFieldHeading();
+
+        /**
+         * @returns velocity of movement (this is a calculation based on controller inputs)
+        */
+       double getCalculatedVelocity();
+       
+        /**
+         * @param module the module to get the heading from
+         * 
+         * @returns the field heading from the modules
+        */
+       double getMovementHeading(int module);
+
+        /**
+         * @param module the module to get the heading from
+         * 
+         * @returns velocity of movement calculated from the Talon built-in encoders
+        */
+       double getMovementVelocity(int module);
+
+        /**
+         * resets the yaw to be 0 in the NavX (parallel to the field floor)
+        */
+        void resetNavxHeading();
 
     private:
         void setupWheels();
@@ -103,6 +129,7 @@ class Drivetrain : public frc2::SubsystemBase {
         void sendToSwerveModules();
 
         bool m_fieldOriented = false;
+        double m_fieldOrientedOffset = 0;
 
         double m_strife = 0;
         double m_forwards = 0;
@@ -111,11 +138,13 @@ class Drivetrain : public frc2::SubsystemBase {
         SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};
 
         Point c_wheelPositions[Constants::k_NumberOfSwerveModules] = {
-            Point{/*x=*/(float)(-0.4445/2), /*y=*/(float)( 0.4953/2), /*z=*/0.0F}, // -8.75in, 9.75in
-            Point{/*x=*/(float)( 0.4445/2), /*y=*/(float)( 0.4953/2), /*z=*/0.0F}, // 8.75in, 9.75in
-            Point{/*x=*/(float)( 0.4445/2), /*y=*/(float)(-0.4953/2), /*z=*/0.0F}, // 8.75in, -9.75in
-            Point{/*x=*/(float)(-0.4445/2), /*y=*/(float)(-0.4953/2), /*z=*/0.0F} // -8.75in, -9.75in
+            Point{/*y=*/(float)(-0.4953/2), /*x=*/(float)(-0.4445/2), /*z=*/0.0F}, // -8.75in, -9.75in
+            Point{/*y=*/(float)( 0.4953/2), /*x=*/(float)(-0.4445/2), /*z=*/0.0F},  // -8.75in, 9.75in
+            Point{/*y=*/(float)( 0.4953/2), /*x=*/(float)( 0.4445/2), /*z=*/0.0F}, // 8.75in, 9.75in
+            Point{/*y=*/(float)(-0.4953/2), /*x=*/(float)( 0.4445/2), /*z=*/0.0F} // 8.75in, -9.75in
         };
+
+        AHRS * m_navX = new AHRS(frc::SPI::Port::kMXP);
 
         // class-wide so we can optimize turning path
         Polar m_motorDirectionAngleSpeed[Constants::k_NumberOfSwerveModules];

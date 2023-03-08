@@ -11,6 +11,8 @@
 #include "subsystems/drivetrain/swerveWheelTypes.h"
 
 
+#define DEGREES_TO_RADIANS(deg) ((deg/180.0)*M_PI)
+#include <AHRS.h>
 /*
 NOTE ON UNITS:
 
@@ -23,11 +25,13 @@ it should be removed or put in a debug preprocessor.
 Drivetrain::Drivetrain(bool fieldOriented) {
     this->m_fieldOriented = fieldOriented;
     Drivetrain::setupWheels();
+    Drivetrain::resetNavxHeading();
 }
 
 Drivetrain::Drivetrain() {
     this->m_fieldOriented = false;
     Drivetrain::setupWheels();
+    Drivetrain::resetNavxHeading();
 }
 
 Drivetrain::~Drivetrain() {
@@ -40,6 +44,10 @@ Drivetrain::~Drivetrain() {
 }
 
 void Drivetrain::Periodic() {
+    if (m_fieldOriented) {
+        //gets the current angle of the NavX (reported in degrees, converted to radians)
+        m_fieldOrientedOffset = DEGREES_TO_RADIANS(m_navX->GetYaw());
+    }
     //just tell the motor abstractions to pet the watchdog and update the motors
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
         Drivetrain::c_wheels[i]->Periodic();
@@ -49,41 +57,52 @@ void Drivetrain::Periodic() {
 void Drivetrain::setupWheels() {
     //setup wheel classes with correct motors from toml file
     Drivetrain::c_wheels[0] = new SwerveWheel(
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 5,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 1,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 21, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontLeftSteer,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontLeftDrive,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontLeftEncoder, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
     Drivetrain::c_wheels[1] = new SwerveWheel(
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 6,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 2,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 22, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontRightSteer,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontRightDrive,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainFrontRightEncoder, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
     Drivetrain::c_wheels[2] = new SwerveWheel(
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 7,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 3,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 23, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackRightSteer,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackRightDrive,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackRightEncoder, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
     Drivetrain::c_wheels[3] = new SwerveWheel(
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 8,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 4,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
-        SwerveWheelTypes::SwerveWheelTypes{ .ID = 24, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackLeftSteer,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_REV_SPARKMAX },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackLeftDrive,  .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_FALCON },
+        SwerveWheelTypes::SwerveWheelTypes{ .ID = Interfaces::k_drivetrainBackLeftEncoder, .Protocol = PROTOCOL_CAN, .Vendor = VENDOR_CTRE_CANCODER }
     );
 }
 
 void Drivetrain::calculateWheelAnglesAndSpeeds() {
     if ((abs(Drivetrain::m_strife) <= 0.001) && (abs(Drivetrain::m_forwards) <= 0.001)) {
-        for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
-            Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = 0;
+        if(abs(Drivetrain::m_rotation) <= 0.001){
+            for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
+                Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = 0;
+            }
+            Drivetrain::sendToSwerveModules();
+            return;
         }
-        Drivetrain::sendToSwerveModules();
-        return;
     }
 
     double maxSpeed = 0.0;
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i += 1) {
         //combine the movement and turning vectors
-        double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].x) + Drivetrain::m_strife;
-        double vertical_motion   = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].y) + Drivetrain::m_forwards;
+        double strife;
+        double forwards;
+        if(m_fieldOriented){
+            strife = -m_forwards*sin(m_fieldOrientedOffset) + m_strife*cos(m_fieldOrientedOffset);
+            forwards = m_forwards*cos(m_fieldOrientedOffset) + m_strife*sin(m_fieldOrientedOffset);
+        } else {
+            strife = m_strife;
+            forwards = m_forwards;
+        }
+        double horizontal_motion = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].x) + strife;
+        double vertical_motion   = (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].y) + forwards;
 
         // calculate the change in radians
         double newRadians = atan2(horizontal_motion, vertical_motion); //flipped so that 0 is going towards the front
@@ -152,7 +171,11 @@ void Drivetrain::disableFieldCentric() {
 }
 
 void Drivetrain::toggleFieldCentric() {
-    Drivetrain::m_fieldOriented = !Drivetrain::m_fieldOriented;
+    if(m_fieldOriented){
+        m_fieldOriented = false;
+    } else {
+        m_fieldOriented = true;
+    }
 }
 
 bool Drivetrain::getFieldCentric() {
@@ -181,11 +204,11 @@ void Drivetrain::setMotion(double x, double y, double r) {
     calculateWheelAnglesAndSpeeds();
 }
 
-double Drivetrain::getHeading() {
+double Drivetrain::getCalculatedHeading() {
     return atan2(Drivetrain::m_strife, Drivetrain::m_forwards); //swapped x & y so forwards is 0 radians
 }
 
-double Drivetrain::getVelocity() {
+double Drivetrain::getCalculatedVelocity() {
     //using pythagorean to find the magnitude of the vector components (forwards and strife)
     return std::sqrt((std::pow(Drivetrain::m_strife, 2) + std::pow(Drivetrain::m_forwards, 2)));
 }
@@ -197,4 +220,20 @@ void Drivetrain::sendToSwerveModules() {
             m_motorDirectionAngleSpeed[i].radian
         );
     }
+}
+
+void Drivetrain::resetNavxHeading(){
+    Drivetrain::m_navX->ZeroYaw();
+}
+
+double Drivetrain::getFieldHeading(){
+    return m_fieldOrientedOffset;
+}
+
+double Drivetrain::getMovementHeading(int module){
+    return c_wheels[module]->getHeading();
+}
+
+double Drivetrain::getMovementVelocity(int module){
+    return c_wheels[module]->getVelocity();
 }

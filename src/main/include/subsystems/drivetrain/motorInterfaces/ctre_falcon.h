@@ -31,6 +31,12 @@ class CtreFalcon : public MotorInterfaces {
          * @param radians the radian number to set the 
         */
        void setRotation(double radians) override;
+
+        /**
+         * this will output the velocity that the motor is going at in radians/second
+        */
+        double getSensorVelocity() override;
+
     private:
         double m_currentSpeedPercentage = 0;
 
