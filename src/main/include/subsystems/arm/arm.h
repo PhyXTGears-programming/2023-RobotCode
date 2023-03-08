@@ -65,6 +65,15 @@ public:
     void setWristRollAngle(double angle);
     void setGrip(double grip); // hehe grippy grabby hand
 
+    /**
+     * Given a target position, compute necessary joint angles, and move joints
+     * of arm toward target.  Will NOT stop on its own.  Must call this method
+     * repeatedly to stop on target.
+     *
+     * @return false if point is within the no-go zone, true if point is safe.
+     */
+    bool moveToPoint(Point const & target);
+
 private:
     void loadConfig(std::shared_ptr<cpptoml::table> toml);
 

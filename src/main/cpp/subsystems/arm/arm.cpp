@@ -255,6 +255,20 @@ void ArmSubsystem::setGrip(double grip) {
     }
 }
 
+bool ArmSubsystem::moveToPoint(Point const & target) {
+    if (!isPointSafe(target)) {
+        return false;
+    }
+
+    ArmPose pose = calcIKJointPoses(target);
+
+    setTurretAngle(pose.turretAngle);
+    setShoulderAngle(pose.shoulderAngle);
+    setElbowAngle(pose.elbowAngle);
+
+    return true;
+}
+
 //          NOT IMPLEMENTED IN HARDWARE
 // float ArmSubsystem::getWristPitchAngle() {
 //     return 0; // TODO when we get reading components available
