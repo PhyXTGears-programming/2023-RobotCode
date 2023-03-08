@@ -1,0 +1,125 @@
+{
+    "segments": [
+        [
+            [
+                4.99451201923077,
+                7.080583580613254
+            ],
+            [
+                5.939616185897436,
+                7.080583580613254
+            ],
+            [
+                6.470366907044898,
+                7.0672815650559935
+            ],
+            [
+                7.415432692307692,
+                7.058763600395647
+            ]
+        ],
+        [
+            [
+                7.415432692307692,
+                7.058763600395647
+            ],
+            [
+                8.360498477570488,
+                7.050245635735301
+            ],
+            [
+                7.352472329826056,
+                6.016583695791032
+            ],
+            [
+                7.2954771634615385,
+                5.0731454005934715
+            ]
+        ],
+        [
+            [
+                7.2954771634615385,
+                5.0731454005934715
+            ],
+            [
+                7.238481997097022,
+                4.129707105395913
+            ],
+            [
+                8.330274010627326,
+                2.332413416961268
+            ],
+            [
+                8.593177884615386,
+                3.2402670623145404
+            ]
+        ]
+    ],
+    "waypoints": [
+        {
+            "commands": {
+                "kind": "group",
+                "children": [],
+                "name": "sequential",
+                "nodeId": 0
+            },
+            "shallHalt": true
+        },
+        {
+            "commands": {
+                "kind": "group",
+                "children": [
+                    {
+                        "kind": "command",
+                        "children": [],
+                        "name": "arm: move to top peg",
+                        "nodeId": 3
+                    },
+                    {
+                        "kind": "command",
+                        "children": [],
+                        "name": "grip: open",
+                        "nodeId": 4
+                    }
+                ],
+                "name": "sequential",
+                "nodeId": 1
+            },
+            "shallHalt": true
+        },
+        {
+            "commands": {
+                "kind": "group",
+                "children": [
+                    {
+                        "kind": "group",
+                        "children": [
+                            {
+                                "kind": "command",
+                                "children": [],
+                                "name": "grip: close",
+                                "nodeId": 7
+                            },
+                            {
+                                "kind": "command",
+                                "children": [],
+                                "name": "arm: move to mid peg",
+                                "nodeId": 8
+                            }
+                        ],
+                        "name": "parallel",
+                        "nodeId": 6
+                    }
+                ],
+                "name": "sequential",
+                "nodeId": 2
+            },
+            "shallHalt": true
+        }
+    ],
+    "times":[
+        2.428833549,
+        2.354791833,
+        2.425262298
+    ]
+}

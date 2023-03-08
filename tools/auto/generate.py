@@ -58,7 +58,7 @@ def calculate(a_x, a_y, b_x, b_y, c_x, c_y, d_x, d_y):
     """
     len = integrate(sqrt((dx**2) + (dy**2)), (t, 0, 1)) # does the integral from 0 to 1, so no need to divide by anything because it will be 1 :)
 
-    appr_len = N(len, 10) #calculate the integral to 10 digits (will be an approximation, but will be close enough)
+    appr_len = N(len, 5) #calculate the integral to 10 digits (will be an approximation, but will be close enough)
     seconds = appr_len/max_speed
 
     return seconds
@@ -81,7 +81,10 @@ def start():
                 commands = []
                 for x in range(len(waypoint["commands"]["children"])):
                     if(waypoint["commands"]["children"][x]["kind"] == "command"):
-                        commands.append(waypoint["commands"]["children"][x]["name"])
+                        json_output+='{{"type":"commands", "length":1, "commands":["{}"]}}\n'.format(waypoint["commands"]["children"][x]["name"])
+                    elif(waypoint["commands"]["children"][x]["kind"] == "group"):
+                        for z in waypoint["commands"]["children"][x]["children"]:
+                            commands.append(z["name"])
                     else:
                         doNothing()
                 if(len(commands)>0):
