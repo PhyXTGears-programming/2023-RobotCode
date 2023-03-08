@@ -10,10 +10,7 @@ namespace Constants {
     const double k_maxSpinSpeed = 1.00;
 
     namespace Arm {
-        const double k_forearmLenInches = 24.0; // Update to correct value
-        const double k_bicepLenInches = 24.0;// Update to correct value
-
-        const double k_shoulderMinDeg = 0;
-        const double k_shoulderMaxDeg = 270;
+        const double k_forearmLenMeters = 32.0 /*inch*/ * 0.0254;
+        const double k_bicepLenMeters   = 36.0 /*inch*/ * 0.0254;
     };
 };

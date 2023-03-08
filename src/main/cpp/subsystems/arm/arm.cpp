@@ -62,9 +62,9 @@ void ArmSubsystem::initialiseBoundary() {
 
 Point ArmSubsystem::calcElbowPos(double turretAng, double shoulderAng) {
     Point pt{
-        Constants::Arm::k_bicepLenInches * std::cos(shoulderAng) * std::cos(turretAng),
-        Constants::Arm::k_bicepLenInches * std::cos(shoulderAng) * std::sin(turretAng),
-        Constants::Arm::k_bicepLenInches * std::sin(shoulderAng),
+        Constants::Arm::k_bicepLenMeters * std::cos(shoulderAng) * std::cos(turretAng),
+        Constants::Arm::k_bicepLenMeters * std::cos(shoulderAng) * std::sin(turretAng),
+        Constants::Arm::k_bicepLenMeters * std::sin(shoulderAng),
     };
 
     return pt;
@@ -77,9 +77,9 @@ Point ArmSubsystem::calcGripPos(
 ) {
     Point elbowPos = calcElbowPos(turretAng, shoulderAng);
     Point pt(
-        Constants::Arm::k_forearmLenInches * std::cos(shoulderAng + elbowAng) * std::cos(turretAng),
-        Constants::Arm::k_forearmLenInches * std::cos(shoulderAng + elbowAng) * std::sin(turretAng),
-        Constants::Arm::k_forearmLenInches * std::sin(shoulderAng + elbowAng)
+        Constants::Arm::k_forearmLenMeters * std::cos(shoulderAng + elbowAng) * std::cos(turretAng),
+        Constants::Arm::k_forearmLenMeters * std::cos(shoulderAng + elbowAng) * std::sin(turretAng),
+        Constants::Arm::k_forearmLenMeters * std::sin(shoulderAng + elbowAng)
     );
 
     return Point(elbowPos.x + pt.x, elbowPos.y + pt.y, elbowPos.z + pt.z);
@@ -90,10 +90,10 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
     double targetToXAxisAng = atan2(pt.z, std::sqrt(pt.x * pt.x + pt.y * pt.y));
 
     double targetToBicepAng = std::acos(
-        (Constants::Arm::k_forearmLenInches * Constants::Arm::k_forearmLenInches 
-        - Constants::Arm::k_bicepLenInches * Constants::Arm::k_bicepLenInches
+        (Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
+        - Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
         + targetLen * targetLen)
-        / (2.0 * Constants::Arm::k_forearmLenInches * targetLen)
+        / (2.0 * Constants::Arm::k_forearmLenMeters * targetLen)
     );
 
     // Solve IK:
@@ -102,10 +102,10 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
     double bicepToForearmAng =
         (std::numbers::pi / 2.0)
         - std::acos(
-            (Constants::Arm::k_forearmLenInches * Constants::Arm::k_forearmLenInches
-            - Constants::Arm::k_bicepLenInches * Constants::Arm::k_bicepLenInches
+            (Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
+            - Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
             + targetLen * targetLen)
-            / (2.0 * Constants::Arm::k_forearmLenInches * targetLen));
+            / (2.0 * Constants::Arm::k_forearmLenMeters * targetLen));
 
     double turretToXZAng = std::atan2(pt.z, pt.x);
 
