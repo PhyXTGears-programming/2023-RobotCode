@@ -30,7 +30,7 @@ public:
     // Calulating Functions:
     Point calcElbowPos(double turretAng, double angShoulder);
 
-    Point calcWristPos(double turretAng, double shoulderAng, double elbowAng);
+    Point calcGripPos(double turretAng, double shoulderAng, double elbowAng);
 
     ArmPose calcIKJointPoses(Point const & pt);
 
@@ -47,7 +47,7 @@ public:
     double getGrip();
 
     // Getting Points:
-    Point getWristPoint();
+    Point getGripPoint();
 
     Point const & getSafetyPoint(Point pt);
 

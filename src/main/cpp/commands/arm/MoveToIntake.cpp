@@ -13,7 +13,7 @@ MoveToIntakeCommand::MoveToIntakeCommand(ArmSubsystem * arm, Point currentPoint)
 
 void MoveToIntakeCommand::Initialize() {
     m_finalTarget = m_arm->m_pointIntake;
-    Point currentPoint = m_arm->getWristPoint();
+    Point currentPoint = m_arm->getGripPoint();
 
     m_path.emplace(std::move(m_arm->getPathTo(currentPoint, m_finalTarget)));
     m_target = m_path->getNextPoint();

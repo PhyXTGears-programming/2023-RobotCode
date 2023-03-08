@@ -70,7 +70,7 @@ Point ArmSubsystem::calcElbowPos(double turretAng, double shoulderAng) {
     return pt;
 }
 
-Point ArmSubsystem::calcWristPos(
+Point ArmSubsystem::calcGripPos(
     double turretAng,
     double shoulderAng,
     double elbowAng
@@ -122,11 +122,7 @@ bool ArmSubsystem::isPointSafe(Point const & point) {
 }
 
 bool ArmSubsystem::isNearPoint(Point const & point) {
-    Point currentPosition = calcWristPos(
-        getTurretAngle(),
-        getShoulderAngle(),
-        getElbowAngle()
-    );
+    Point currentPosition = getGripPoint();
 
     return point.isNear(currentPosition);
 }
@@ -182,8 +178,8 @@ double ArmSubsystem::getGrip() {
     return m_gripSensor.Get() * config.grip.sensorToMeters + config.grip.zeroOffset;
 }
 
-Point ArmSubsystem::getWristPoint() {
-    return calcWristPos(
+Point ArmSubsystem::getGripPoint() {
+    return calcGripPos(
         getTurretAngle(),
         getShoulderAngle(),
         getElbowAngle()
