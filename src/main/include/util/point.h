@@ -36,6 +36,14 @@ class Point {
         };
     }
 
+    Point operator- (Vector const & rhs) const {
+        return Point {
+            x - rhs.x,
+            y - rhs.y,
+            z - rhs.z
+        };
+    }
+
     bool isNear(Point const & rhs) const {
         return std::abs(x - rhs.x) < NEAR_ZERO_METERS
             && std::abs(y - rhs.y) < NEAR_ZERO_METERS

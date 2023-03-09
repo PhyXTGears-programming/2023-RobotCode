@@ -152,13 +152,21 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
 
     double targetLen =  std::sqrt((std::pow(pt.x, 2) + std::pow(pt.y, 2) + std::pow(pt.z, 2))); // Line from shoulder to target
 
-    double c3 = atan2(pt.z, std::sqrt(pt.x * pt.x + pt.y * pt.y));
+    // Constrain target point.
+    double constrainLen = std::min(
+        Constants::Arm::k_forearmLenMeters + Constants::Arm::k_bicepLenMeters * 0.95,   /* Safety margin. Limit length to 95% of max. */
+        targetLen
+    );
+
+    Point cp = Vector(pt.x, pt.y, pt.z).unit() * constrainLen;
+
+    double c3 = atan2(cp.z, std::sqrt(cp.x * cp.x + cp.y * cp.y));
 
     double c1 = std::acos(
         (Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
         - Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
-        + targetLen * targetLen)
-        / (2.0 * Constants::Arm::k_forearmLenMeters * targetLen)
+        + constrainLen * constrainLen)
+        / (2.0 * Constants::Arm::k_forearmLenMeters * constrainLen)
     );
 
     // Solve IK:
@@ -169,10 +177,10 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
         - std::acos(
             (Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
             - Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
-            + targetLen * targetLen)
-            / (2.0 * Constants::Arm::k_forearmLenMeters * targetLen));
+            + constrainLen * constrainLen)
+            / (2.0 * Constants::Arm::k_forearmLenMeters * constrainLen));
 
-    double turretAngle = std::atan2(-pt.x, pt.y);
+    double turretAngle = std::atan2(-cp.x, cp.y);
 
     return ArmPose(turretAngle, shoulderAngle, elbowAngle);
 
