@@ -13,6 +13,7 @@
 
 #include <frc/AnalogPotentiometer.h>
 #include <frc/DutyCycleEncoder.h>
+#include <frc/controller/PIDController.h>
 #include <frc2/command/SubsystemBase.h>
 
 #include <rev/CANSparkMax.h>
@@ -125,6 +126,8 @@ private:
     frc::AnalogPotentiometer m_wristRollAngleSensor {k_WristRollSensor, 1.0, 0.0};
     frc::AnalogPotentiometer m_gripSensor {k_GripSensor, 1.0, 0.0};
     frc::DutyCycleEncoder m_shoulderAngleSensor{k_ShoulderSensor}; // Using Funky Fresh Encoder
+
+    frc2::PIDController * m_shoulderPid = nullptr;
 
     std::shared_ptr<Boundary> m_noGoZone = nullptr;
 

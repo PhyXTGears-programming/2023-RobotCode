@@ -11,6 +11,11 @@
     shoulder.limit.hi = 0.646
     shoulder.zeroOffsetRadians = 0.131
 
+    shoulder.pid.p = 0.001
+    shoulder.pid.i = 0.001
+    shoulder.pid.d = 0.000
+    shoulder.pid.tolerance = 0.05
+
     # Limits are in raw sensors units
     elbow.limit.lo = 0.283
     elbow.limit.hi = 0.414

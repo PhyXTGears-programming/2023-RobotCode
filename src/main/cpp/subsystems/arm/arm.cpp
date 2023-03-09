@@ -9,6 +9,10 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
+// PROTOTYPES
+static double requireTomlDouble (std::shared_ptr<cpptoml::table> toml, std::string const & name);
+
+// CONSTANTS
 const double k_ChassisXSize = 0.775; // meters
 const double k_ChassisYSize = 0.826; // meters
 const double k_ChassisZSize = 0.229; // meters
@@ -19,13 +23,33 @@ const double k_PickupXSize = 0.076;  // meters
 const double k_PickupYSize = 0.340;  // meters
 const double k_PickupZSize = 1.000;  // meters
 
+// MACROS
 #define RAD_2_DEG(rad) ((rad) * 180.0 / M_PI)
 
 ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     loadConfig(toml);
+
+    double kp, ki, kd, tolerance;
+
+    kp = requireTomlDouble(toml, "shoulder.pid.p");
+    ki = requireTomlDouble(toml, "shoulder.pid.i");
+    kd = requireTomlDouble(toml, "shoulder.pid.d");
+    tolerance = requireTomlDouble(toml, "shoulder.pid.tolerance");
+
+    m_shoulderPid = new frc2::PIDController(kp, ki, kd);
+    m_shoulderPid->SetTolerance(tolerance);
+    m_shoulderPid->SetIntegratorRange(-0.01, 0.01);
+
+    m_shoulderPid->SetSetpoint(getShoulderAngle());
 }
 
 void ArmSubsystem::Periodic() {
+    // Move shoulder or hold position.
+    if (nullptr != m_shoulderPid) {
+        double output = m_shoulderPid->Calculate(getShoulderAngle());
+        m_turretMotor.Set(output);
+    }
+
     frc::SmartDashboard::PutNumber("Turret Angle (deg)",     RAD_2_DEG(getTurretAngle()));
     frc::SmartDashboard::PutNumber("Shoulder Angle (deg)",   RAD_2_DEG(getShoulderAngle()));
     frc::SmartDashboard::PutNumber("Elbow Angle (deg)",      RAD_2_DEG(getElbowAngle()));
@@ -298,12 +322,17 @@ void ArmSubsystem::setTurretAngle(double angle) {
 void ArmSubsystem::setShoulderAngle(double angle) {
     angle = std::clamp(angle, config.shoulder.limit.lo, config.shoulder.limit.hi);
 
+    /*
     double da = angle - getShoulderAngle();
     if (isNearZero(da)) {
         m_lowJointMotor.Set(0.0);
     } else {
         m_lowJointMotor.Set(std::copysign(0.05, da));
     }
+    */
+
+    // Use PID to hold arm in place once target angle is reached.
+    m_shoulderPid->SetSetpoint(angle);
 }
 
 void ArmSubsystem::setElbowAngle(double angle) {
