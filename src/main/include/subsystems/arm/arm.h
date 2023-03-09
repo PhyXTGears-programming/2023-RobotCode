@@ -4,7 +4,7 @@
 #include "subsystems/arm/armPose.h"
 #include "subsystems/arm/boundary.h"
 #include "subsystems/arm/motionPath.h"
-#include "util/point.h"
+#include "util/geom.h"
 
 #include "external/cpptoml.h"
 

@@ -3,7 +3,7 @@
 #include "subsystems/arm/arm.h"
 #include "subsystems/arm/motionPath.h"
 
-#include <util/point.h>
+#include <util/geom.h>
 
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/CommandHelper.h>

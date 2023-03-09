@@ -1,7 +1,6 @@
 #pragma once
 
-#include "util/point.h"
-#include "util/vector.h"
+#include "util/geom.h"
 
 #include <memory>
 #include <vector>

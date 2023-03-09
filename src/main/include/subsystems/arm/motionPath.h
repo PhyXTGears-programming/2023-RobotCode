@@ -1,6 +1,6 @@
 #pragma once
 
-#include "util/point.h"
+#include "util/geom.h"
 
 #include <vector>
 

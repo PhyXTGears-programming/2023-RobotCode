@@ -35,6 +35,3 @@ public:
     double y;
     double z;
 };
-
-Vector operator* (Vector const &, double);
-Vector operator* (double, Vector const &);
