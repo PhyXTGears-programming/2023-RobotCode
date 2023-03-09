@@ -23,9 +23,6 @@ const double k_PickupXSize = 0.076;  // meters
 const double k_PickupYSize = 0.340;  // meters
 const double k_PickupZSize = 1.000;  // meters
 
-// MACROS
-#define RAD_2_DEG(rad) ((rad) * 180.0 / M_PI)
-
 ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     loadConfig(toml);
 
