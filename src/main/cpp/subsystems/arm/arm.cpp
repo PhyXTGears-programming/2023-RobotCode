@@ -143,7 +143,7 @@ Point ArmSubsystem::calcGripPos(
         Constants::Arm::k_forearmLenMeters * std::sin(shoulderAng + elbowAng)
     );
 
-    return Point(elbowPos.x + pt.x, elbowPos.y + pt.y, elbowPos.z + pt.z);
+    return Point(elbowPos.x - pt.x, elbowPos.y - pt.y, elbowPos.z - pt.z);
 }
 
 ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
