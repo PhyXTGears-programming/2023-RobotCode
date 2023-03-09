@@ -88,6 +88,16 @@ private:
     //     O        O
     // **Not to scale
     // Shoulder = Low Joint, Elbow = Mid Joint, Wrist = Gripper Rotate/Roll
+    //
+    // Turret angle conventions/reference
+    //               0 deg
+    //          ┌──────────┐
+    //          │          │
+    //          │          │
+    //          │          │
+    //  -90 deg │    o     │ 90 deg
+    //          │          │
+    //          └──────────┘
 
     rev::CANSparkMax m_turretMotor {
         k_TurretMotor,

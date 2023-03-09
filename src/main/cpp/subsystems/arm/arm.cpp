@@ -123,8 +123,8 @@ void ArmSubsystem::initialiseBoundary() {
 
 Point ArmSubsystem::calcElbowPos(double turretAng, double shoulderAng) {
     Point pt{
-        Constants::Arm::k_bicepLenMeters * std::cos(shoulderAng) * std::cos(turretAng),
         Constants::Arm::k_bicepLenMeters * std::cos(shoulderAng) * std::sin(turretAng),
+        Constants::Arm::k_bicepLenMeters * std::cos(shoulderAng) * std::cos(turretAng),
         Constants::Arm::k_bicepLenMeters * std::sin(shoulderAng),
     };
 
@@ -138,8 +138,8 @@ Point ArmSubsystem::calcGripPos(
 ) {
     Point elbowPos = calcElbowPos(turretAng, shoulderAng);
     Point pt(
-        Constants::Arm::k_forearmLenMeters * std::cos(shoulderAng + elbowAng) * std::cos(turretAng),
         Constants::Arm::k_forearmLenMeters * std::cos(shoulderAng + elbowAng) * std::sin(turretAng),
+        Constants::Arm::k_forearmLenMeters * std::cos(shoulderAng + elbowAng) * std::cos(turretAng),
         Constants::Arm::k_forearmLenMeters * std::sin(shoulderAng + elbowAng)
     );
 
