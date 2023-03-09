@@ -33,6 +33,7 @@ void Robot::RobotInit() {
   //Subsystems
   c_drivetrain = new Drivetrain(false);
   c_odometry = new Odometry(c_drivetrain);
+  c_arm = new ArmSubsystem(c_toml->get_table("arm"));
 
   //Commands
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
