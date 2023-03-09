@@ -169,7 +169,7 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
         targetLen
     );
 
-    Point cp = Point(0.0, 0.0, 0.0) - Vector(turretPt.x, turretPt.y, turretPt.z).unit() * constrainLen;
+    Point cp = Point(0.0, 0.0, 0.0) + Vector(turretPt.x, turretPt.y, turretPt.z).unit() * constrainLen;
 
     double c3 = atan2(cp.z, std::sqrt(cp.x * cp.x + cp.y * cp.y));
 
