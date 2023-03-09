@@ -224,7 +224,7 @@ double ArmSubsystem::getTurretAngle() {
 }
 
 double ArmSubsystem::getShoulderAngle() {
-    return m_shoulderAngleSensor.Get().value() * M_2_PI + config.shoulder.zeroOffset;
+    return m_shoulderAngleSensor.Get().value() * 2.0 * M_PI + config.shoulder.zeroOffset;
 }
 
 double ArmSubsystem::getElbowAngle() {
