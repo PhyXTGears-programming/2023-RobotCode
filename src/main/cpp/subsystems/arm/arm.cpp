@@ -147,10 +147,14 @@ Point ArmSubsystem::calcGripPos(
 }
 
 ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
-    double targetLen =  std::sqrt((std::pow(pt.x, 2) + std::pow(pt.y, 2) + std::pow(pt.z, 2))); // Line from shoulder to target
-    double targetToXAxisAng = atan2(pt.z, std::sqrt(pt.x * pt.x + pt.y * pt.y));
+    // See arm.h for diagram of robot arm angle reference conventions.
+    // desmos 2d IK solver demo: https://www.desmos.com/calculator/p3uouu2un2
 
-    double targetToBicepAng = std::acos(
+    double targetLen =  std::sqrt((std::pow(pt.x, 2) + std::pow(pt.y, 2) + std::pow(pt.z, 2))); // Line from shoulder to target
+
+    double c3 = atan2(pt.z, std::sqrt(pt.x * pt.x + pt.y * pt.y));
+
+    double c1 = std::acos(
         (Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
         - Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
         + targetLen * targetLen)
@@ -158,9 +162,9 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
     );
 
     // Solve IK:
-    double bicepToXAxisAng = targetToBicepAng + targetToXAxisAng;
+    double shoulderAngle = c1 + c3;
 
-    double bicepToForearmAng =
+    double elbowAngle =
         (std::numbers::pi / 2.0)
         - std::acos(
             (Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
@@ -168,9 +172,9 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
             + targetLen * targetLen)
             / (2.0 * Constants::Arm::k_forearmLenMeters * targetLen));
 
-    double turretToXZAng = std::atan2(pt.z, pt.x);
+    double turretAngle = std::atan2(-pt.x, pt.y);
 
-    return ArmPose(turretToXZAng, bicepToXAxisAng, bicepToForearmAng);
+    return ArmPose(turretAngle, shoulderAngle, elbowAngle);
 
 }
 
