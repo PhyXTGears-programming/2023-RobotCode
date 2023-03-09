@@ -173,12 +173,16 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
     double shoulderAngle = c1 + c3;
 
     double elbowAngle =
-        (std::numbers::pi / 2.0)
+        std::numbers::pi
         - std::acos(
-            (Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
-            - Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
-            + constrainLen * constrainLen)
-            / (2.0 * Constants::Arm::k_forearmLenMeters * constrainLen));
+            (
+                Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
+                - Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
+                + constrainLen * constrainLen
+            )
+            / (2.0 * Constants::Arm::k_bicepLenMeters * constrainLen)
+        )
+        - c1;
 
     double turretAngle = std::atan2(-cp.x, cp.y);
 
