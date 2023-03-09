@@ -195,7 +195,7 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
         )
         - c1;
 
-    double turretAngle = std::atan2(-cp.x, cp.y);
+    double turretAngle = std::atan2(cp.x, cp.y);
 
     return ArmPose(turretAngle, shoulderAngle, elbowAngle);
 
