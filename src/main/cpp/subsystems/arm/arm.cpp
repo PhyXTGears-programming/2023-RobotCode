@@ -13,6 +13,8 @@ const double k_ChassisXSize = 0.775; // meters
 const double k_ChassisYSize = 0.826; // meters
 const double k_ChassisZSize = 0.229; // meters
 
+const double k_TurretZOffset = 0.210; // meters
+
 const double k_PickupXSize = 0.076;  // meters
 const double k_PickupYSize = 0.340;  // meters
 const double k_PickupZSize = 1.000;  // meters
@@ -122,11 +124,12 @@ void ArmSubsystem::initialiseBoundary() {
 }
 
 Point ArmSubsystem::calcElbowPos(double turretAng, double shoulderAng) {
-    Point pt{
+    // Origin z is floor level.  Add turret z offset to calculated point.
+    Point pt = Point(
         Constants::Arm::k_bicepLenMeters * std::cos(shoulderAng) * std::sin(turretAng),
         Constants::Arm::k_bicepLenMeters * std::cos(shoulderAng) * std::cos(turretAng),
-        Constants::Arm::k_bicepLenMeters * std::sin(shoulderAng),
-    };
+        Constants::Arm::k_bicepLenMeters * std::sin(shoulderAng)
+    ) + Vector(0.0, 0.0, k_TurretZOffset);
 
     return pt;
 }
@@ -150,7 +153,15 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
     // See arm.h for diagram of robot arm angle reference conventions.
     // desmos 2d IK solver demo: https://www.desmos.com/calculator/p3uouu2un2
 
-    double targetLen =  std::sqrt((std::pow(pt.x, 2) + std::pow(pt.y, 2) + std::pow(pt.z, 2))); // Line from shoulder to target
+    // IK solver assumes base of turret is origin.  Adjust target point from
+    // robot origin to turret origin.
+    Point turretPt = pt - Vector(0.0, 0.0, k_TurretZOffset);
+
+    double targetLen =  std::sqrt(
+        std::pow(turretPt.x, 2)
+        + std::pow(turretPt.y, 2)
+        + std::pow(turretPt.z, 2)
+    ); // Line from shoulder to target
 
     // Constrain target point.
     double constrainLen = std::min(
@@ -158,7 +169,7 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
         targetLen
     );
 
-    Point cp = Point(0.0, 0.0, k_ChassisZSize) - Vector(pt.x, pt.y, pt.z).unit() * constrainLen;
+    Point cp = Point(0.0, 0.0, 0.0) - Vector(turretPt.x, turretPt.y, turretPt.z).unit() * constrainLen;
 
     double c3 = atan2(cp.z, std::sqrt(cp.x * cp.x + cp.y * cp.y));
 
