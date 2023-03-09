@@ -9,7 +9,6 @@
 class Odometry : frc2::SubsystemBase {
     public:
         Odometry(Drivetrain* drivetrain);
-        ~Odometry();
         void Periodic() override;
         void disableCalculation();
         void enableCalculation();
