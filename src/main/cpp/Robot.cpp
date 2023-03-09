@@ -5,16 +5,20 @@
 #include "Robot.h"
 
 #include <frc2/command/CommandScheduler.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 #include "Mandatory.h"
 
 #include <frc/Filesystem.h>
 
 #include <iostream>
+#include <sstream>
 
 #include "subsystems/drivetrain/drivetrain.h"
 #include "subsystems/drivetrain/odometry.h"
 #include "commands/drivetrain/driveTeleopCommand.h"
+
+#include "util/math.h"
 
 #include "external/cpptoml.h"
 
@@ -40,6 +44,8 @@ void Robot::RobotInit() {
 
   //Commands
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
+
+  m_gripTarget = c_arm->getGripPoint();
 }
 
 /**
@@ -51,7 +57,24 @@ void Robot::RobotInit() {
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
-  frc2::CommandScheduler::GetInstance().Run();
+    frc2::CommandScheduler::GetInstance().Run();
+
+    std::stringstream gripTargetStr;
+
+    gripTargetStr << std::fixed << std::setprecision(4)
+        << "(" << m_gripTarget.x
+        << ", " << m_gripTarget.y
+        << ", " << m_gripTarget.z
+        << ")";
+    frc::SmartDashboard::PutString("Test Pos (m)", gripTargetStr.str());
+
+    // Report calculated arm pose angles.  What the robot thinks the angles
+    // should be to reach gripper position.
+
+    ArmPose pose = c_arm->calcIKJointPoses(m_gripTarget);
+    frc::SmartDashboard::PutNumber("Test Turret Angle (deg)",   RAD_2_DEG(pose.turretAngle));
+    frc::SmartDashboard::PutNumber("Test Shoulder Angle (deg)", RAD_2_DEG(pose.shoulderAngle));
+    frc::SmartDashboard::PutNumber("Test Elbow Angle (deg)",    RAD_2_DEG(pose.elbowAngle));
 }
 
 /**
@@ -75,22 +98,46 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {
   // TODO: Make sure autonomous command is canceled first.
-  c_driveTeleopCommand->Schedule();
+  //c_driveTeleopCommand->Schedule();
+
+
+
 }
 
 /**
  * This function is called periodically during operator control.
  */
 void Robot::TeleopPeriodic() {
-  // Driver A button -> toggle field centric.
-  if (c_driverController->GetAButtonPressed()) {
-    c_drivetrain->toggleFieldCentric();
-  }
+    // Driver A button -> toggle field centric.
+    if (c_driverController->GetAButtonPressed()) {
+        c_drivetrain->toggleFieldCentric();
+    }
 
-  // Driver B button -> reset navx heading.
-  if (c_driverController->GetBButtonPressed()) {
-    c_drivetrain->resetNavxHeading();
-  }
+    // Driver B button -> reset navx heading.
+    if (c_driverController->GetBButtonPressed()) {
+        c_drivetrain->resetNavxHeading();
+    }
+
+    double leftX = c_operatorController->GetLeftX();
+    leftX = std::copysign(std::clamp(leftX * leftX, -1.0, 1.0), leftX);
+    leftX = std::abs(leftX < 0.1) ? 0.0 : leftX;
+    if (0.0 != leftX) {
+        m_gripTarget = m_gripTarget + Vector(leftX * 0.005, 0.0, 0.0);
+    }
+
+    double leftY = -c_operatorController->GetLeftY(); /* Invert so + is forward */
+    leftY = std::copysign(std::clamp(leftY * leftY, -1.0, 1.0), leftY);
+    if (0.0 != leftY) {
+        m_gripTarget = m_gripTarget + Vector(0.0, leftY * 0.005, 0.0);
+    }
+
+    double rightY = -c_operatorController->GetRightY();    /* Invert so + is up */
+    rightY = std::copysign(std::clamp(rightY * rightY, -1.0, 1.0), rightY);
+    if (0.0 != rightY) {
+        m_gripTarget = m_gripTarget + Vector(0.0, 0.0, rightY * 0.005);
+    }
+
+    c_arm->moveToPoint(m_gripTarget);
 }
 
 /**

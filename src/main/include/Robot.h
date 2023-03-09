@@ -52,4 +52,6 @@ class Robot : public frc::TimedRobot {
 
   //Commands
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;
+
+  Point m_gripTarget;
 };
