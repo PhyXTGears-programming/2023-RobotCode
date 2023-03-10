@@ -360,10 +360,13 @@ void ArmSubsystem::setWristRollAngle(double angle) {
     angle = std::clamp(angle, config.wrist.limit.lo, config.wrist.limit.hi);
 
     double da = angle - getWristRollAngle();
-    if (isNearZero(da)) {
+    if (isNearZero(da, 0.01)) {
         m_gripperRotateMotor.Set(0.0);
     } else {
-        m_gripperRotateMotor.Set(std::copysign(0.05, da));
+        m_gripperRotateMotor.Set(std::clamp(
+            da + std::copysign(0.05, da),
+            -0.2, 0.2
+        ));
     }
 }
 
@@ -371,10 +374,13 @@ void ArmSubsystem::setGrip(double grip) {
     grip = std::clamp(grip, config.grip.limit.lo, config.grip.limit.hi);
 
     double dx = grip - getGrip();
-    if (isNearZero(dx)) {
+    if (isNearZero(dx, 0.015 /* meters */)) {
         m_gripperGraspMotor.Set(0.0);
     } else {
-        m_gripperGraspMotor.Set(std::copysign(0.05, dx));
+        m_gripperGraspMotor.Set(std::clamp(
+            dx + std::copysign(0.02, dx),
+            -0.2, 0.2
+        ));
     }
 }
 
