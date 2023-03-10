@@ -121,6 +121,25 @@ void AutoSequenceCommand::dispatcher(std::string name){
     }
 }
 #endif
+#ifndef DEBUG_MODE
+void AutoSequenceCommand::dispatcher(std::string name){
+    if(name == "halt"){
+        c_driveAutoCommand->Cancel();
+    } else if (name == "arm_top"){
+        // arm top command
+    } else if (name == "arm_mid"){
+        // arm mid command
+    } else if (name == "arm_hybrid"){
+        // arm hybrid command
+    } else if (name == "grip_open"){
+        // grip open command
+    } else if (name == "grip_close"){
+        // grip open command
+    } else {
+        // do nothing. hope and pray this did not get past the testing phase :)
+    }
+}
+#endif
 
 void AutoSequenceCommand::End(bool interrupted){}
 
