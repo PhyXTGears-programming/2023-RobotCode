@@ -133,7 +133,7 @@ void ArmSubsystem::initialiseBoundary() {
     std::shared_ptr<Boundary> floorNoGoZone = std::make_shared<BoxBoundary>(
         -5.0,     5.0,
         -5.0,     5.0,
-         0.0254, -5.0   /* keep gripper 1 inch from floor */
+        -5.0,     0.0254   /* keep gripper 1 inch from floor */
     );
 
     std::shared_ptr<ComposeBoundary> defNoGoZone = std::make_shared<ComposeBoundary>(std::vector{
