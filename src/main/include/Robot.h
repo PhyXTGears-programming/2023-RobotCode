@@ -19,6 +19,13 @@
 
 #include "external/cpptoml.h"
 
+//temporary auto
+#ifdef COMPETITION_MODE
+#include <frc2/command/SequentialCommandGroup.h>
+#include <frc2/command/StartEndCommand.h>
+#include <frc2/command/ParallelRaceGroup.h>
+#endif
+
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
@@ -50,4 +57,12 @@ class Robot : public frc::TimedRobot {
 
   //Commands
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;
+
+  //temporary auto
+  #ifdef COMPETITION_MODE
+  frc::Timer* timerOne;
+  frc::Timer* timerTwo;
+  frc2::FunctionalCommand* outOfSafeZone;
+  frc2::FunctionalCommand* ontoPlatform;
+  #endif
 };
