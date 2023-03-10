@@ -121,6 +121,8 @@ void Robot::TeleopPeriodic() {
 
     const double maxPointSpeed = 0.005;
     const double maxPointRotSpeed = 2.0 * M_PI / 10.0 * 0.02;   // radians per second in 20ms.
+    const double maxWristRotSpeed = 2.0 * M_PI / 2.0 * 0.2;
+    const double maxGripSpeed = 0.1;
 
     Vector gripVec(m_gripTarget.x, m_gripTarget.y, m_gripTarget.z);
     double gripMag = gripVec.len();
@@ -166,6 +168,43 @@ void Robot::TeleopPeriodic() {
     }
 
     c_arm->moveToPoint(m_gripTarget);
+
+    // Rotate wrist clockwise or counterclockwise.
+    {
+        double leftTrigger = c_operatorController->GetLeftTriggerAxis();
+        double rightTrigger = c_operatorController->GetRightTriggerAxis();
+        double trigger = leftTrigger - rightTrigger;
+        trigger = std::copysign(std::clamp(trigger * trigger, -1.0, 1.0), trigger);
+        trigger = std::abs(trigger) < 0.1 ? 0.0 : trigger;
+
+        // Use current angle as default so wrist doesn't move wildly upon enable.
+        double wristTargetAngle = c_arm->getWristRollAngle();
+
+        if (0.0 != trigger) {
+            // (+) trigger should rotate wrist counter-clockwise, looking down forearm.
+            wristTargetAngle += trigger * maxWristRotSpeed;
+        }
+
+        // Move/hold wrist angle.
+        c_arm->setWristRollAngle(wristTargetAngle);
+    }
+
+    // Open and close gripper.
+    {
+        double bumper =
+            (c_operatorController->GetRightBumper() ? 1.0 : 0.0)
+            - (c_operatorController->GetLeftBumper() ? 1.0 : 0.0);
+
+        // Use current position as default so grip doesn't move wildly upon enable.
+        double gripTargetPos = c_arm->getGrip();
+
+        if (0.0 != bumper) {
+            gripTargetPos += bumper * maxGripSpeed;
+        }
+
+        // Move/hold grip.
+        c_arm->setGrip(gripTargetPos);
+    }
 }
 
 /**
