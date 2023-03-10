@@ -67,6 +67,7 @@ void Robot::RobotPeriodic() {
         << ", " << m_gripTarget.z
         << ")";
     frc::SmartDashboard::PutString("Test Pos (m)", gripTargetStr.str());
+    frc::SmartDashboard::PutBoolean("Test Point Is Safe", c_arm->isPointSafe(m_gripTarget));
 
     // Report calculated arm pose angles.  What the robot thinks the angles
     // should be to reach gripper position.
