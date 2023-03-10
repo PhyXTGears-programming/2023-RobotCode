@@ -44,6 +44,8 @@ void ArmSubsystem::Periodic() {
     // Move shoulder or hold position.
     if (nullptr != m_shoulderPid) {
         double output = m_shoulderPid->Calculate(getShoulderAngle());
+        // Reverse motor direction.
+        output = -output;
         m_lowJointMotor.Set(output);
     }
 
