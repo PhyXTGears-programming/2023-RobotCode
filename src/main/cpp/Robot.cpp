@@ -202,6 +202,8 @@ void Robot::TeleopPeriodic() {
             gripTargetPos += bumper * maxGripSpeed;
         }
 
+        frc::SmartDashboard::PutNumber("Test Grip (m)", gripTargetPos);
+
         // Move/hold grip.
         c_arm->setGrip(gripTargetPos);
     }
