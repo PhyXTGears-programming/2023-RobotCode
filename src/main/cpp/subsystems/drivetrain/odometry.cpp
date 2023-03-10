@@ -13,6 +13,14 @@ Odometry::Odometry(Drivetrain* drivetrain){
     m_previousTime = 0;
 }
 
+Odometry::~Odometry(){
+    m_position.x = 0;
+    m_position.y = 0;
+    m_position.z = 0;
+    c_drivetrain = 0; // just remove the pointer because we still need the drivetrain for teleop
+    m_previousTime = 0;
+}
+
 void Odometry::setPosition(double x, double y){
     m_position.x = x;
     m_position.y = y;
