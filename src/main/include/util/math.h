@@ -3,4 +3,4 @@
 // MACROS
 #define RAD_2_DEG(rad) ((rad) * 180.0 / M_PI)
 
-bool isNearZero(double val);
+bool isNearZero(double val, double tolerance = 0.001);
