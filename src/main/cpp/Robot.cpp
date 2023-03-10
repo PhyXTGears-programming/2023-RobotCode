@@ -121,19 +121,21 @@ void Robot::TeleopPeriodic() {
 
     double leftX = c_operatorController->GetLeftX();
     leftX = std::copysign(std::clamp(leftX * leftX, -1.0, 1.0), leftX);
-    leftX = std::abs(leftX < 0.1) ? 0.0 : leftX;
+    leftX = std::abs(leftX) < 0.1 ? 0.0 : leftX;
     if (0.0 != leftX) {
         m_gripTarget = m_gripTarget + Vector(leftX * 0.005, 0.0, 0.0);
     }
 
     double leftY = -c_operatorController->GetLeftY(); /* Invert so + is forward */
     leftY = std::copysign(std::clamp(leftY * leftY, -1.0, 1.0), leftY);
+    leftY = std::abs(leftY) < 0.1 ? 0.0 : leftY;
     if (0.0 != leftY) {
         m_gripTarget = m_gripTarget + Vector(0.0, leftY * 0.005, 0.0);
     }
 
     double rightY = -c_operatorController->GetRightY();    /* Invert so + is up */
     rightY = std::copysign(std::clamp(rightY * rightY, -1.0, 1.0), rightY);
+    rightY = std::abs(rightY) < 0.1 ? 0.0 : rightY;
     if (0.0 != rightY) {
         m_gripTarget = m_gripTarget + Vector(0.0, 0.0, rightY * 0.005);
     }
