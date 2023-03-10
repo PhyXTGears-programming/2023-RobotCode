@@ -195,10 +195,10 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
     double c3 = atan2(cp.z, std::sqrt(cp.x * cp.x + cp.y * cp.y));
 
     double c1 = std::acos(
-        (Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
-        - Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
+        (Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
+        - Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
         + constrainLen * constrainLen)
-        / (2.0 * Constants::Arm::k_forearmLenMeters * constrainLen)
+        / (2.0 * Constants::Arm::k_bicepLenMeters * constrainLen)
     );
 
     // Solve IK:
@@ -208,11 +208,11 @@ ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
         std::numbers::pi
         - std::acos(
             (
-                Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
-                - Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
+                Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
+                - Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
                 + constrainLen * constrainLen
             )
-            / (2.0 * Constants::Arm::k_bicepLenMeters * constrainLen)
+            / (2.0 * Constants::Arm::k_forearmLenMeters * constrainLen)
         )
         - c1;
 
