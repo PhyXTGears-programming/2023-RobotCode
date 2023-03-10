@@ -120,25 +120,48 @@ void Robot::TeleopPeriodic() {
     }
 
     const double maxPointSpeed = 0.005;
+    const double maxPointRotSpeed = 2.0 * M_PI / 10.0 * 0.02;   // radians per second in 20ms.
 
+    Vector gripVec(m_gripTarget.x, m_gripTarget.y, m_gripTarget.z);
+    double gripMag = gripVec.len();
+    double gripDir = std::atan2(gripVec.x, gripVec.y);  // 0 deg == y axis
+
+    // Rotate turret. Speed of rotation is reduced the further the arm reaches.
     double leftX = c_operatorController->GetLeftX();
     leftX = std::copysign(std::clamp(leftX * leftX, -1.0, 1.0), leftX);
     leftX = std::abs(leftX) < 0.1 ? 0.0 : leftX;
     if (0.0 != leftX) {
-        m_gripTarget = m_gripTarget + Vector(leftX * maxPointSpeed, 0.0, 0.0);
+        // (+) leftX should move turret clockwise.
+        gripDir = gripDir + leftX * maxPointRotSpeed / gripMag;
+        Vector offset(
+            gripMag * std::cos(gripDir),
+            gripMag * std::sin(gripDir),
+            0.0
+        );
+        m_gripTarget = m_gripTarget + offset;
     }
 
+    // Extend/retract gripper from/to turret.
     double leftY = -c_operatorController->GetLeftY(); /* Invert so + is forward */
     leftY = std::copysign(std::clamp(leftY * leftY, -1.0, 1.0), leftY);
     leftY = std::abs(leftY) < 0.1 ? 0.0 : leftY;
     if (0.0 != leftY) {
-        m_gripTarget = m_gripTarget + Vector(0.0, leftY * maxPointSpeed, 0.0);
+        // (+) leftY should move away from turret.
+        gripMag = gripMag + leftY * maxPointSpeed;
+        Vector offset(
+            gripMag * std::cos(gripDir),
+            gripMag * std::sin(gripDir),
+            0.0
+        );
+        m_gripTarget = m_gripTarget + offset;
     }
 
+    // Move gripper up or down.
     double rightY = -c_operatorController->GetRightY();    /* Invert so + is up */
     rightY = std::copysign(std::clamp(rightY * rightY, -1.0, 1.0), rightY);
     rightY = std::abs(rightY) < 0.1 ? 0.0 : rightY;
     if (0.0 != rightY) {
+        // (+) rightY should move gripper up.
         m_gripTarget = m_gripTarget + Vector(0.0, 0.0, rightY * maxPointSpeed);
     }
 
