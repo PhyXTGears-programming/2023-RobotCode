@@ -167,7 +167,7 @@ void Robot::TeleopPeriodic() {
         m_gripTarget = m_gripTarget + Vector(0.0, 0.0, rightY * maxPointSpeed);
     }
 
-    c_arm->moveToPoint(m_gripTarget);
+    // FIXME: c_arm->moveToPoint(m_gripTarget);
 
     // Rotate wrist clockwise or counterclockwise.
     {
