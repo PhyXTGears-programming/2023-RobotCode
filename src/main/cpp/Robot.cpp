@@ -101,7 +101,7 @@ void Robot::TeleopInit() {
   // TODO: Make sure autonomous command is canceled first.
   //c_driveTeleopCommand->Schedule();
 
-
+  m_gripTarget = c_arm->getGripPoint();
 
 }
 
