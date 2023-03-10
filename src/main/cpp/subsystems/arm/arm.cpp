@@ -422,28 +422,20 @@ void ArmSubsystem::loadConfig(std::shared_ptr<cpptoml::table> toml) {
 
     // Load raw limits and convert to radians or meters.
 
-    config.turret.limit.lo = requireTomlDouble(toml, "turret.limit.lo")
-        * config.turret.sensorToRadians;
-    config.turret.limit.hi = requireTomlDouble(toml, "turret.limit.hi")
-        * config.turret.sensorToRadians;
+    config.turret.limit.lo = DEG_2_RAD(requireTomlDouble(toml, "turret.limit.lo"));
+    config.turret.limit.hi = DEG_2_RAD(requireTomlDouble(toml, "turret.limit.hi"));
 
-    config.shoulder.limit.lo = requireTomlDouble(toml, "shoulder.limit.lo");
-    config.shoulder.limit.hi = requireTomlDouble(toml, "shoulder.limit.hi");
+    config.shoulder.limit.lo = DEG_2_RAD(requireTomlDouble(toml, "shoulder.limit.lo"));
+    config.shoulder.limit.hi = DEG_2_RAD(requireTomlDouble(toml, "shoulder.limit.hi"));
 
-    config.elbow.limit.lo = requireTomlDouble(toml, "elbow.limit.lo")
-        * config.elbow.sensorToRadians;
-    config.elbow.limit.hi = requireTomlDouble(toml, "elbow.limit.hi")
-        * config.elbow.sensorToRadians;
+    config.elbow.limit.lo = DEG_2_RAD(requireTomlDouble(toml, "elbow.limit.lo"));
+    config.elbow.limit.hi = DEG_2_RAD(requireTomlDouble(toml, "elbow.limit.hi"));
 
-    config.wrist.limit.lo = requireTomlDouble(toml, "wrist.limit.lo")
-        * config.wrist.sensorToRadians;
-    config.wrist.limit.hi = requireTomlDouble(toml, "wrist.limit.hi")
-        * config.wrist.sensorToRadians;
+    config.wrist.limit.lo = DEG_2_RAD(requireTomlDouble(toml, "wrist.limit.lo"));
+    config.wrist.limit.hi = DEG_2_RAD(requireTomlDouble(toml, "wrist.limit.hi"));
 
-    config.grip.limit.lo = requireTomlDouble(toml, "grip.limit.lo")
-        * config.grip.sensorToMeters;
-    config.grip.limit.hi = requireTomlDouble(toml, "grip.limit.hi")
-        * config.grip.sensorToMeters;
+    config.grip.limit.lo = requireTomlDouble(toml, "grip.limit.lo");
+    config.grip.limit.hi = requireTomlDouble(toml, "grip.limit.hi");
 
     config.grip.setpoint.open = requireTomlDouble(toml, "grip.setpoint.open");
     config.grip.setpoint.close = requireTomlDouble(toml, "grip.setpoint.close");
