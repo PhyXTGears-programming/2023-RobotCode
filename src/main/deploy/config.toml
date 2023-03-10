@@ -11,10 +11,10 @@
     shoulder.limit.hi = 96.0
     shoulder.zeroOffsetRadians = 0.131
 
-    shoulder.pid.p = 0.001
-    shoulder.pid.i = 0.001
+    shoulder.pid.p = 0.35
+    shoulder.pid.i = 0.002
     shoulder.pid.d = 0.000
-    shoulder.pid.tolerance = 0.05
+    shoulder.pid.tolerance = 0.10
 
     # Limits are in degrees
     elbow.limit.lo = 15.0
