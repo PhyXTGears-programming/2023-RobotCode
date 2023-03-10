@@ -44,7 +44,7 @@ void ArmSubsystem::Periodic() {
     // Move shoulder or hold position.
     if (nullptr != m_shoulderPid) {
         double output = m_shoulderPid->Calculate(getShoulderAngle());
-        m_turretMotor.Set(output);
+        m_lowJointMotor.Set(output);
     }
 
     frc::SmartDashboard::PutNumber("Turret Angle (deg)",     RAD_2_DEG(getTurretAngle()));
