@@ -314,7 +314,7 @@ void ArmSubsystem::setTurretAngle(double angle) {
     if (isNearZero(da, 0.02)) {
         m_turretMotor.Set(0.0);
     } else {
-        m_turretMotor.Set(std::copysign(0.05, da));
+        m_turretMotor.Set(std::clamp(da, -0.1, 0.1));
     }
 }
 
@@ -341,7 +341,7 @@ void ArmSubsystem::setElbowAngle(double angle) {
     if (isNearZero(da, 0.02)) {
         m_midJointMotor.Set(0.0);
     } else {
-        m_midJointMotor.Set(std::copysign(0.05, da));
+        m_midJointMotor.Set(std::clamp(da, -0.1, 0.1));
     }
 }
 
