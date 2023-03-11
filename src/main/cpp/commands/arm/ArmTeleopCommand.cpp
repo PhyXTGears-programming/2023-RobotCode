@@ -34,8 +34,8 @@ void ArmTeleopCommand::Execute() {
         // Rotate turret. Speed of rotation is reduced the further the arm reaches.
         double leftX = c_operatorController->GetLeftX();
         // Square input to improve fidelity.
-        leftX = std::copysign(std::clamp(leftX * leftX, -1.0, 1.0), leftX);
         leftX = DEADZONE(leftX);
+        leftX = std::copysign(std::clamp(leftX * leftX, -1.0, 1.0), leftX);
         if (0.0 != leftX) {
             // (+) leftX should move turret clockwise.
             gripDir = gripDir + leftX * k_maxPointRotSpeed / gripMag;
@@ -50,8 +50,8 @@ void ArmTeleopCommand::Execute() {
         // Extend/retract gripper from/to turret.
         double leftY = -c_operatorController->GetLeftY(); /* Invert so + is forward */
         // Square input to improve fidelity.
-        leftY = std::copysign(std::clamp(leftY * leftY, -1.0, 1.0), leftY);
         leftY = DEADZONE(leftY);
+        leftY = std::copysign(std::clamp(leftY * leftY, -1.0, 1.0), leftY);
         if (0.0 != leftY) {
             // (+) leftY should move away from turret.
             gripMag = gripMag + leftY * k_maxPointSpeed;
@@ -82,8 +82,8 @@ void ArmTeleopCommand::Execute() {
         double rightTrigger = c_operatorController->GetRightTriggerAxis();
         double trigger = leftTrigger - rightTrigger;
         // Square input to improve fidelity.
-        trigger = std::copysign(std::clamp(trigger * trigger, -1.0, 1.0), trigger);
         trigger = DEADZONE(trigger);
+        trigger = std::copysign(std::clamp(trigger * trigger, -1.0, 1.0), trigger);
 
         // Use current angle as default so wrist doesn't move wildly upon enable.
         double wristTargetAngle = c_arm->getWristRollAngle();
