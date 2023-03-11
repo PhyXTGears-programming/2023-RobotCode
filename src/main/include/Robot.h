@@ -16,6 +16,8 @@
 #include "subsystems/arm/arm.h"
 #include "subsystems/drivetrain/drivetrain.h"
 #include "subsystems/drivetrain/odometry.h"
+
+#include "commands/arm/ArmTeleopCommand.h"
 #include "commands/drivetrain/driveTeleopCommand.h"
 
 #include "external/cpptoml.h"
@@ -58,6 +60,7 @@ class Robot : public frc::TimedRobot {
   ArmSubsystem* c_arm = nullptr;
 
   //Commands
+  ArmTeleopCommand* c_armTeleopCommand = nullptr;
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;
   
   //temporary auto
