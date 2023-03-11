@@ -24,7 +24,7 @@
 
 //temporary auto
 #ifdef COMPETITION_MODE
-#include <frc2/command/SequentialCommandGroup.h>
+#include <frc2/command/CommandBase.h>
 #include <frc2/command/StartEndCommand.h>
 #include <frc2/command/ParallelRaceGroup.h>
 #endif
@@ -65,9 +65,6 @@ class Robot : public frc::TimedRobot {
   
   //temporary auto
   #ifdef COMPETITION_MODE
-  frc::Timer* timerOne;
-  frc::Timer* timerTwo;
-  frc2::FunctionalCommand* outOfSafeZone;
-  frc2::FunctionalCommand* ontoPlatform;
+  std::unique_ptr<frc2::CommandBase> c_simpleAuto{nullptr};
   #endif
 };
