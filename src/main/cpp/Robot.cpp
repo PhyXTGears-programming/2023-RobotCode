@@ -94,12 +94,12 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
-  c_simpleAuto->Schedule();
+  //c_simpleAuto->Schedule();
   // TODO: Make sure to cancel autonomous command in teleop init.
 }
 
 void Robot::AutonomousPeriodic() {
-  c_drivetrain->Periodic();// update drivetrain no matter what
+  // c_drivetrain->Periodic();// update drivetrain no matter what
 }
 
 void Robot::TeleopInit() {
