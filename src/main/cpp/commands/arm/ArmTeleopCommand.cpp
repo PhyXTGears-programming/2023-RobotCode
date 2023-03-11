@@ -40,8 +40,8 @@ void ArmTeleopCommand::Execute() {
             // (+) leftX should move turret clockwise.
             gripDir = gripDir + leftX * k_maxPointRotSpeed / gripMag;
             Vector offset(
-                gripMag * std::cos(gripDir),
                 gripMag * std::sin(gripDir),
+                gripMag * std::cos(gripDir),
                 0.0
             );
             m_target = m_target + offset;
@@ -56,8 +56,8 @@ void ArmTeleopCommand::Execute() {
             // (+) leftY should move away from turret.
             gripMag = gripMag + leftY * k_maxPointSpeed;
             Vector offset(
-                gripMag * std::cos(gripDir),
                 gripMag * std::sin(gripDir),
+                gripMag * std::cos(gripDir),
                 0.0
             );
             m_target = m_target + offset;
