@@ -23,16 +23,16 @@
     elbow.sensorToRadians = 24.54
 
     # Limits are in degrees
-    wrist.limit.lo = 0.650
-    wrist.limit.hi = 0.697
-    wrist.zeroOffsetRadians = -43.446
-    wrist.sensorToRadians = 66.84
+    wrist.limit.lo = 3.0
+    wrist.limit.hi = 177.0
+    wrist.zeroOffsetRadians = -39.511
+    wrist.sensorToRadians = 60.415
 
     # Limits are in meters
-    grip.limit.lo = 0.511
-    grip.limit.hi = 0.522
+    grip.limit.lo = 0.01
+    grip.limit.hi = 0.260
     # Grip closed is considered 0 meters.
-    grip.zeroOffsetMeters = 12.338
-    grip.sensorToMeters = -23.636
+    grip.zeroOffsetMeters = -0.704
+    grip.sensorToMeters = 1.688
     grip.setpoint.open = 0
     grip.setpoint.close = 0
