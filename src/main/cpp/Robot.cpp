@@ -50,22 +50,21 @@ void Robot::RobotInit() {
 
   //temp auto
   #ifdef COMPETITION_MODE
-  timerOne = new frc::Timer();
-  timerTwo = new frc::Timer();
-  outOfSafeZone = new frc2::FunctionalCommand{
-    [&](){timerOne->Reset();},
-    [&](){c_drivetrain->setMotion(0,0.5,0);},
-    [&](bool interrupted){c_drivetrain->setMotion(0,0,0);},
-    [&](){return timerOne->AdvanceIfElapsed(3.0_s);},
+  auto outOfSafeZone = frc2::StartEndCommand{
+    [&] () { c_drivetrain->setMotion(0,0.5,0); },
+    [&] () { c_drivetrain->setMotion(0,0,0); },
+    { c_drivetrain }
+  }.ToPtr();
+
+  auto ontoPlatform = frc2::StartEndCommand{
+    [&] () { c_drivetrain->setMotion(0,-0.5,0); },
+    [&] () { c_drivetrain->setMotion(0,0,0); },
     {c_drivetrain}
-  };
-  ontoPlatform = new frc2::FunctionalCommand{
-    [&](){timerTwo->Reset();},
-    [&](){c_drivetrain->setMotion(0,-0.5,0);},
-    [&](bool interrupted){c_drivetrain->setMotion(0,0,0);},
-    [&](){return timerTwo->AdvanceIfElapsed(2.0_s);},
-    {c_drivetrain}
-  };
+  }.ToPtr();
+
+  c_simpleAuto = std::move(outOfSafeZone).WithTimeout(3.0_s)
+    .AndThen(std::move(ontoPlatform).WithTimeout(2.0_s))
+    .Unwrap();
   #endif
 }
 
@@ -95,21 +94,18 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
-  outOfSafeZone->Schedule();
+  c_simpleAuto->Schedule();
   // TODO: Make sure to cancel autonomous command in teleop init.
 }
 
 void Robot::AutonomousPeriodic() {
-  if(!outOfSafeZone->IsScheduled()){ // check to see if driving out of the save zone is still running (don't want to drive in opposite directions at the same time)
-    if(!ontoPlatform->IsScheduled()){ // check to see if we have started the movement onto the platform (should not start it multiple times)
-      ontoPlatform->Schedule();
-    }
-  }
   c_drivetrain->Periodic();// update drivetrain no matter what
 }
 
 void Robot::TeleopInit() {
-  // TODO: Make sure autonomous command is canceled first.
+  // Make sure autonomous command is canceled first.
+  c_simpleAuto->Cancel();
+
   c_armTeleopCommand->Schedule();
   c_driveTeleopCommand->Schedule();
 }
