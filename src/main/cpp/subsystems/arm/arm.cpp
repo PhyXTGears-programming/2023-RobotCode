@@ -56,11 +56,13 @@ void ArmSubsystem::Periodic() {
     frc::SmartDashboard::PutNumber("Grip Distance (meters)", getGrip());
 
     // Raw values
+    /* DEBUG ARM *
     frc::SmartDashboard::PutNumber("Raw: Turret Angle (V)",     m_turretAngleSensor.Get());
     frc::SmartDashboard::PutNumber("Raw: Shoulder Angle (deg)", m_shoulderAngleSensor.Get().value() * 360.0);
     frc::SmartDashboard::PutNumber("Raw: Elbow Angle (V)",      m_elbowAngleSensor.Get());
     frc::SmartDashboard::PutNumber("Raw: Wrist Roll Angle (V)", m_wristRollAngleSensor.Get());
     frc::SmartDashboard::PutNumber("Raw: Grip Distance (V)",    m_gripSensor.Get());
+    /* */
 
     // Report calculated gripper position.
 
@@ -77,10 +79,12 @@ void ArmSubsystem::Periodic() {
     // Report calculated arm pose angles.  What the robot thinks the angles
     // should be to reach gripper position.
 
+    /*  DEBUG ARM *
     ArmPose pose = calcIKJointPoses(gripPos);
     frc::SmartDashboard::PutNumber("IK Turret Angle (deg)",   RAD_2_DEG(pose.turretAngle));
     frc::SmartDashboard::PutNumber("IK Shoulder Angle (deg)", RAD_2_DEG(pose.shoulderAngle));
     frc::SmartDashboard::PutNumber("IK Elbow Angle (deg)",    RAD_2_DEG(pose.elbowAngle));
+    /* */
 }
 
 void ArmSubsystem::initialiseBoundary() {
