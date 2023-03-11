@@ -85,6 +85,12 @@ void ArmSubsystem::Periodic() {
     frc::SmartDashboard::PutNumber("IK Shoulder Angle (deg)", RAD_2_DEG(pose.shoulderAngle));
     frc::SmartDashboard::PutNumber("IK Elbow Angle (deg)",    RAD_2_DEG(pose.elbowAngle));
     /* */
+
+    frc::SmartDashboard::PutNumber("Turret Current (A)", m_turretMotor.GetOutputCurrent());
+    frc::SmartDashboard::PutNumber("Shoulder Current (A)", m_lowJointMotor.GetOutputCurrent());
+    frc::SmartDashboard::PutNumber("Elbow Current (A)", m_midJointMotor.GetOutputCurrent());
+    frc::SmartDashboard::PutNumber("Wrist Current (A)", m_gripperRotateMotor.GetOutputCurrent());
+    frc::SmartDashboard::PutNumber("Grip Current (A)", m_gripperGraspMotor.GetOutputCurrent());
 }
 
 void ArmSubsystem::initialiseBoundary() {
