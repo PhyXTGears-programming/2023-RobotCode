@@ -50,7 +50,16 @@ void Robot::TeleopInit() {
 /**
  * This function is called periodically during operator control.
  */
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  if(c_calibrationController->GetAButtonPressed()){
+    c_calibration->turnOnMotors();
+  } else if(c_calibrationController->GetAButtonReleased()){
+    c_calibration->turnOffMotors();
+  }
+  if(c_calibrationController->GetBButtonPressed()){
+    c_calibration->resetEncoders();
+  }
+}
 
 /**
  * This function is called periodically during test mode.
