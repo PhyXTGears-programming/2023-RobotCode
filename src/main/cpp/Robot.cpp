@@ -106,7 +106,7 @@ void Robot::TeleopInit() {
   // Make sure autonomous command is canceled first.
   c_simpleAuto->Cancel();
 
-  c_armTeleopCommand->Schedule();
+  //c_armTeleopCommand->Schedule();
   c_driveTeleopCommand->Schedule();
 }
 
