@@ -40,7 +40,7 @@ void Robot::RobotInit() {
   c_operatorController = new frc::XboxController(Interfaces::k_operatorXboxController);
 
   //Subsystems
-  c_drivetrain = new Drivetrain(false);
+  c_drivetrain = new Drivetrain(true);
   c_odometry = new Odometry(c_drivetrain);
   c_arm = new ArmSubsystem(c_toml->get_table("arm"));
 
@@ -108,8 +108,8 @@ void Robot::TeleopInit() {
 
   //c_armTeleopCommand->Schedule();
   c_driveTeleopCommand->Schedule();
+  c_drivetrain->enableFieldCentric();
 }
-
 /**
  * This function is called periodically during operator control.
  */
