@@ -45,6 +45,7 @@ void Robot::RobotInit() {
   c_arm = new ArmSubsystem(c_toml->get_table("arm"));
 
   //Commands
+  c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
 
   //temp auto
@@ -109,6 +110,7 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {
   // TODO: Make sure autonomous command is canceled first.
+  c_armTeleopCommand->Schedule();
   c_driveTeleopCommand->Schedule();
 }
 
