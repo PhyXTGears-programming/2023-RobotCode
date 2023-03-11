@@ -36,7 +36,8 @@ void DriveTeleopCommand::Execute() {
     c_drivetrain->setMotion(
       -DEADZONE(c_driverController->GetLeftX()) * speedFactor,
       DEADZONE(c_driverController->GetLeftY()) * speedFactor,
-      DEADZONE(c_driverController->GetRightX()) * Constants::k_maxSpinSpeed
+      // Reverse rotation so right is clockwise robot motion.
+      -DEADZONE(c_driverController->GetRightX()) * Constants::k_maxSpinSpeed
     );
 }
 
