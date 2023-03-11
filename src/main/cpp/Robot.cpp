@@ -18,6 +18,12 @@
 
 #include "external/cpptoml.h"
 
+#ifdef COMPETITION_MODE
+#include <frc2/command/SequentialCommandGroup.h>
+#include <frc2/command/Command.h>
+#include <frc/Timer.h>
+#endif
+
 void Robot::RobotInit() {
   try{
     c_toml = cpptoml::parse_file(frc::filesystem::GetDeployDirectory()+"/config.toml");
@@ -36,6 +42,26 @@ void Robot::RobotInit() {
 
   //Commands
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
+
+  //temp auto
+  #ifdef COMPETITION_MODE
+  timerOne = new frc::Timer();
+  timerTwo = new frc::Timer();
+  outOfSafeZone = new frc2::FunctionalCommand{
+    [&](){timerOne->Reset();},
+    [&](){c_drivetrain->setMotion(0,0.5,0);},
+    [&](bool interrupted){c_drivetrain->setMotion(0,0,0);},
+    [&](){return timerOne->AdvanceIfElapsed(3.0_s);},
+    {c_drivetrain}
+  };
+  ontoPlatform = new frc2::FunctionalCommand{
+    [&](){timerTwo->Reset();},
+    [&](){c_drivetrain->setMotion(0,-0.5,0);},
+    [&](bool interrupted){c_drivetrain->setMotion(0,0,0);},
+    [&](){return timerTwo->AdvanceIfElapsed(2.0_s);},
+    {c_drivetrain}
+  };
+  #endif
 }
 
 /**
@@ -64,10 +90,18 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
+  outOfSafeZone->Schedule();
   // TODO: Make sure to cancel autonomous command in teleop init.
 }
 
-void Robot::AutonomousPeriodic() {}
+void Robot::AutonomousPeriodic() {
+  if(!outOfSafeZone->IsScheduled()){ // check to see if driving out of the save zone is still running (don't want to drive in opposite directions at the same time)
+    if(!ontoPlatform->IsScheduled()){ // check to see if we have started the movement onto the platform (should not start it multiple times)
+      ontoPlatform->Schedule();
+    }
+  }
+  c_drivetrain->Periodic();// update drivetrain no matter what
+}
 
 void Robot::TeleopInit() {
   // TODO: Make sure autonomous command is canceled first.
