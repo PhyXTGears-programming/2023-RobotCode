@@ -13,6 +13,7 @@
 
 #include <frc/XboxController.h>
 
+#include "subsystems/arm/arm.h"
 #include "subsystems/drivetrain/drivetrain.h"
 #include "subsystems/drivetrain/odometry.h"
 #include "commands/drivetrain/driveTeleopCommand.h"
@@ -54,6 +55,7 @@ class Robot : public frc::TimedRobot {
   //Subsystems
   Drivetrain* c_drivetrain = nullptr;
   Odometry* c_odometry = nullptr;
+  ArmSubsystem* c_arm = nullptr;
 
   //Commands
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;

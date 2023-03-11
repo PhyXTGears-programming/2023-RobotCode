@@ -4,9 +4,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#include "util/point.h"
-#include "util/polar.h"
-
 #include "subsystems/drivetrain/swerveWheel.h"
 #include "subsystems/drivetrain/swerveWheelTypes.h"
 

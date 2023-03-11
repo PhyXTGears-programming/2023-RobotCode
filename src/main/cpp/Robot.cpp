@@ -28,7 +28,10 @@ void Robot::RobotInit() {
   try{
     c_toml = cpptoml::parse_file(frc::filesystem::GetDeployDirectory()+"/config.toml");
   } catch (cpptoml::parse_exception & ex){
-    std::cerr << "Unable to open file: config.toml" << std::endl;
+    std::cerr << "Unable to open file: config.toml"
+        << std::endl
+        << ex.what()
+        << std::endl;
     exit(1);
   }
   
@@ -39,6 +42,7 @@ void Robot::RobotInit() {
   //Subsystems
   c_drivetrain = new Drivetrain(false);
   c_odometry = new Odometry(c_drivetrain);
+  c_arm = new ArmSubsystem(c_toml->get_table("arm"));
 
   //Commands
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
