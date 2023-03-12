@@ -52,6 +52,11 @@ void Robot::RobotInit() {
 
   //temp auto
   #ifdef COMPETITION_MODE
+  auto orientWheels = frc2::StartEndCommand{
+    [&] () { c_drivetrain->setMotion(0,0.05,0); },
+    [&] () { c_drivetrain->setMotion(0,0,0); },
+    { c_drivetrain }
+  }.ToPtr();
   auto forceOffCube = frc2::StartEndCommand{
     [&] () { c_drivetrain->setMotion(0,0.5,0); },
     [&] () { c_drivetrain->setMotion(0,0,0); },
@@ -64,7 +69,8 @@ void Robot::RobotInit() {
     {c_drivetrain}
   }.ToPtr();
 
-  c_simpleAuto = std::move(forceOffCube).WithTimeout(0.5_s)
+  c_simpleAuto = std::move(orientWheels).WithTimeout(0.5_s)
+    .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
     .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
     .Unwrap();
   #endif
