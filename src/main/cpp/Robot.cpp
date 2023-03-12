@@ -52,20 +52,20 @@ void Robot::RobotInit() {
 
   //temp auto
   #ifdef COMPETITION_MODE
-  auto outOfSafeZone = frc2::StartEndCommand{
+  auto forceOffCube = frc2::StartEndCommand{
     [&] () { c_drivetrain->setMotion(0,0.5,0); },
     [&] () { c_drivetrain->setMotion(0,0,0); },
     { c_drivetrain }
   }.ToPtr();
 
-  auto ontoPlatform = frc2::StartEndCommand{
-    [&] () { c_drivetrain->setMotion(0,-0.5,0); },
+  auto putCubeIntoStation = frc2::StartEndCommand{
+    [&] () { c_drivetrain->setMotion(0,-0.15,0); },
     [&] () { c_drivetrain->setMotion(0,0,0); },
     {c_drivetrain}
   }.ToPtr();
 
-  c_simpleAuto = std::move(outOfSafeZone).WithTimeout(3.0_s)
-    .AndThen(std::move(ontoPlatform).WithTimeout(2.0_s))
+  c_simpleAuto = std::move(forceOffCube).WithTimeout(0.5_s)
+    .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
     .Unwrap();
   #endif
 }
@@ -98,12 +98,12 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
-  //c_simpleAuto->Schedule();
+  c_simpleAuto->Schedule();
   // TODO: Make sure to cancel autonomous command in teleop init.
 }
 
 void Robot::AutonomousPeriodic() {
-  // c_drivetrain->Periodic();// update drivetrain no matter what
+  c_drivetrain->Periodic();// update drivetrain no matter what
 }
 
 void Robot::TeleopInit() {
