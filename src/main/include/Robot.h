@@ -57,10 +57,10 @@ class Robot : public frc::TimedRobot {
   //Subsystems
   Drivetrain* c_drivetrain = nullptr;
   Odometry* c_odometry = nullptr;
-  ArmSubsystem* c_arm = nullptr;
+  //ArmSubsystem* c_arm = nullptr;
 
   //Commands
-  ArmTeleopCommand* c_armTeleopCommand = nullptr;
+  //ArmTeleopCommand* c_armTeleopCommand = nullptr;
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;
   
   //temporary auto
