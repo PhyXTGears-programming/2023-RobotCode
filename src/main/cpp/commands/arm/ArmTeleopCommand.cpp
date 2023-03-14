@@ -129,3 +129,7 @@ void ArmTeleopCommand::End(bool interrupted) {
 bool ArmTeleopCommand::IsFinished() {
     return false; // dont end because then we wont be able to drive
 }
+
+void ArmTeleopCommand::resetTarget(){
+    m_target = c_arm->getGripPoint();
+}

@@ -17,6 +17,7 @@ public:
     void Execute() override;
     void End(bool interrupted) override;
     bool IsFinished() override;
+    void resetTarget();
 private:
     ArmSubsystem* c_arm;
     frc::XboxController* c_operatorController;
