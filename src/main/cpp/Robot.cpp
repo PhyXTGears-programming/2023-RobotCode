@@ -19,6 +19,7 @@
 #include "external/cpptoml.h"
 
 #include <frc2/command/SequentialCommandGroup.h>
+#include <frc2/command/StartEndCommand.h>
 #include <frc2/command/Command.h>
 #include <frc/Timer.h>
 
@@ -46,27 +47,27 @@ void Robot::RobotInit() {
   //c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
 
-  auto orientWheels = frc2::StartEndCommand{
   //dump cube and move auto
+  auto c_orientWheels = frc2::StartEndCommand{
     [&] () { c_drivetrain->setMotion(0,0.05,0); },
     [&] () { c_drivetrain->setMotion(0,0,0); },
     { c_drivetrain }
   }.ToPtr();
-  auto forceOffCube = frc2::StartEndCommand{
+  auto c_forceOffCube = frc2::StartEndCommand{
     [&] () { c_drivetrain->setMotion(0,0.5,0); },
     [&] () { c_drivetrain->setMotion(0,0,0); },
     { c_drivetrain }
   }.ToPtr();
 
-  auto putCubeIntoStation = frc2::StartEndCommand{
+  auto c_putCubeIntoStation = frc2::StartEndCommand{
     [&] () { c_drivetrain->setMotion(0,-0.15,0); },
     [&] () { c_drivetrain->setMotion(0,0,0); },
     {c_drivetrain}
   }.ToPtr();
 
-  c_simpleAuto = std::move(orientWheels).WithTimeout(0.5_s)
-    .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
-    .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
+  c_simpleAuto = std::move(c_orientWheels).WithTimeout(0.5_s)
+    .AndThen(std::move(c_forceOffCube).WithTimeout(0.3_s))
+    .AndThen(std::move(c_putCubeIntoStation).WithTimeout(2.0_s))
     .Unwrap();
 }
 
