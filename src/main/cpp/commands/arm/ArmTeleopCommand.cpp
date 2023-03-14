@@ -28,9 +28,11 @@ void ArmTeleopCommand::Initialize() {
 
 void ArmTeleopCommand::Execute() {
     {
-        Vector gripVec(m_target.x, m_target.y, m_target.z);
-        double gripMag = gripVec.len();
-        double gripDir = std::atan2(gripVec.x, gripVec.y);  // 0 deg == y axis
+        Vector offsetLX;
+        Vector offsetLY;
+        Vector offsetRY;
+        double gripMag = std::sqrt(std::pow(m_target.x,2)+std::pow(m_target.y,2));
+        double gripDir = std::atan2(m_target.x, m_target.y);  // 0 deg == y axis
 
         // Rotate turret. Speed of rotation is reduced the further the arm reaches.
         double leftX = c_operatorController->GetLeftX();
@@ -39,13 +41,13 @@ void ArmTeleopCommand::Execute() {
         leftX = std::copysign(std::clamp(leftX * leftX, -1.0, 1.0), leftX);
         if (0.0 != leftX) {
             // (+) leftX should move turret clockwise.
-            gripDir = gripDir + leftX * k_maxPointRotSpeed / gripMag;
-            Vector offset(
-                gripMag * std::sin(gripDir),
-                gripMag * std::cos(gripDir),
-                0.0
+            double dir = gripDir + (leftX * k_maxPointRotSpeed) / std::max(gripMag,1.0);
+            Point point1(
+                gripMag * std::sin(dir),
+                gripMag * std::cos(dir),
+                m_target.z
             );
-            m_target = m_target + offset;
+            offsetLX = point1 - m_target;
         }
 
         // Extend/retract gripper from/to turret.
@@ -55,24 +57,26 @@ void ArmTeleopCommand::Execute() {
         leftY = std::copysign(std::clamp(leftY * leftY, -1.0, 1.0), leftY);
         if (0.0 != leftY) {
             // (+) leftY should move away from turret.
-            gripMag = gripMag + leftY * k_maxPointSpeed;
-            Vector offset(
-                gripMag * std::sin(gripDir),
-                gripMag * std::cos(gripDir),
-                0.0
+            double mag = gripMag + (leftY * k_maxPointSpeed);
+            Point point1(
+                mag * std::sin(gripDir),
+                mag * std::cos(gripDir),
+                m_target.z
             );
-            m_target = m_target + offset;
+            offsetLY = point1 - m_target;
         }
 
         // Move gripper up or down.
         double rightY = -c_operatorController->GetRightY();    /* Invert so + is up */
         // Square input to improve fidelity.
-        rightY = std::copysign(std::clamp(rightY * rightY, -1.0, 1.0), rightY);
         rightY = DEADZONE(rightY);
+        rightY = std::copysign(std::clamp(rightY * rightY, -1.0, 1.0), rightY);
         if (0.0 != rightY) {
             // (+) rightY should move gripper up.
-            m_target = m_target + Vector(0.0, 0.0, rightY * k_maxPointSpeed);
+            offsetRY = Vector(0.0, 0.0, rightY * k_maxPointSpeed);
         }
+
+        m_target = m_target + offsetLX + offsetLY + offsetRY;
 
         c_arm->moveToPoint(m_target);
     }
