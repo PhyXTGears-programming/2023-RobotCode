@@ -18,12 +18,9 @@
 
 #include "external/cpptoml.h"
 
-
-#ifdef COMPETITION_MODE
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/Command.h>
 #include <frc/Timer.h>
-#endif
 
 void Robot::RobotInit() {
   try{
@@ -49,9 +46,8 @@ void Robot::RobotInit() {
   //c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
 
-  //temp auto
-  #ifdef COMPETITION_MODE
   auto orientWheels = frc2::StartEndCommand{
+  //dump cube and move auto
     [&] () { c_drivetrain->setMotion(0,0.05,0); },
     [&] () { c_drivetrain->setMotion(0,0,0); },
     { c_drivetrain }
@@ -72,7 +68,6 @@ void Robot::RobotInit() {
     .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
     .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
     .Unwrap();
-  #endif
 }
 
 /**
