@@ -3,12 +3,12 @@
     # Limits are in raw sensors units
     turret.limit.lo = -85.0
     turret.limit.hi =  90.0
-    turret.zeroOffsetRadians = -6.377
+    turret.zeroOffsetRadians = -8.001
     turret.sensorToRadians = 13.426
 
     # Limits are in degrees
     shoulder.limit.lo = 45.0
-    shoulder.limit.hi = 96.0
+    shoulder.limit.hi = 100.0
     shoulder.zeroOffsetRadians = 0.131
 
     shoulder.pid.p = 0.35
@@ -17,7 +17,7 @@
     shoulder.pid.tolerance = 0.10
 
     # Limits are in degrees
-    elbow.limit.lo = 15.0
+    elbow.limit.lo = 10.0
     elbow.limit.hi = 180.0
     elbow.zeroOffsetRadians = -7.018
     elbow.sensorToRadians = 24.54
