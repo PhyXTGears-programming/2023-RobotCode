@@ -134,6 +134,10 @@ void Robot::TeleopPeriodic() {
   if (c_driverController->GetBButtonPressed()) {
     c_drivetrain->resetNavxHeading();
   }
+
+  if(c_driverController->GetXButtonPressed()) {
+    c_drivetrain->lockMovement(false);
+  }
 }
 
 /**
