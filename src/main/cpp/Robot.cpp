@@ -18,7 +18,6 @@
 
 #include "external/cpptoml.h"
 
-#include <frc/smartdashboard/SmartDashboard.h>
 
 #ifdef COMPETITION_MODE
 #include <frc2/command/SequentialCommandGroup.h>
@@ -86,8 +85,6 @@ void Robot::RobotInit() {
  */
 void Robot::RobotPeriodic() {
   frc2::CommandScheduler::GetInstance().Run();
-
-  frc::SmartDashboard::PutBoolean("Field Centric Enabled",c_drivetrain->getFieldCentric());
 }
 
 /**

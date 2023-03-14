@@ -7,7 +7,6 @@
 #include <iomanip>
 #include <sstream>
 
-#include <frc/smartdashboard/SmartDashboard.h>
 
 // PROTOTYPES
 static double requireTomlDouble (std::shared_ptr<cpptoml::table> toml, std::string const & name);
@@ -56,48 +55,16 @@ void ArmSubsystem::Periodic() {
         m_lowJointMotor.Set(output);
     }
 
-    frc::SmartDashboard::PutNumber("Turret Angle (deg)",     RAD_2_DEG(getTurretAngle()));
-    frc::SmartDashboard::PutNumber("Shoulder Angle (deg)",   RAD_2_DEG(getShoulderAngle()));
-    frc::SmartDashboard::PutNumber("Elbow Angle (deg)",      RAD_2_DEG(getElbowAngle()));
-    frc::SmartDashboard::PutNumber("Wrist Roll Angle (deg)", RAD_2_DEG(getWristRollAngle()));
-    frc::SmartDashboard::PutNumber("Grip Distance (meters)", getGrip());
 
-    // Raw values
-    /* DEBUG ARM *
-    frc::SmartDashboard::PutNumber("Raw: Turret Angle (V)",     m_turretAngleSensor.Get());
-    frc::SmartDashboard::PutNumber("Raw: Shoulder Angle (deg)", m_shoulderAngleSensor.Get().value() * 360.0);
-    frc::SmartDashboard::PutNumber("Raw: Elbow Angle (V)",      m_elbowAngleSensor.Get());
-    frc::SmartDashboard::PutNumber("Raw: Wrist Roll Angle (V)", m_wristRollAngleSensor.Get());
-    frc::SmartDashboard::PutNumber("Raw: Grip Distance (V)",    m_gripSensor.Get());
-    /* */
 
     // Report calculated gripper position.
 
     Point gripPos = getGripPoint();
     std::stringstream gripPosStr;
 
-    gripPosStr << std::fixed << std::setprecision(4)
-        << "(" << gripPos.x
-        << ", " << gripPos.y
-        << ", " << gripPos.z
-        << ")";
-    frc::SmartDashboard::PutString("Grip Pos (m)", gripPosStr.str());
 
     // Report calculated arm pose angles.  What the robot thinks the angles
     // should be to reach gripper position.
-
-    /*  DEBUG ARM *
-    ArmPose pose = calcIKJointPoses(gripPos);
-    frc::SmartDashboard::PutNumber("IK Turret Angle (deg)",   RAD_2_DEG(pose.turretAngle));
-    frc::SmartDashboard::PutNumber("IK Shoulder Angle (deg)", RAD_2_DEG(pose.shoulderAngle));
-    frc::SmartDashboard::PutNumber("IK Elbow Angle (deg)",    RAD_2_DEG(pose.elbowAngle));
-    /* */
-
-    frc::SmartDashboard::PutNumber("Turret Current (A)", m_turretMotor.GetOutputCurrent());
-    frc::SmartDashboard::PutNumber("Shoulder Current (A)", m_lowJointMotor.GetOutputCurrent());
-    frc::SmartDashboard::PutNumber("Elbow Current (A)", m_midJointMotor.GetOutputCurrent());
-    frc::SmartDashboard::PutNumber("Wrist Current (A)", m_gripperRotateMotor.GetOutputCurrent());
-    frc::SmartDashboard::PutNumber("Grip Current (A)", m_gripperGraspMotor.GetOutputCurrent());
 }
 
 void ArmSubsystem::initialiseBoundary() {
