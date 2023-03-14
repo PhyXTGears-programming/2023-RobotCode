@@ -23,6 +23,7 @@ ArmTeleopCommand::ArmTeleopCommand(ArmSubsystem* arm, frc::XboxController* opera
 void ArmTeleopCommand::Initialize() {
     // Update target to current point so arm doesn't move unexpectedly.
     m_target = c_arm->getGripPoint();
+    c_arm->moveToPoint(m_target);
 }
 
 void ArmTeleopCommand::Execute() {
