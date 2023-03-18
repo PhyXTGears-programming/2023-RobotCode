@@ -327,6 +327,10 @@ Point const & ArmSubsystem::getSafetyPoint(Point pt) {
 }
 
 void ArmSubsystem::setTurretAngle(double angle) {
+    if (std::isnan(angle)) {
+        return;
+    }
+
     angle = std::clamp(angle, config.turret.limit.lo, config.turret.limit.hi);
 
     double da = angle - getTurretAngle();
@@ -338,6 +342,10 @@ void ArmSubsystem::setTurretAngle(double angle) {
 }
 
 void ArmSubsystem::setShoulderAngle(double angle) {
+    if (std::isnan(angle)) {
+        return;
+    }
+
     angle = std::clamp(angle, config.shoulder.limit.lo, config.shoulder.limit.hi);
 
     /*
@@ -354,6 +362,10 @@ void ArmSubsystem::setShoulderAngle(double angle) {
 }
 
 void ArmSubsystem::setElbowAngle(double angle) {
+    if (std::isnan(angle)) {
+        return;
+    }
+
     angle = std::clamp(angle, config.elbow.limit.lo, config.elbow.limit.hi);
 
     double da = angle - getElbowAngle();
@@ -365,6 +377,10 @@ void ArmSubsystem::setElbowAngle(double angle) {
 }
 
 void ArmSubsystem::setWristRollAngle(double angle) {
+    if (std::isnan(angle)) {
+        return;
+    }
+
     angle = std::clamp(angle, config.wrist.limit.lo, config.wrist.limit.hi);
 
     double da = angle - getWristRollAngle();
@@ -379,6 +395,10 @@ void ArmSubsystem::setWristRollAngle(double angle) {
 }
 
 void ArmSubsystem::setGrip(double grip) {
+    if (std::isnan(grip)) {
+        return;
+    }
+
     grip = std::clamp(grip, config.grip.limit.lo, config.grip.limit.hi);
 
     double dx = grip - getGrip();
