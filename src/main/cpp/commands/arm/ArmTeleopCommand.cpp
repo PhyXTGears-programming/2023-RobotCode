@@ -76,9 +76,12 @@ void ArmTeleopCommand::Execute() {
             offsetRY = Vector(0.0, 0.0, rightY * k_maxPointSpeed);
         }
 
-        m_target = m_target + offsetLX + offsetLY + offsetRY;
+        Point desiredTarget = m_target + offsetLX + offsetLY + offsetRY;
 
-        c_arm->moveToPoint(m_target);
+        // Attempt to move to desired target, and ignore point if deemed unsafe.
+        if (c_arm->moveToPoint(desiredTarget)) {
+            m_target = desiredTarget;
+        }
     }
 
     // Rotate wrist clockwise or counterclockwise.
