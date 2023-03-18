@@ -26,18 +26,23 @@ const double k_PickupZSize = 1.000;  // meters
 ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     loadConfig(toml);
 
-    double kp, ki, kd, tolerance;
+    double kp, ki, kd, kff, tolerance, minOutput, maxOutput, iZone;
 
-    kp = requireTomlDouble(toml, "shoulder.pid.p");
-    ki = requireTomlDouble(toml, "shoulder.pid.i");
-    kd = requireTomlDouble(toml, "shoulder.pid.d");
+    kp  = requireTomlDouble(toml, "shoulder.pid.p");
+    ki  = requireTomlDouble(toml, "shoulder.pid.i");
+    kd  = requireTomlDouble(toml, "shoulder.pid.d");
+    kff = requireTomlDouble(toml, "shoulder.pid.ff");
+
     tolerance = requireTomlDouble(toml, "shoulder.pid.tolerance");
 
-    m_shoulderPid = new frc2::PIDController(kp, ki, kd);
-    m_shoulderPid->SetTolerance(tolerance);
-    m_shoulderPid->SetIntegratorRange(-0.01, 0.01);
+    minOutput = requireTomlDouble(toml, "shoulder.pid.minOutput");
+    maxOutput = requireTomlDouble(toml, "shoulder.pid.maxOutput");
 
-    m_shoulderPid->SetSetpoint(getShoulderAngle());
+    iZone = requireTomlDouble(toml, "shoulder.pid.iZone");
+
+    m_shoulderPid = new PID(kp, ki, kd, kff, tolerance, minOutput, maxOutput, iZone);
+
+    m_shoulderPid->setTarget(getShoulderAngle());
 
     m_turretMotor.SetSmartCurrentLimit(5.0);
     m_lowJointMotor.SetSmartCurrentLimit(5.0);
@@ -51,7 +56,7 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
 void ArmSubsystem::Periodic() {
     // Move shoulder or hold position.
     if (nullptr != m_shoulderPid) {
-        double output = m_shoulderPid->Calculate(getShoulderAngle());
+        double output = m_shoulderPid->calculate(getShoulderAngle());
         // Reverse motor direction.
         output = -output;
         output = std::clamp(output, -0.1, 0.1);
@@ -358,7 +363,7 @@ void ArmSubsystem::setShoulderAngle(double angle) {
     */
 
     // Use PID to hold arm in place once target angle is reached.
-    m_shoulderPid->SetSetpoint(angle);
+    m_shoulderPid->setTarget(angle);
 }
 
 void ArmSubsystem::setElbowAngle(double angle) {
