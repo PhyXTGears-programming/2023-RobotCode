@@ -136,6 +136,8 @@ private:
     Point m_safetyPointCenter{0.0, 0.254, 0.8635};
     Point m_safetyPointIntake{0.254, 0.0, -0.8128};
 
+    Point m_computedGripPoint;
+
     struct {
         struct {
             struct {

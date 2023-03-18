@@ -49,6 +49,8 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
 }
 
 void ArmSubsystem::Periodic() {
+    m_computedGripPoint = calcGripPos(getTurretAngle(), getShoulderAngle(), getElbowAngle());
+
     // Move shoulder or hold position.
     if (nullptr != m_shoulderPid) {
         double output = m_shoulderPid->Calculate(getShoulderAngle());
@@ -309,11 +311,7 @@ double ArmSubsystem::getGrip() {
 }
 
 Point ArmSubsystem::getGripPoint() {
-    return calcGripPos(
-        getTurretAngle(),
-        getShoulderAngle(),
-        getElbowAngle()
-    );
+    return m_computedGripPoint;
 }
 
 Point const & ArmSubsystem::getSafetyPoint(Point pt) {
