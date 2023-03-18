@@ -44,10 +44,10 @@ void Robot::RobotInit() {
   //Subsystems
   c_drivetrain = new Drivetrain(true);
   c_odometry = new Odometry(c_drivetrain);
-  //c_arm = new ArmSubsystem(c_toml->get_table("arm"));
+  c_arm = new ArmSubsystem(c_toml->get_table("arm"));
 
   //Commands
-  //c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
+  c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
 
   //temp auto
@@ -116,8 +116,8 @@ void Robot::TeleopInit() {
   // Make sure autonomous command is canceled first.
   c_simpleAuto->Cancel();
 
-  //c_armTeleopCommand->Schedule();
-  //c_armTeleopCommand->resetTarget();
+  c_armTeleopCommand->Schedule();
+  c_armTeleopCommand->resetTarget();
   c_driveTeleopCommand->Schedule();
   c_drivetrain->enableFieldCentric();
 }
