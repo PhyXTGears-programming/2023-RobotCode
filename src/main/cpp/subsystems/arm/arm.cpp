@@ -44,6 +44,8 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     m_midJointMotor.SetSmartCurrentLimit(5.0);
     m_gripperRotateMotor.SetSmartCurrentLimit(5.0);
     m_gripperGraspMotor.SetSmartCurrentLimit(5.0);
+
+    initialiseBoundary();
 }
 
 void ArmSubsystem::Periodic() {
