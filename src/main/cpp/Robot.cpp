@@ -10,6 +10,7 @@
 
 #include "Mandatory.h"
 #include "subsystems/arm/arm.h"
+#include "util/math.h"
 
 #include <frc/Filesystem.h>
 
@@ -47,7 +48,7 @@ void Robot::RobotInit() {
   //Subsystems
   c_drivetrain = new Drivetrain(true);
   c_odometry = new Odometry(c_drivetrain);
-  //c_arm = new ArmSubsystem(c_toml->get_table("arm"));
+  c_arm = new ArmSubsystem(c_toml->get_table("arm"));
 
   //Commands
   //c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
@@ -113,6 +114,7 @@ void Robot::AutonomousInit() {
 
 void Robot::AutonomousPeriodic() {
   c_drivetrain->Periodic();// update drivetrain no matter what
+}
 
 void Robot::TeleopInit() {
   // TODO: Make sure autonomous command is canceled first.
@@ -132,14 +134,22 @@ void Robot::TeleopInit() {
  * This function is called periodically during operator control.
  */
 void Robot::TeleopPeriodic() {
-  static const double DEAD_ZONE = 0.05;
+  #define DEAD_ZONE 0.10
+  #define INPUT(x, min, max) ((std::abs((x)) < DEAD_ZONE) \
+    ? 0.0 \
+    : ((x) + std::copysign(1.0 - DEAD_ZONE, (x))) \
+      / (1.0 - DEAD_ZONE) \
+      * ((max) - (min)) \
+      + std::copysign((min), (x)))
 
   double leftX = c_driverController->GetLeftX();
   double leftY = c_driverController->GetLeftY();
+  double rightY = -c_driverController->GetRightY();
 
   // 1. Run first
   frc::SmartDashboard::PutNumber("Left X", leftX);
   frc::SmartDashboard::PutNumber("Left Y", leftY);
+  frc::SmartDashboard::PutNumber("Right Y", rightY);
   frc::SmartDashboard::PutNumber("Left Trigger", c_driverController->GetLeftTriggerAxis());
 
 
@@ -150,11 +160,8 @@ void Robot::TeleopPeriodic() {
   //    -  90 (right):    ??
   //    - left max:       ??
   //    - right max:      ??
-  // if (abs(leftX) < DEAD_ZONE) {
-  //   arm->setTurretSpeed(0.0);
-  // } else {
-  //   arm->setTurretSpeed(0.1 * leftX);
-  // }
+  leftX = INPUT(leftX, 0.01, 0.05);
+  c_arm->setTurretSpeed(leftX);
 
   // 3. Test Shoulder
   //    - Invert direction (up is z+):  ??
@@ -162,11 +169,9 @@ void Robot::TeleopPeriodic() {
   //    - -45 deg (down):     ??
   //    - down max:           ??
   //    - up max:             ??
-  // if (abs(leftY) < DEAD_ZONE) {
-  //   arm->setShoulderSpeed(0.0);
-  // } else {
-  //   arm->setShoulderSpeed(0.1 * leftY);
-  // }
+  double boost = (leftY < 0.0) ? 0.050 : 0.0;
+  leftY = INPUT(leftY, 0.035 + boost, 0.035 + boost);
+  c_arm->setShoulderSpeed(leftY);
 
 
   // 4. Test Elbow
@@ -175,11 +180,8 @@ void Robot::TeleopPeriodic() {
   //    - 90 deg (up):     ??
   //    - down max:           ??
   //    - up max:             ??
-  // if (abs(leftY) < DEAD_ZONE) {
-  //   arm->setElbowSpeed(0.0);
-  // } else {
-  //   arm->setElbowSpeed(0.1 * leftY);
-  // }
+  rightY = INPUT(rightY, 0.05, 0.15);
+  c_arm->setElbowSpeed(rightY);
 
   // 5. Test Wrist Roll
   //    - Invert direction (cw is +):  ??
@@ -187,11 +189,9 @@ void Robot::TeleopPeriodic() {
   //    - 180 deg (cw):       ??
   //    - down max:           ??
   //    - up max:             ??
-  // if (abs(leftX) < DEAD_ZONE) {
-  //   arm->setWristRollSpeed(0.0);
-  // } else {
-  //   arm->setWristRollSpeed(0.1 * leftX);
-  // }
+  leftX = c_operatorController->GetLeftX();
+  leftX = INPUT(leftX, 0.01, 0.05);
+  c_arm->setWristRollSpeed(leftX);
 
   // 6. Test Grip
   //    - Invert direction (open is +):  ??
@@ -199,11 +199,9 @@ void Robot::TeleopPeriodic() {
   //    - open distance (m):      ??
   //    - down max:               ??
   //    - up max:                 ??
-  // if (abs(leftX) < DEAD_ZONE) {
-  //   arm->setGripperGraspSpeed(0.0);
-  // } else {
-  //   arm->setGripperGraspSpeed(0.1 * leftX);
-  // }
+  double rightX = c_operatorController->GetRightX();
+  rightX = INPUT(rightX, 0.05, 0.1);
+  c_arm->setGripSpeed(rightX);
 }
 
 /**
