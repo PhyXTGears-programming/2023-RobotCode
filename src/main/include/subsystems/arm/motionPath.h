@@ -1,14 +1,12 @@
 #pragma once
 
-#include "util/geom.h"
+#include "util/point.h"
 
 #include <vector>
 
 class MotionPath {
 public:
-    MotionPath(std::vector<Point> path) : m_path(path) {
-        m_finalTarget = m_path[m_path.size() - 1];
-    }
+    MotionPath(std::vector<Point> path);
 
     Point interpolate(Point const & pt0, Point const & pt1);
 
