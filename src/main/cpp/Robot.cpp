@@ -113,6 +113,10 @@ void Robot::AutonomousInit() {
 
 void Robot::AutonomousPeriodic() {
   c_drivetrain->Periodic();// update drivetrain no matter what
+
+void Robot::TeleopInit() {
+  // TODO: Make sure autonomous command is canceled first.
+  //c_driveTeleopCommand->Schedule();
 }
 
 void Robot::TeleopInit() {
