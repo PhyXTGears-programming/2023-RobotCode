@@ -56,7 +56,7 @@ void ArmSubsystem::Periodic() {
         // Reverse motor direction.
         output = -output;
         output = std::clamp(output, -0.2, 0.2);
-        m_lowJointMotor.Set(output);
+        // FIXME: m_lowJointMotor.Set(output);
     }
 
     frc::SmartDashboard::PutNumber("/arm/turret/angle/deg/sensor", RAD_2_DEG(getTurretAngle()));
