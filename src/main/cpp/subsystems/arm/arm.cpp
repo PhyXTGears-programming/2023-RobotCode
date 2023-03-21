@@ -480,6 +480,26 @@ void ArmSubsystem::setGrip(double grip) {
     }
 }
 
+void ArmSubsystem::setTurretSpeed(double speed) {
+    m_turretMotor.Set(speed);
+}
+
+void ArmSubsystem::setShoulderSpeed(double speed) {
+    m_lowJointMotor.Set(speed);
+}
+
+void ArmSubsystem::setElbowSpeed(double speed) {
+    m_midJointMotor.Set(speed);
+}
+
+void ArmSubsystem::setWristRollSpeed(double speed) {
+    m_gripperRotateMotor.Set(speed);
+}
+
+void ArmSubsystem::setGripSpeed(double speed) {
+    m_gripperGraspMotor.Set(speed);
+}
+
 bool ArmSubsystem::moveToPoint(Point const & target) {
     if (!isPointSafe(target)) {
         return false;
