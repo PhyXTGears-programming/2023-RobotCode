@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-#define JOYSTICK_DEADZONE 0.1
+#define JOYSTICK_DEADZONE 0.15
 #define DEADZONE(input) ((std::abs(input) < JOYSTICK_DEADZONE) ? 0.0 : input)
 
 const double k_maxPointSpeed = 0.005;
