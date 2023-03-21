@@ -3,8 +3,8 @@
     # Limits are in raw sensors units
     turret.limit.lo = -85.0
     turret.limit.hi =  90.0
-    turret.zeroOffsetRadians = -8.001
-    turret.sensorToRadians = 13.426
+    turret.zeroOffsetRadians = -7.673
+    turret.sensorToRadians = 13.156
 
     # Limits are in degrees
     shoulder.limit.lo = 45.0
