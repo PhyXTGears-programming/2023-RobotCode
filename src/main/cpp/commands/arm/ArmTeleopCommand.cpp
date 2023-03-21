@@ -6,7 +6,12 @@
 #include <cmath>
 
 #define JOYSTICK_DEADZONE 0.15
-#define DEADZONE(input) ((std::abs(input) < JOYSTICK_DEADZONE) ? 0.0 : input)
+#define DEADZONE(x, min, max) ((std::abs((x)) < JOYSTICK_DEADZONE) \
+    ? 0.0 \
+    : ((x) + std::copysign(1.0 - JOYSTICK_DEADZONE, (x))) \
+        / (1.0 - JOYSTICK_DEADZONE) \
+        * ((max) - (min)) \
+        + std::copysign((min), (x)))
 
 const double k_maxPointSpeed = 0.005;
 const double k_maxPointRotSpeed = (2.0 * M_PI / 10.0) * 0.02;   // radians per second in 20ms.
@@ -37,8 +42,7 @@ void ArmTeleopCommand::Execute() {
         // Rotate turret. Speed of rotation is reduced the further the arm reaches.
         double leftX = c_operatorController->GetLeftX();
         // Square input to improve fidelity.
-        leftX = DEADZONE(leftX);
-        leftX = std::copysign(std::clamp(leftX * leftX, -1.0, 1.0), leftX);
+        leftX = DEADZONE(leftX, 0.0, 1.0);
         if (0.0 != leftX) {
             // (+) leftX should move turret clockwise.
             double dir = gripDir + (leftX * k_maxPointRotSpeed) / std::max(gripMag,1.0);
@@ -53,8 +57,7 @@ void ArmTeleopCommand::Execute() {
         // Extend/retract gripper from/to turret.
         double leftY = -c_operatorController->GetLeftY(); /* Invert so + is forward */
         // Square input to improve fidelity.
-        leftY = DEADZONE(leftY);
-        leftY = std::copysign(std::clamp(leftY * leftY, -1.0, 1.0), leftY);
+        leftY = DEADZONE(leftY, 0.0, 1.0);
         if (0.0 != leftY) {
             // (+) leftY should move away from turret.
             double mag = gripMag + (leftY * k_maxPointSpeed);
@@ -69,8 +72,7 @@ void ArmTeleopCommand::Execute() {
         // Move gripper up or down.
         double rightY = -c_operatorController->GetRightY();    /* Invert so + is up */
         // Square input to improve fidelity.
-        rightY = DEADZONE(rightY);
-        rightY = std::copysign(std::clamp(rightY * rightY, -1.0, 1.0), rightY);
+        rightY = DEADZONE(rightY, 0.0, 1.0);
         if (0.0 != rightY) {
             // (+) rightY should move gripper up.
             offsetRY = Vector(0.0, 0.0, rightY * k_maxPointSpeed);
@@ -90,8 +92,7 @@ void ArmTeleopCommand::Execute() {
         double rightTrigger = c_operatorController->GetRightTriggerAxis();
         double trigger = leftTrigger - rightTrigger;
         // Square input to improve fidelity.
-        trigger = DEADZONE(trigger);
-        trigger = std::copysign(std::clamp(trigger * trigger, -1.0, 1.0), trigger);
+        trigger = DEADZONE(trigger, 0.0, 1.0);
 
         // Use current angle as default so wrist doesn't move wildly upon enable.
         double wristTargetAngle = c_arm->getWristRollAngle();
