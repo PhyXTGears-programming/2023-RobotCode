@@ -185,7 +185,7 @@ void Robot::TeleopPeriodic() {
   //    - down max:           ??
   //    - up max:             ??
   leftX = c_operatorController->GetLeftX();
-  leftX = INPUT(leftX, 0.01, 0.05);
+  leftX = INPUT(leftX, 0.02, 0.04);
   c_arm->setWristRollSpeed(leftX);
 
   // 6. Test Grip
