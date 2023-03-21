@@ -59,11 +59,11 @@ void ArmSubsystem::Periodic() {
         // FIXME: m_lowJointMotor.Set(output);
     }
 
-    frc::SmartDashboard::PutNumber("/arm/turret/angle/deg/sensor", RAD_2_DEG(getTurretAngle()));
-    frc::SmartDashboard::PutNumber("/arm/shoulder/angle/deg/sensor", RAD_2_DEG(getShoulderAngle()));
-    frc::SmartDashboard::PutNumber("/arm/elbow/angle/deg/sensor", RAD_2_DEG(getElbowAngle()));
-    frc::SmartDashboard::PutNumber("/arm/wrist/angle/deg/sensor", RAD_2_DEG(getWristRollAngle()));
-    frc::SmartDashboard::PutNumber("/arm/grip/pos/meter/sensor", getGrip());
+    frc::SmartDashboard::PutNumber("arm.turret.angle.deg.sensor", RAD_2_DEG(getTurretAngle()));
+    frc::SmartDashboard::PutNumber("arm.shoulder.angle.deg.sensor", RAD_2_DEG(getShoulderAngle()));
+    frc::SmartDashboard::PutNumber("arm.elbow.angle.deg.sensor", RAD_2_DEG(getElbowAngle()));
+    frc::SmartDashboard::PutNumber("arm.wrist.angle.deg.sensor", RAD_2_DEG(getWristRollAngle()));
+    frc::SmartDashboard::PutNumber("arm.grip.pos.meter.sensor", getGrip());
 
     // Raw values
     /* DEBUG ARM *
@@ -96,11 +96,11 @@ void ArmSubsystem::Periodic() {
     frc::SmartDashboard::PutNumber("IK Elbow Angle (deg)",    RAD_2_DEG(pose.elbowAngle));
     /* */
 
-    frc::SmartDashboard::PutNumber("/arm/turret/current/amps", m_turretMotor.GetOutputCurrent());
-    frc::SmartDashboard::PutNumber("/arm/shoulder/current/amps", m_lowJointMotor.GetOutputCurrent());
-    frc::SmartDashboard::PutNumber("/arm/elbow/current/amps", m_midJointMotor.GetOutputCurrent());
-    frc::SmartDashboard::PutNumber("/arm/wrist/current/amps", m_gripperRotateMotor.GetOutputCurrent());
-    frc::SmartDashboard::PutNumber("/arm/grip/current/amps", m_gripperGraspMotor.GetOutputCurrent());
+    frc::SmartDashboard::PutNumber("arm.turret.current.amps", m_turretMotor.GetOutputCurrent());
+    frc::SmartDashboard::PutNumber("arm.shoulder.current.amps", m_lowJointMotor.GetOutputCurrent());
+    frc::SmartDashboard::PutNumber("arm.elbow.current.amps", m_midJointMotor.GetOutputCurrent());
+    frc::SmartDashboard::PutNumber("arm.wrist.current.amps", m_gripperRotateMotor.GetOutputCurrent());
+    frc::SmartDashboard::PutNumber("arm.grip.current.amps", m_gripperGraspMotor.GetOutputCurrent());
 }
 
 void ArmSubsystem::initialiseBoundary() {
