@@ -127,6 +127,7 @@ void ArmTeleopCommand::End(bool interrupted) {
     // Update target to current point so arm stops.
     // Cannot stop motors because shoulder will backdrive and fall.
     m_target = c_arm->getGripPoint();
+    c_arm->moveToPoint(m_target);
 }
 
 bool ArmTeleopCommand::IsFinished() {
