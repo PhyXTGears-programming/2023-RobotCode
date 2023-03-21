@@ -113,12 +113,7 @@ void Robot::AutonomousInit() {
 }
 
 void Robot::AutonomousPeriodic() {
-  c_drivetrain->Periodic();// update drivetrain no matter what
-}
-
-void Robot::TeleopInit() {
-  // TODO: Make sure autonomous command is canceled first.
-  //c_driveTeleopCommand->Schedule();
+  //c_drivetrain->Periodic();// update drivetrain no matter what
 }
 
 void Robot::TeleopInit() {
@@ -127,8 +122,8 @@ void Robot::TeleopInit() {
 
   //c_armTeleopCommand->Schedule();
   //c_armTeleopCommand->resetTarget();
-  c_driveTeleopCommand->Schedule();
-  c_drivetrain->enableFieldCentric();
+  //c_driveTeleopCommand->Schedule();
+  //c_drivetrain->enableFieldCentric();
 }
 /**
  * This function is called periodically during operator control.
