@@ -20,7 +20,7 @@ void MoveToIntakeCommand::Initialize() {
 }
 
 void MoveToIntakeCommand::Execute() {
-    if(m_finalTarget.isNear(m_target) && m_arm->isNearPoint(m_target)) {
+    if(m_finalTarget.isNear(m_target) && m_arm->isNearPoint(m_finalTarget)) {
         return;
     } else if (m_arm->isNearPoint(m_target)) {
         m_target = m_path->getNextPoint();
@@ -39,5 +39,5 @@ void MoveToIntakeCommand::End(bool isInterrupted) {
 
 bool MoveToIntakeCommand::IsFinished() {
     return !m_arm->isPointSafe(m_target)
-        || (m_finalTarget.isNear(m_target) && m_arm->isNearPoint(m_target));
+        || (m_finalTarget.isNear(m_target) && m_arm->isNearPoint(m_finalTarget));
 }
