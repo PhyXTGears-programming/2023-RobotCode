@@ -129,7 +129,7 @@ void Robot::TeleopInit() {
  * This function is called periodically during operator control.
  */
 void Robot::TeleopPeriodic() {
-  #define DEAD_ZONE 0.10
+  #define DEAD_ZONE 0.15
   #define INPUT(x, min, max) ((std::abs((x)) < DEAD_ZONE) \
     ? 0.0 \
     : ((x) + std::copysign(1.0 - DEAD_ZONE, (x))) \
