@@ -26,15 +26,13 @@ void MoveToIntakeCommand::Execute() {
         m_target = m_path->getNextPoint();
     }
 
-    if (!m_arm->isPointSafe(m_target)) {
-        return;
-    }
+    m_arm->moveToPoint(m_target);
 
-    ArmPose calculatedIKPose = m_arm->calcIKJointPoses(m_target);
 }
 
 void MoveToIntakeCommand::End(bool isInterrupted) {
     //heeyaw
+    m_arm->stopArm();
 }
 
 bool MoveToIntakeCommand::IsFinished() {
