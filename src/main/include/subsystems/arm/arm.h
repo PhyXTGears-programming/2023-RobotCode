@@ -75,6 +75,8 @@ public:
      */
     bool moveToPoint(Point const & target);
 
+    void stopArm();
+
 private:
     void loadConfig(std::shared_ptr<cpptoml::table> toml);
 

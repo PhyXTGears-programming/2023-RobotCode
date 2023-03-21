@@ -426,6 +426,10 @@ bool ArmSubsystem::moveToPoint(Point const & target) {
     return true;
 }
 
+void ArmSubsystem::stopArm() {
+    moveToPoint(getGripPoint());
+}
+
 //          NOT IMPLEMENTED IN HARDWARE
 // float ArmSubsystem::getWristPitchAngle() {
 //     return 0; // TODO when we get reading components available
