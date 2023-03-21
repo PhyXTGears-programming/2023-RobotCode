@@ -22,6 +22,13 @@ using namespace Interfaces::Arm;
 
 class ArmSubsystem : public frc2::SubsystemBase {
 public:
+
+    enum class SafetyZone {
+        LEFT,
+        MIDDLE,
+        RIGHT,
+    };
+
     ArmSubsystem(std::shared_ptr<cpptoml::table> toml);
 
     void Periodic() override;
@@ -50,7 +57,7 @@ public:
     // Getting Points:
     Point getGripPoint();
 
-    Point const & getSafetyPoint(Point pt);
+    SafetyZone getSafetyZone(Point const & pt);
 
     Point const & getIntakePoint();
     Point const & getHomePoint();

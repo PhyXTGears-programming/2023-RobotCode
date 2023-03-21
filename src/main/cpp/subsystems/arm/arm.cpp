@@ -262,8 +262,76 @@ bool ArmSubsystem::isNearPoint(Point const & point) {
 }
 
 MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) {
-    // FIXME: compute proper path sequence for arm to follow.
-    return MotionPath({ target });
+    std::vector<Point> path;
+
+    SafetyZone startZone  = getSafetyZone(current);
+    SafetyZone targetZone = getSafetyZone(target);
+
+    switch (startZone) {
+    case ArmSubsystem::SafetyZone::LEFT:
+        switch (targetZone) {
+        case ArmSubsystem::SafetyZone::LEFT:
+            path.push_back(target);
+            break;
+
+        case ArmSubsystem::SafetyZone::MIDDLE:
+            path.push_back(m_safetyPointIntake);
+            path.push_back(m_safetyPointCenter);
+            path.push_back(target);
+            break;
+
+        case ArmSubsystem::SafetyZone::RIGHT:
+            path.push_back(m_safetyPointIntake);
+            path.push_back(m_safetyPointCenter);
+            path.push_back(m_safetyPointGrid);
+            path.push_back(target);
+            break;
+        }
+        break;
+
+    case ArmSubsystem::SafetyZone::MIDDLE:
+        switch (targetZone) {
+        case ArmSubsystem::SafetyZone::LEFT:
+            path.push_back(m_safetyPointCenter);
+            path.push_back(m_safetyPointIntake);
+            path.push_back(target);
+            break;
+
+        case ArmSubsystem::SafetyZone::MIDDLE:
+            path.push_back(target);
+            break;
+
+        case ArmSubsystem::SafetyZone::RIGHT:
+            path.push_back(m_safetyPointCenter);
+            path.push_back(m_safetyPointGrid);
+            path.push_back(target);
+            break;
+        }
+        break;
+
+    case ArmSubsystem::SafetyZone::RIGHT:
+        switch (targetZone) {
+        case ArmSubsystem::SafetyZone::LEFT:
+            path.push_back(m_safetyPointGrid);
+            path.push_back(m_safetyPointCenter);
+            path.push_back(m_safetyPointIntake);
+            path.push_back(target);
+            break;
+
+        case ArmSubsystem::SafetyZone::MIDDLE:
+            path.push_back(m_safetyPointGrid);
+            path.push_back(m_safetyPointCenter);
+            path.push_back(target);
+            break;
+
+        case ArmSubsystem::SafetyZone::RIGHT:
+            path.push_back(target);
+            break;
+        }
+        break;
+    }
+
+    return MotionPath(path);
 }
 
 //  ============  Point  Grabbers:  ============  //|
@@ -316,13 +384,13 @@ Point ArmSubsystem::getGripPoint() {
     return m_computedGripPoint;
 }
 
-Point const & ArmSubsystem::getSafetyPoint(Point pt) {
-    if (isNearZero(pt.x)) {
-        return ArmSubsystem::m_safetyPointCenter;
-    } else if (0.0 > pt.x) {
-        return ArmSubsystem::m_safetyPointGrid;
+ArmSubsystem::SafetyZone ArmSubsystem::getSafetyZone(Point const & pt) {
+    if (-k_ChassisXSize / 2.0 > pt.x) {
+        return SafetyZone::LEFT;
+    } else if (k_ChassisXSize / 2.0 < pt.x) {
+        return SafetyZone::RIGHT;
     } else {
-        return ArmSubsystem::m_safetyPointIntake;
+        return SafetyZone::MIDDLE;
     }
 }
 
