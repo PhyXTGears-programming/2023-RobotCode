@@ -52,6 +52,8 @@ void ArmSubsystem::Periodic() {
     m_computedGripPoint = calcGripPos(getTurretAngle(), getShoulderAngle(), getElbowAngle());
 
     // Move shoulder or hold position.
+    // Must update motor output here to hold shoulder position because arm backdrives due to
+    // gravity.
     if (nullptr != m_shoulderPid) {
         double output = m_shoulderPid->Calculate(getShoulderAngle());
         // Reverse motor direction.
