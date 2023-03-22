@@ -67,7 +67,7 @@ void ArmSubsystem::Periodic() {
         double output = m_shoulderPid->Calculate(getShoulderAngle());
         // Reverse motor direction.
         output = -output;
-        output = std::clamp(output, -0.1, 0.1);
+        output = std::clamp(output, -0.2, 0.2);
         m_lowJointMotor.Set(output);
     }
 
@@ -455,7 +455,7 @@ void ArmSubsystem::_setElbowAngle(double angle) {
     if (isNearZero(da, 0.02)) {
         m_midJointMotor.Set(0.0);
     } else {
-        m_midJointMotor.Set(std::clamp(da, -0.1, 0.1));
+        m_midJointMotor.Set(std::clamp(da, -0.05, 0.05) + std::copysign(0.1, da));
     }
 }
 
@@ -489,7 +489,7 @@ void ArmSubsystem::setGrip(double grip) {
         m_gripperGraspMotor.Set(0.0);
     } else {
         m_gripperGraspMotor.Set(std::clamp(
-            dx + std::copysign(0.02, dx),
+            dx + std::copysign(0.15, dx),
             -0.2, 0.2
         ));
     }
