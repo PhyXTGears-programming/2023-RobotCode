@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <memory>
+#include <optional>
 
 #include <frc/AnalogPotentiometer.h>
 #include <frc/DutyCycleEncoder.h>
@@ -22,6 +23,13 @@ using namespace Interfaces::Arm;
 
 class ArmSubsystem : public frc2::SubsystemBase {
 public:
+
+    enum class SafetyZone {
+        LEFT,
+        MIDDLE,
+        RIGHT,
+    };
+
     ArmSubsystem(std::shared_ptr<cpptoml::table> toml);
 
     void Periodic() override;
@@ -50,7 +58,7 @@ public:
     // Getting Points:
     Point getGripPoint();
 
-    Point const & getSafetyPoint(Point pt);
+    SafetyZone getSafetyZone(Point const & pt);
 
     Point const & getIntakePoint();
     Point const & getHomePoint();
@@ -66,6 +74,12 @@ public:
     void setWristRollAngle(double angle);
     void setGrip(double grip); // hehe grippy grabby hand
 
+    void setTurretSpeed(double speed);
+    void setShoulderSpeed(double speed);
+    void setElbowSpeed(double speed);
+    void setWristRollSpeed(double speed);
+    void setGripSpeed(double speed);
+
     /**
      * Given a target position, compute necessary joint angles, and move joints
      * of arm toward target.  Will NOT stop on its own.  Must call this method
@@ -73,10 +87,16 @@ public:
      *
      * @return false if point is within the no-go zone, true if point is safe.
      */
-    bool moveToPoint(Point const & target);
+    std::optional<Point> moveToPoint(Point const & target);
+
+    void stopArm();
 
 private:
     void loadConfig(std::shared_ptr<cpptoml::table> toml);
+
+    void _setTurretAngle(double angle);
+    void _setShoulderAngle(double angle);
+    void _setElbowAngle(double angle);
 
     // Arm Diagram:
     // 1: Turret, 2: Shoulder, 3: Elbow, 4: Wrist
@@ -100,41 +120,43 @@ private:
     //          │          │
     //          └──────────┘
 
-    rev::CANSparkMax m_turretMotor {
+    rev::CANSparkMax c_turretMotor {
         k_TurretMotor,
         rev::CANSparkMaxLowLevel::MotorType::kBrushless
     };
-    rev::CANSparkMax m_lowJointMotor {
+    rev::CANSparkMax c_lowJointMotor {
         k_LowJointMotor,
         rev::CANSparkMaxLowLevel::MotorType::kBrushless
     };
-    rev::CANSparkMax m_midJointMotor {
+    rev::CANSparkMax c_midJointMotor {
         k_MidJointMotor,
         rev::CANSparkMaxLowLevel::MotorType::kBrushless
     };
-    rev::CANSparkMax m_gripperRotateMotor {
+    rev::CANSparkMax c_gripperRotateMotor {
         k_GripperRotateMotor,
         rev::CANSparkMaxLowLevel::MotorType::kBrushless
     };
-    rev::CANSparkMax m_gripperGraspMotor {
+    rev::CANSparkMax c_gripperGraspMotor {
         k_GripperGraspMotor,
         rev::CANSparkMaxLowLevel::MotorType::kBrushless
     };
 
-    frc::AnalogPotentiometer m_turretAngleSensor {k_TurretSensor, 1.0, 0.0};
-    frc::AnalogPotentiometer m_elbowAngleSensor {k_ElbowSensor, 1.0, 0.0};
-    frc::AnalogPotentiometer m_wristRollAngleSensor {k_WristRollSensor, 1.0, 0.0};
-    frc::AnalogPotentiometer m_gripSensor {k_GripSensor, 1.0, 0.0};
-    frc::DutyCycleEncoder m_shoulderAngleSensor{k_ShoulderSensor}; // Using Funky Fresh Encoder
+    frc::AnalogPotentiometer c_turretAngleSensor {k_TurretSensor, 1.0, 0.0};
+    frc::AnalogPotentiometer c_elbowAngleSensor {k_ElbowSensor, 1.0, 0.0};
+    frc::AnalogPotentiometer c_wristRollAngleSensor {k_WristRollSensor, 1.0, 0.0};
+    frc::AnalogPotentiometer c_gripSensor {k_GripSensor, 1.0, 0.0};
+    frc::DutyCycleEncoder c_shoulderAngleSensor{k_ShoulderSensor}; // Using Funky Fresh Encoder
 
-    frc2::PIDController * m_shoulderPid = nullptr;
+    frc2::PIDController * c_shoulderPid = nullptr;
 
-    std::shared_ptr<Boundary> m_noGoZone = nullptr;
+    std::shared_ptr<Boundary> c_noGoZone = nullptr;
 
     // Safety Points
     Point m_safetyPointGrid{-0.2540, 0.0, 0.9144};
     Point m_safetyPointCenter{0.0, 0.254, 0.8635};
     Point m_safetyPointIntake{0.254, 0.0, -0.8128};
+
+    Point m_computedGripPoint;
 
     struct {
         struct {

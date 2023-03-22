@@ -61,6 +61,34 @@ TEST(ConvexPolygonBoundaryTest, GivenPointOutsideTriangle_IsInsideReturnsFalse) 
     ASSERT_TRUE(boundary.isOutside(inTrianglePoint));
 }
 
+TEST(NotBoundaryTest, GivenPointInsideNotSphere_IsInsideReturnsFalse) {
+    SphereBoundary * sphere = new SphereBoundary {
+        Point{0.0, 0.0, 0.0},
+        1.0
+    };
+
+    NotBoundary boundary { std::unique_ptr<SphereBoundary>{ sphere } };
+
+    Point insidePoint {0.0, 0.0, 0.5};
+
+    ASSERT_FALSE(boundary.isInside(insidePoint));
+    ASSERT_TRUE(boundary.isOutside(insidePoint));
+}
+
+TEST(NotBoundaryTest, GivenPointOutsideNotSphere_IsInsideReturnsTrue) {
+    SphereBoundary * sphere = new SphereBoundary {
+        Point{0.0, 0.0, 0.0},
+        1.0
+    };
+
+    NotBoundary boundary { std::unique_ptr<SphereBoundary>{ sphere } };
+
+    Point outsidePoint {2.0, 0.0, 0.0};
+
+    ASSERT_TRUE(boundary.isInside(outsidePoint));
+    ASSERT_FALSE(boundary.isOutside(outsidePoint));
+}
+
 TEST(SphereBoundaryTest, GivenPointInsideSphere_IsInsideReturnsTrue) {
     SphereBoundary boundary {
         Point{0.0, 0.0, 0.0},

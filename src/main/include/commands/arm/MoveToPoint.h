@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Mandatory.h"
 #include "subsystems/arm/arm.h"
 #include "subsystems/arm/motionPath.h"
 
@@ -9,9 +10,9 @@
 #include <frc2/command/CommandHelper.h>
 
 
-class MoveToIntakeCommand : public frc2::CommandHelper<frc2::CommandBase, MoveToIntakeCommand> {
+class MoveToPointCommand : public frc2::CommandHelper<frc2::CommandBase, MoveToPointCommand> {
 public:
-    MoveToIntakeCommand(ArmSubsystem * arm, Point finalTarget);
+    MoveToPointCommand(ArmSubsystem * arm, Point finalTarget);
 
     void Initialize() override;
     void Execute() override;
@@ -19,10 +20,9 @@ public:
     bool IsFinished() override;
 
 private:
-    ArmSubsystem * m_arm = nullptr;
-    Point m_finalTarget;
+    ArmSubsystem * c_arm = nullptr;
+    Point c_finalTarget;
+
     Point m_target;
     std::optional<MotionPath> m_path;
-
-    Point m_currentPoint;
 };
