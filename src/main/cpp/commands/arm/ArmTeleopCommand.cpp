@@ -92,7 +92,8 @@ void ArmTeleopCommand::Execute() {
     }
 
     // Rotate wrist clockwise or counterclockwise.
-    {
+    if (false) {
+        /// TODO: Fix analog sensor
         double leftTrigger = c_operatorController->GetLeftTriggerAxis();
         double rightTrigger = c_operatorController->GetRightTriggerAxis();
         double trigger = leftTrigger - rightTrigger;
@@ -109,6 +110,15 @@ void ArmTeleopCommand::Execute() {
 
         // Move/hold wrist angle.
         c_arm->setWristRollAngle(wristTargetAngle);
+    } else {
+        // Fallback: manual operation
+        double leftTrigger = c_operatorController->GetLeftTriggerAxis();
+        double rightTrigger = c_operatorController->GetRightTriggerAxis();
+        double trigger = rightTrigger - leftTrigger;
+        // Square input to improve fidelity.
+        trigger = DEADZONE(trigger, 0.0, 0.1);
+
+        c_arm->setWristRollSpeed(trigger);
     }
 
     // Open and close gripper.
