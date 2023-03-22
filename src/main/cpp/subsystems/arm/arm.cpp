@@ -1,3 +1,4 @@
+#include "Constants.h"
 #include "Mandatory.h"
 #include "subsystems/arm/arm.h"
 #include "util/math.h"
@@ -11,15 +12,14 @@
 static double requireTomlDouble (std::shared_ptr<cpptoml::table> toml, std::string const & name);
 
 // CONSTANTS
-const double k_ChassisXSize = 0.775; // meters
-const double k_ChassisYSize = 0.826; // meters
-const double k_ChassisZSize = 0.229; // meters
+using Constants::Arm::k_ChassisXSize;
+using Constants::Arm::k_ChassisYSize;
+using Constants::Arm::k_ChassisZSize;
 
-const double k_TurretZOffset = 0.210; // meters
+using Constants::Arm::k_TurretZOffset;
 
-const double k_PickupXSize = 0.076;  // meters
-const double k_PickupYSize = 0.340;  // meters
-const double k_PickupZSize = 1.000;  // meters
+using Constants::Arm::k_PickupXSize;
+using Constants::Arm::k_PickupYSize;
 
 ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     loadConfig(toml);

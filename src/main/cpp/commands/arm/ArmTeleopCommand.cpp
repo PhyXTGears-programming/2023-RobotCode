@@ -13,11 +13,6 @@
         * ((max) - (min)) \
         + std::copysign((min), (x)))
 
-const double k_maxPointSpeed = 0.005;
-const double k_maxPointRotSpeed = (2.0 * M_PI / 10.0) * 0.02;   // radians per second in 20ms.
-const double k_maxWristRotSpeed = (2.0 * M_PI / 2.0) * 0.02;
-const double k_maxGripSpeed = 0.1;
-
 ArmTeleopCommand::ArmTeleopCommand(ArmSubsystem* arm, frc::XboxController* operatorController) {
     c_operatorController = operatorController;
     c_arm = arm;
@@ -45,7 +40,7 @@ void ArmTeleopCommand::Execute() {
         leftX = DEADZONE(leftX, 0.0, 1.0);
         if (0.0 != leftX) {
             // (+) leftX should move turret clockwise.
-            double dir = gripDir + (leftX * k_maxPointRotSpeed) / std::max(gripMag,1.0);
+            double dir = gripDir + (leftX * Constants::Arm::k_maxPointRotSpeed) / std::max(gripMag,1.0);
             Point point1(
                 gripMag * std::sin(dir),
                 gripMag * std::cos(dir),
@@ -60,7 +55,7 @@ void ArmTeleopCommand::Execute() {
         leftY = DEADZONE(leftY, 0.0, 1.0);
         if (0.0 != leftY) {
             // (+) leftY should move away from turret.
-            double mag = gripMag + (leftY * k_maxPointSpeed);
+            double mag = gripMag + (leftY * Constants::Arm::k_maxPointSpeed);
             Point point1(
                 mag * std::sin(gripDir),
                 mag * std::cos(gripDir),
@@ -75,7 +70,7 @@ void ArmTeleopCommand::Execute() {
         rightY = DEADZONE(rightY, 0.0, 1.0);
         if (0.0 != rightY) {
             // (+) rightY should move gripper up.
-            offsetRY = Vector(0.0, 0.0, rightY * k_maxPointSpeed);
+            offsetRY = Vector(0.0, 0.0, rightY * Constants::Arm::k_maxPointSpeed);
         }
 
         Point desiredTarget = m_target + offsetLX + offsetLY + offsetRY;
@@ -105,7 +100,7 @@ void ArmTeleopCommand::Execute() {
 
         if (0.0 != trigger) {
             // (+) trigger should rotate wrist counter-clockwise, looking down forearm.
-            wristTargetAngle += trigger * k_maxWristRotSpeed;
+            wristTargetAngle += trigger * Constants::Arm::k_maxWristRotSpeed;
         }
 
         // Move/hold wrist angle.
@@ -131,7 +126,7 @@ void ArmTeleopCommand::Execute() {
         double gripTargetPos = c_arm->getGrip();
 
         if (0.0 != bumper) {
-            gripTargetPos += bumper * k_maxGripSpeed;
+            gripTargetPos += bumper * Constants::Arm::k_maxGripSpeed;
         }
 
         // Move/hold grip.
