@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <memory>
+#include <optional>
 
 #include <frc/AnalogPotentiometer.h>
 #include <frc/DutyCycleEncoder.h>
@@ -86,12 +87,16 @@ public:
      *
      * @return false if point is within the no-go zone, true if point is safe.
      */
-    bool moveToPoint(Point const & target);
+    std::optional<Point> moveToPoint(Point const & target);
 
     void stopArm();
 
 private:
     void loadConfig(std::shared_ptr<cpptoml::table> toml);
+
+    void _setTurretAngle(double angle);
+    void _setShoulderAngle(double angle);
+    void _setElbowAngle(double angle);
 
     // Arm Diagram:
     // 1: Turret, 2: Shoulder, 3: Elbow, 4: Wrist

@@ -81,8 +81,13 @@ void ArmTeleopCommand::Execute() {
         Point desiredTarget = m_target + offsetLX + offsetLY + offsetRY;
 
         // Attempt to move to desired target, and ignore point if deemed unsafe.
-        if (c_arm->moveToPoint(desiredTarget)) {
-            m_target = desiredTarget;
+        std::optional<Point> optSafePoint = c_arm->moveToPoint(desiredTarget);
+
+        if (optSafePoint) {
+            // moveToPoint yielded a safe point that employs safety limits.
+            // Reset target to this safe point so target doesn't attempt to travel
+            // beyond arm limits.
+            m_target = *optSafePoint;
         }
     }
 

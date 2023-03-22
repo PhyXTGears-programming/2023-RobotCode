@@ -398,11 +398,16 @@ ArmSubsystem::SafetyZone ArmSubsystem::getSafetyZone(Point const & pt) {
 }
 
 void ArmSubsystem::setTurretAngle(double angle) {
+    angle = std::clamp(angle, config.turret.limit.lo, config.turret.limit.hi);
+    _setTurretAngle(angle);
+}
+
+/// @brief DO NOT USE without clamping angle between limits.
+/// @param angle 
+void ArmSubsystem::_setTurretAngle(double angle) {
     if (std::isnan(angle)) {
         return;
     }
-
-    angle = std::clamp(angle, config.turret.limit.lo, config.turret.limit.hi);
 
     double da = angle - getTurretAngle();
     if (isNearZero(da, 0.02)) {
@@ -413,31 +418,32 @@ void ArmSubsystem::setTurretAngle(double angle) {
 }
 
 void ArmSubsystem::setShoulderAngle(double angle) {
+    angle = std::clamp(angle, config.shoulder.limit.lo, config.shoulder.limit.hi);
+    _setShoulderAngle(angle);
+}
+
+/// @brief DO NOT USE without clamping angle between limits.
+/// @param angle 
+void ArmSubsystem::_setShoulderAngle(double angle) {
     if (std::isnan(angle)) {
         return;
     }
-
-    angle = std::clamp(angle, config.shoulder.limit.lo, config.shoulder.limit.hi);
-
-    /*
-    double da = angle - getShoulderAngle();
-    if (isNearZero(da)) {
-        m_lowJointMotor.Set(0.0);
-    } else {
-        m_lowJointMotor.Set(std::copysign(0.05, da));
-    }
-    */
 
     // Use PID to hold arm in place once target angle is reached.
     m_shoulderPid->SetSetpoint(angle);
 }
 
 void ArmSubsystem::setElbowAngle(double angle) {
+    angle = std::clamp(angle, config.elbow.limit.lo, config.elbow.limit.hi);
+    _setElbowAngle(angle);
+}
+
+/// @brief DO NOT USE without clamping angle between limits.
+/// @param angle 
+void ArmSubsystem::_setElbowAngle(double angle) {
     if (std::isnan(angle)) {
         return;
     }
-
-    angle = std::clamp(angle, config.elbow.limit.lo, config.elbow.limit.hi);
 
     double da = angle - getElbowAngle();
     if (isNearZero(da, 0.02)) {
@@ -503,18 +509,32 @@ void ArmSubsystem::setGripSpeed(double speed) {
     m_gripperGraspMotor.Set(speed);
 }
 
-bool ArmSubsystem::moveToPoint(Point const & target) {
+std::optional<Point> ArmSubsystem::moveToPoint(Point const & target) {
     if (!isPointSafe(target)) {
-        return false;
+        return std::nullopt;
     }
 
     ArmPose pose = calcIKJointPoses(target);
 
-    setTurretAngle(pose.turretAngle);
-    setShoulderAngle(pose.shoulderAngle);
-    setElbowAngle(pose.elbowAngle);
+    pose.turretAngle = std::clamp(pose.turretAngle, config.turret.limit.lo, config.turret.limit.hi);
+    pose.shoulderAngle = std::clamp(pose.shoulderAngle, config.shoulder.limit.lo, config.shoulder.limit.hi);
+    pose.elbowAngle = std::clamp(pose.elbowAngle, config.elbow.limit.lo, config.elbow.limit.hi);
 
-    return true;
+    // If any angle is Not a Number (NaN), target point is unsafe.
+    if (std::isnan(pose.turretAngle)
+        || std::isnan(pose.shoulderAngle)
+        || std::isnan(pose.elbowAngle))
+    {
+        return std::nullopt;
+    }
+
+    _setTurretAngle(pose.turretAngle);
+    _setShoulderAngle(pose.shoulderAngle);
+    _setElbowAngle(pose.elbowAngle);
+
+    Point checkTarget = calcGripPos(pose.turretAngle, pose.shoulderAngle, pose.elbowAngle);
+
+    return checkTarget;
 }
 
 void ArmSubsystem::stopArm() {
