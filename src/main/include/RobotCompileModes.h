@@ -1,8 +1,8 @@
 #pragma once
 
-//#define COMPETITION_MODE // only competition related dashboard output
+#define COMPETITION_MODE // only competition related dashboard output
 //#define TESTING_MODE // no console output, but has dashboard output
-#define DEBUG_MODE // enables console output and dashboard output
+//#define DEBUG_MODE // enables console output and dashboard output
 
 
 //just to guard against multiple things being enabled at the same time
