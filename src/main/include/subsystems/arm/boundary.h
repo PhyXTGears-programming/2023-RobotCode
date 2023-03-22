@@ -101,7 +101,7 @@ public:
         if (dist < c_radius * c_radius) {
             return c_zLo < pt.z && pt.z < c_zHi;
         } else {
-            return true;
+            return false;
         }
     }
 
