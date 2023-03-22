@@ -146,7 +146,7 @@ void ArmTeleopCommand::End(bool interrupted) {
 }
 
 bool ArmTeleopCommand::IsFinished() {
-    return false; // dont end because then we wont be able to drive
+    return false; // dont end because then we wont be able to move the arm
 }
 
 void ArmTeleopCommand::resetTarget(){
