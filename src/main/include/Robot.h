@@ -23,11 +23,8 @@
 #include "external/cpptoml.h"
 
 //temporary auto
-#ifdef COMPETITION_MODE
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/StartEndCommand.h>
-#include <frc2/command/ParallelRaceGroup.h>
-#endif
 
 class Robot : public frc::TimedRobot {
  public:
@@ -63,8 +60,6 @@ class Robot : public frc::TimedRobot {
   ArmTeleopCommand* c_armTeleopCommand = nullptr;
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;
   
-  //temporary auto
-  #ifdef COMPETITION_MODE
-  std::unique_ptr<frc2::CommandBase> c_simpleAuto{nullptr};
-  #endif
+  //dump cube and put into scoring zone auto
+  std::unique_ptr<frc2::CommandBase> c_autoDumpCubeAndScore{nullptr};
 };
