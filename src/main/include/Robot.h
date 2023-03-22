@@ -60,5 +60,5 @@ class Robot : public frc::TimedRobot {
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;
   
   //dump cube and put into scoring zone auto
-  std::unique_ptr<frc2::CommandBase> c_simpleAuto{nullptr};
+  std::unique_ptr<frc2::CommandBase> c_autoDumpCubeAndScore{nullptr};
 };

@@ -66,7 +66,7 @@ void Robot::RobotInit() {
     {c_drivetrain}
   }.ToPtr();
 
-  c_simpleAuto = std::move(orientWheels).WithTimeout(0.5_s)
+  c_autoDumpCubeAndScore = std::move(orientWheels).WithTimeout(0.5_s)
     .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
     .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
     .Unwrap();
@@ -100,7 +100,7 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
-  c_simpleAuto->Schedule();
+  c_autoDumpCubeAndScore->Schedule();
   // TODO: Make sure to cancel autonomous command in teleop init.
 }
 
@@ -110,7 +110,7 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {
   // Make sure autonomous command is canceled first.
-  c_simpleAuto->Cancel();
+  c_autoDumpCubeAndScore->Cancel();
 
   //c_armTeleopCommand->Schedule();
   //c_armTeleopCommand->resetTarget();
