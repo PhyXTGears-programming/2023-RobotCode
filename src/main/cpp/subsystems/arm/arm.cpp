@@ -48,6 +48,12 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     m_gripperRotateMotor.SetSmartCurrentLimit(5.0);
     m_gripperGraspMotor.SetSmartCurrentLimit(5.0);
 
+    m_turretMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    m_lowJointMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    m_midJointMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    m_gripperRotateMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    m_gripperGraspMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+
     initialiseBoundary();
 }
 
