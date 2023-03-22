@@ -24,6 +24,7 @@
 
 //temporary auto
 #include <frc2/command/CommandBase.h>
+#include <frc2/command/StartEndCommand.h>
 
 class Robot : public frc::TimedRobot {
  public:
