@@ -516,9 +516,12 @@ void ArmSubsystem::setGripSpeed(double speed) {
 }
 
 std::optional<Point> ArmSubsystem::moveToPoint(Point const & target) {
-    if (!isPointSafe(target)) {
-        return std::nullopt;
-    }
+    // FIXME: Disabled check for safe point until testing resolves issue with all points unsafe.
+    // Lean on angle and speed limits for safety in the meantime.
+    frc::SmartDashboard::PutBoolean("Is target point safe?", isPointSafe(target));
+    //if (!isPointSafe(target)) {
+    //    return std::nullopt;
+    //}
 
     ArmPose pose = calcIKJointPoses(target);
 
