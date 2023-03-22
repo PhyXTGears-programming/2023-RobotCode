@@ -4,7 +4,7 @@
 #include <frc2/command/SubsystemBase.h>
 
 #include "subsystems/drivetrain/swerveWheel.h"
-#include "util/point.h"
+#include "util/geom.h"
 #include "util/polar.h"
 
 #include <AHRS.h>
@@ -121,6 +121,10 @@ class Drivetrain : public frc2::SubsystemBase {
         */
         void resetNavxHeading();
 
+        /**
+         * @param restrictMovement whether the Drivetrain should lock out any movement
+         */
+        void lockMovement(bool restrictMovement);
     private:
         void setupWheels();
 
@@ -134,6 +138,8 @@ class Drivetrain : public frc2::SubsystemBase {
         double m_strife = 0;
         double m_forwards = 0;
         double m_rotation = 0;
+
+        bool m_forceLockMovement = false;
 
         SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};
 

@@ -18,11 +18,20 @@
 
 #include "external/cpptoml.h"
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
+#include <frc2/command/SequentialCommandGroup.h>
+#include <frc2/command/Command.h>
+#include <frc/Timer.h>
+
 void Robot::RobotInit() {
   try{
     c_toml = cpptoml::parse_file(frc::filesystem::GetDeployDirectory()+"/config.toml");
   } catch (cpptoml::parse_exception & ex){
-    std::cerr << "Unable to open file: config.toml" << std::endl;
+    std::cerr << "Unable to open file: config.toml"
+        << std::endl
+        << ex.what()
+        << std::endl;
     exit(1);
   }
   
@@ -31,11 +40,36 @@ void Robot::RobotInit() {
   c_operatorController = new frc::XboxController(Interfaces::k_operatorXboxController);
 
   //Subsystems
-  c_drivetrain = new Drivetrain(false);
+  c_drivetrain = new Drivetrain(true);
   c_odometry = new Odometry(c_drivetrain);
+  //c_arm = new ArmSubsystem(c_toml->get_table("arm"));
 
   //Commands
+  //c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
+
+  auto orientWheels = frc2::StartEndCommand{
+  //dump cube and move auto
+    [&] () { c_drivetrain->setMotion(0,0.05,0); },
+    [&] () { c_drivetrain->setMotion(0,0,0); },
+    { c_drivetrain }
+  }.ToPtr();
+  auto forceOffCube = frc2::StartEndCommand{
+    [&] () { c_drivetrain->setMotion(0,0.5,0); },
+    [&] () { c_drivetrain->setMotion(0,0,0); },
+    { c_drivetrain }
+  }.ToPtr();
+
+  auto putCubeIntoStation = frc2::StartEndCommand{
+    [&] () { c_drivetrain->setMotion(0,-0.15,0); },
+    [&] () { c_drivetrain->setMotion(0,0,0); },
+    {c_drivetrain}
+  }.ToPtr();
+
+  c_autoDumpCubeAndScore = std::move(orientWheels).WithTimeout(0.5_s)
+    .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
+    .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
+    .Unwrap();
 }
 
 /**
@@ -48,6 +82,8 @@ void Robot::RobotInit() {
  */
 void Robot::RobotPeriodic() {
   frc2::CommandScheduler::GetInstance().Run();
+
+  frc::SmartDashboard::PutBoolean("Field Centric Enabled",c_drivetrain->getFieldCentric());
 }
 
 /**
@@ -64,16 +100,23 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
+  c_autoDumpCubeAndScore->Schedule();
   // TODO: Make sure to cancel autonomous command in teleop init.
 }
 
-void Robot::AutonomousPeriodic() {}
-
-void Robot::TeleopInit() {
-  // TODO: Make sure autonomous command is canceled first.
-  c_driveTeleopCommand->Schedule();
+void Robot::AutonomousPeriodic() {
+  c_drivetrain->Periodic();// update drivetrain no matter what
 }
 
+void Robot::TeleopInit() {
+  // Make sure autonomous command is canceled first.
+  c_autoDumpCubeAndScore->Cancel();
+
+  //c_armTeleopCommand->Schedule();
+  //c_armTeleopCommand->resetTarget();
+  c_driveTeleopCommand->Schedule();
+  c_drivetrain->enableFieldCentric();
+}
 /**
  * This function is called periodically during operator control.
  */
@@ -86,6 +129,10 @@ void Robot::TeleopPeriodic() {
   // Driver B button -> reset navx heading.
   if (c_driverController->GetBButtonPressed()) {
     c_drivetrain->resetNavxHeading();
+  }
+
+  if(c_driverController->GetXButtonPressed()) {
+    c_drivetrain->lockMovement(false);
   }
 }
 

@@ -34,8 +34,9 @@ void DriveTeleopCommand::Execute() {
 
     // the rotation limit is there in case the driver does not want to spin as fast while driving (specifically limiting the controller input)
     c_drivetrain->setMotion(
-      -DEADZONE(c_driverController->GetLeftX()) * speedFactor,
-      DEADZONE(c_driverController->GetLeftY()) * speedFactor,
+      DEADZONE(c_driverController->GetLeftX()) * speedFactor,
+      -DEADZONE(c_driverController->GetLeftY()) * speedFactor,
+      // Reverse rotation so right is clockwise robot motion.
       DEADZONE(c_driverController->GetRightX()) * Constants::k_maxSpinSpeed
     );
 }

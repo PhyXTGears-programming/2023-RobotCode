@@ -13,11 +13,18 @@
 
 #include <frc/XboxController.h>
 
+#include "subsystems/arm/arm.h"
 #include "subsystems/drivetrain/drivetrain.h"
 #include "subsystems/drivetrain/odometry.h"
+
+#include "commands/arm/ArmTeleopCommand.h"
 #include "commands/drivetrain/driveTeleopCommand.h"
 
 #include "external/cpptoml.h"
+
+//temporary auto
+#include <frc2/command/CommandBase.h>
+#include <frc2/command/StartEndCommand.h>
 
 class Robot : public frc::TimedRobot {
  public:
@@ -47,7 +54,12 @@ class Robot : public frc::TimedRobot {
   //Subsystems
   Drivetrain* c_drivetrain = nullptr;
   Odometry* c_odometry = nullptr;
+  //ArmSubsystem* c_arm = nullptr;
 
   //Commands
+  //ArmTeleopCommand* c_armTeleopCommand = nullptr;
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;
+  
+  //dump cube and put into scoring zone auto
+  std::unique_ptr<frc2::CommandBase> c_autoDumpCubeAndScore{nullptr};
 };

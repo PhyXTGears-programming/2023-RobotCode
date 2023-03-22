@@ -4,9 +4,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#include "util/point.h"
-#include "util/polar.h"
-
 #include "subsystems/drivetrain/swerveWheel.h"
 #include "subsystems/drivetrain/swerveWheelTypes.h"
 
@@ -84,6 +81,9 @@ void Drivetrain::setupWheels() {
 }
 
 void Drivetrain::calculateWheelAnglesAndSpeeds() {
+    if(m_forceLockMovement){
+        return;
+    }
     if ((abs(Drivetrain::m_strife) <= 0.001) && (abs(Drivetrain::m_forwards) <= 0.001)) {
         if(abs(Drivetrain::m_rotation) <= 0.001){
             for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
@@ -241,4 +241,17 @@ double Drivetrain::getMovementHeading(int module){
 
 double Drivetrain::getMovementVelocity(int module){
     return c_wheels[module]->getVelocity();
+}
+
+void Drivetrain::lockMovement(bool restrictMovement){
+    // if set true, skips the calculation of everything, and this stays in its orientation regardless of drive movement
+    m_forceLockMovement = restrictMovement;
+    m_strife = 0; // set everything to 0 as a safety
+    m_forwards = 0;
+    m_rotation = 0;
+    for(int i=0;i<Constants::k_NumberOfSwerveModules;i++){
+        m_motorDirectionAngleSpeed[i].radian = atan2(c_wheelPositions[i].y,c_wheelPositions[i].x);
+        m_motorDirectionAngleSpeed[i].magnitude = 0;
+    }
+    sendToSwerveModules();
 }
