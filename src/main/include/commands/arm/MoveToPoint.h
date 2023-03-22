@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Mandatory.h"
 #include "subsystems/arm/arm.h"
 #include "subsystems/arm/motionPath.h"
 

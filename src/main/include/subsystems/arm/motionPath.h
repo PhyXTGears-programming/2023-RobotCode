@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Mandatory.h"
 #include "util/geom.h"
 
 #include <vector>
