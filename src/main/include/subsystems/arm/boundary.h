@@ -72,7 +72,7 @@ public:
             }
         }
 
-        return true;
+        return c_zLo < pt.z && pt.z < c_zHi;
     }
 
     bool isOutside(Point const & pt) override {
