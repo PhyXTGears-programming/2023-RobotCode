@@ -22,7 +22,7 @@ public:
         double zLo,
         double zHi)
     : c_xLo(xLo), c_xHi(xHi), c_yLo(yLo), c_yHi(yHi), c_zLo(zLo), c_zHi(zHi) { }
-    
+
     bool isInside(Point const & pt) override {
         return (c_xLo < pt.x && pt.x < c_xHi)
             && (c_yLo < pt.y && pt.y < c_yHi)

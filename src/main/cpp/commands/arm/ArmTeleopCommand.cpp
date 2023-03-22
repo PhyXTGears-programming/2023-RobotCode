@@ -70,7 +70,11 @@ void ArmTeleopCommand::Execute() {
         rightY = DEADZONE(rightY, 0.0, 1.0);
         if (0.0 != rightY) {
             // (+) rightY should move gripper up.
-            offsetRY = Vector(0.0, 0.0, rightY * Constants::Arm::k_maxPointSpeed);
+            offsetRY = Vector(
+                0.0,
+                0.0,
+                rightY * Constants::Arm::k_maxPointSpeed
+            );
         }
 
         Point desiredTarget = m_target + offsetLX + offsetLY + offsetRY;
