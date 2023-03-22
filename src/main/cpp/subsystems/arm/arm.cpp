@@ -43,10 +43,10 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     m_gripperGraspMotor.SetInverted(true); // Grip open is (+) speed
 
     m_turretMotor.SetSmartCurrentLimit(5.0);
-    m_lowJointMotor.SetSmartCurrentLimit(5.0);
-    m_midJointMotor.SetSmartCurrentLimit(5.0);
+    m_lowJointMotor.SetSmartCurrentLimit(10.0);
+    m_midJointMotor.SetSmartCurrentLimit(20.0);
     m_gripperRotateMotor.SetSmartCurrentLimit(5.0);
-    m_gripperGraspMotor.SetSmartCurrentLimit(5.0);
+    m_gripperGraspMotor.SetSmartCurrentLimit(30.0);
 
     m_turretMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     m_lowJointMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
