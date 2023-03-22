@@ -19,9 +19,9 @@ public:
     bool IsFinished() override;
 
 private:
-    ArmSubsystem * m_arm = nullptr;
-    Point m_finalTarget;
-    Point m_target;
+    ArmSubsystem * c_arm = nullptr;
+    Point c_finalTarget;
 
+    Point m_target;
     std::optional<MotionPath> m_path;
 };

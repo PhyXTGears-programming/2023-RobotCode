@@ -4,7 +4,7 @@
 
 MotionPath::MotionPath(std::vector<Point> path) : m_path(path) {
     std::reverse(m_path.begin(), m_path.end());
-    m_finalTarget = m_path[0];
+    c_finalTarget = m_path[0];
 }
 
 /// Yield next point in path after each call.
@@ -20,5 +20,5 @@ Point MotionPath::interpolate(Point const & p0, Point const & p1) {
 }
 
 bool MotionPath::isDone() {
-    return m_path.size() == 1 && m_finalTarget.isNear(m_path[0]);
+    return m_path.size() == 1 && c_finalTarget.isNear(m_path[0]);
 }

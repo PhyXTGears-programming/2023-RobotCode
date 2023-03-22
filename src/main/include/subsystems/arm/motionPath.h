@@ -17,6 +17,6 @@ public:
 private:
     std::vector<Point> m_path;
 
-    Point m_finalTarget;
+    Point c_finalTarget;
     Point m_target;
 };
