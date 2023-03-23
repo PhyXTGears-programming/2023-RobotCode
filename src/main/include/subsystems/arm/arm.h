@@ -15,6 +15,7 @@
 #include <frc/AnalogPotentiometer.h>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/controller/PIDController.h>
+#include <frc/Servo.h>
 #include <frc2/command/SubsystemBase.h>
 
 #include <rev/CANSparkMax.h>
@@ -140,6 +141,8 @@ private:
         k_GripperGraspMotor,
         rev::CANSparkMaxLowLevel::MotorType::kBrushless
     };
+
+    frc::Servo c_cameraServo { k_CameraServo };
 
     frc::AnalogPotentiometer c_turretAngleSensor {k_TurretSensor, 1.0, 0.0};
     frc::AnalogPotentiometer c_elbowAngleSensor {k_ElbowSensor, 1.0, 0.0};

@@ -78,6 +78,14 @@ void ArmTeleopCommand::Execute() {
         }
 
         Point desiredTarget = m_target + offsetLX + offsetLY + offsetRY;
+        // Clamp max distance from current position.
+        {
+            Point currentPos = c_arm->getGripPoint();
+            Vector offset = desiredTarget - currentPos;
+            double mag = offset.len();
+            offset = offset * (std::min(mag, 0.0254 * 4.0 /* 2 inches */) / mag);
+            desiredTarget = currentPos + offset;
+        }
 
         // Attempt to move to desired target, and ignore point if deemed unsafe.
         std::optional<Point> optSafePoint = c_arm->moveToPoint(desiredTarget);
