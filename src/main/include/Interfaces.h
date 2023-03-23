@@ -93,6 +93,10 @@ namespace Interfaces
         const int k_AIR1 = 1;
         const int k_AIR6 = 6;
         const int k_AIR7 = 7;
+
+        // PWM
+        const int k_PWM0 = 0;
+        const int k_PWM1 = 1;
     }
 
     const int k_driverXboxController = k_USB00;
@@ -127,5 +131,7 @@ namespace Interfaces
         const int k_GripSensor = k_AIO3;
 
         const int k_ShoulderSensor = k_DIO0;
+
+        const int k_CameraServo = k_PWM0;
     }
 }
