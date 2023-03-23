@@ -374,6 +374,7 @@ void ArmSubsystem::_setTurretAngle(double angle) {
     if (isNearZero(da, 0.02)) {
         c_turretMotor.Set(0.0);
     } else {
+        da += std::copysign(0.05, da);
         c_turretMotor.Set(std::clamp(da, -0.1, 0.1));
     }
 }
