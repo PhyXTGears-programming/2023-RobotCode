@@ -40,8 +40,8 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     c_gripperRotateMotor.SetInverted(true); // CW is (+) speed
     c_gripperGraspMotor.SetInverted(true); // Grip open is (+) speed
 
-    c_turretMotor.SetSmartCurrentLimit(5.0);
-    c_lowJointMotor.SetSmartCurrentLimit(10.0);
+    c_turretMotor.SetSmartCurrentLimit(20.0);
+    c_lowJointMotor.SetSmartCurrentLimit(25.0);
     c_midJointMotor.SetSmartCurrentLimit(20.0);
     c_gripperRotateMotor.SetSmartCurrentLimit(5.0);
     c_gripperGraspMotor.SetSmartCurrentLimit(30.0);
