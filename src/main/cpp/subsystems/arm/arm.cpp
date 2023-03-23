@@ -53,6 +53,8 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     c_gripperGraspMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
     initialiseBoundary();
+
+    AddChild("Camera Servo", &c_cameraServo);
 }
 
 void ArmSubsystem::Periodic() {
@@ -65,9 +67,59 @@ void ArmSubsystem::Periodic() {
         double output = c_shoulderPid->Calculate(getShoulderAngle());
         // Reverse motor direction.
         output = -output;
-        output = std::clamp(output, -0.2, 0.2);
+        output = std::clamp(output, -0.3, 0.25);
+
+        if (!isNearZero(output)) {
+            if (output < 0.0) {
+                output -= 0.08;
+            }
+        }
+
         c_lowJointMotor.Set(output);
     }
+
+    {
+        // Reset camera servo position to default.  Will eventually track grip position, if we're lucky.
+        //c_cameraServo.SetAngle(70.0);
+
+        // Try to follow gripper mechanism based on elbow angle.
+        double elbowAngle = getElbowAngle();
+        double servoAngle = std::clamp(180.0 - elbowAngle * (70.0 - 110.0) / (90.0 - 54.0), 0.0, 180.0);
+        c_cameraServo.SetAngle(servoAngle);
+    }
+
+    frc::SmartDashboard::PutNumber("Turret Angle (deg)",     RAD_2_DEG(getTurretAngle()));
+    frc::SmartDashboard::PutNumber("Shoulder Angle (deg)",   RAD_2_DEG(getShoulderAngle()));
+    frc::SmartDashboard::PutNumber("Elbow Angle (deg)",      RAD_2_DEG(getElbowAngle()));
+    frc::SmartDashboard::PutNumber("Wrist Roll Angle (deg)", RAD_2_DEG(getWristRollAngle()));
+    frc::SmartDashboard::PutNumber("Grip Distance (meters)", getGrip());
+
+#ifdef DEBUG_MODE
+    // Raw values
+    frc::SmartDashboard::PutNumber("Raw: Turret Angle (V)",     c_turretAngleSensor.Get());
+    frc::SmartDashboard::PutNumber("Raw: Shoulder Angle (deg)", c_shoulderAngleSensor.Get().value() * 360.0);
+    frc::SmartDashboard::PutNumber("Raw: Elbow Angle (V)",      c_elbowAngleSensor.Get());
+    frc::SmartDashboard::PutNumber("Raw: Wrist Roll Angle (V)", c_wristRollAngleSensor.Get());
+    frc::SmartDashboard::PutNumber("Raw: Grip Distance (V)",    c_gripSensor.Get());
+#endif
+
+    // Report calculated gripper position.
+    Point gripPos = getGripPoint();
+    {
+        static double gripCoords[3];
+        gripCoords[0] = gripPos.x;
+        gripCoords[1] = gripPos.y;
+        gripCoords[2] = gripPos.z;
+        frc::SmartDashboard::PutNumberArray("Grip Pos (m)", gripCoords);
+    }
+
+    // Report calculated arm pose angles.  What the robot thinks the angles
+    // should be to reach gripper position.
+
+    ArmPose pose = calcIKJointPoses(gripPos);
+    frc::SmartDashboard::PutNumber("IK Turret Angle (deg)",   RAD_2_DEG(pose.turretAngle));
+    frc::SmartDashboard::PutNumber("IK Shoulder Angle (deg)", RAD_2_DEG(pose.shoulderAngle));
+    frc::SmartDashboard::PutNumber("IK Elbow Angle (deg)",    RAD_2_DEG(pose.elbowAngle));
 }
 
 void ArmSubsystem::initialiseBoundary() {
