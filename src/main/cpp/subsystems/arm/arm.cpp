@@ -411,7 +411,12 @@ void ArmSubsystem::_setElbowAngle(double angle) {
     if (isNearZero(da, 0.02)) {
         c_midJointMotor.Set(0.0);
     } else {
-        c_midJointMotor.Set(std::clamp(da, -0.05, 0.05) + std::copysign(0.1, da));
+        da += std::copysign(0.1, da);
+        if (da > 0.0) {
+            // Help arm move up.
+            da += 0.05;
+        }
+        c_midJointMotor.Set(std::clamp(da, -0.18, 0.30));
     }
 }
 
