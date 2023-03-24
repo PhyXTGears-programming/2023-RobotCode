@@ -64,3 +64,11 @@ double RevSparkMaxBrushless::getSensorHeading() {
 void RevSparkMaxBrushless::enableContinuousInput() {
     c_pidController.EnableContinuousInput(-M_PI, M_PI);
 }
+
+void RevSparkMaxBrushless::setBrakeMode(bool shallBrake) {
+    if (shallBrake) {
+        c_motor->SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    } else {
+        c_motor->SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    }
+}

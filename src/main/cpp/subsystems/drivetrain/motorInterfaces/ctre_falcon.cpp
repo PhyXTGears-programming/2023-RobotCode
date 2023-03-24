@@ -42,3 +42,11 @@ double CtreFalcon::getSensorHeading() {
 void CtreFalcon::enableContinuousInput() {
     // Not implemented.
 }
+
+void CtreFalcon::setBrakeMode(bool shallBrake) {
+    if (shallBrake) {
+        c_motor->SetNeutralMode(ctre::phoenix::motorcontrol::NeutralMode::Brake);
+    } else {
+        c_motor->SetNeutralMode(ctre::phoenix::motorcontrol::NeutralMode::Coast);
+    }
+}
