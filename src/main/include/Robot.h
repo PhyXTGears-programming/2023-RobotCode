@@ -71,8 +71,8 @@ class Robot : public frc::TimedRobot {
   const std::string c_autoNameDumpScoreAndLeave = "Dump Cube, Score, Then Leave Safe Zone";
 
   //dump cube and put into scoring zone auto
-  std::unique_ptr<frc2::CommandBase> c_autoDumpCubeAndScore{nullptr};
+  frc2::CommandPtr c_autoDumpCubeAndScore{nullptr};
   
   //dump cube and put into scoring zone auto, then leave safe zone
-  std::unique_ptr<frc2::CommandBase> c_autoDumpCubeScoreAndLeaveSafeZone{nullptr};
+  frc2::CommandPtr c_autoDumpCubeScoreAndLeaveSafeZone{nullptr};
 };

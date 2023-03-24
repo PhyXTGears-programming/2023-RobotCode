@@ -12,6 +12,7 @@
 
 #include <iostream>
 
+#include "subsystems/auto/auto.h"
 #include "subsystems/drivetrain/drivetrain.h"
 #include "subsystems/drivetrain/odometry.h"
 #include "commands/drivetrain/driveTeleopCommand.h"
@@ -55,40 +56,8 @@ void Robot::RobotInit() {
 
   frc::SmartDashboard::PutData("Auto Modes", &c_chooser);
 
-  auto orientWheels = frc2::StartEndCommand{
-  //dump cube and move auto
-    [&] () { c_drivetrain->setMotion(0,0.05,0); },
-    [&] () { c_drivetrain->setMotion(0,0,0); },
-    { c_drivetrain }
-  }.ToPtr();
-  auto forceOffCube = frc2::StartEndCommand{
-    [&] () { c_drivetrain->setMotion(0,0.5,0); },
-    [&] () { c_drivetrain->setMotion(0,0,0); },
-    { c_drivetrain }
-  }.ToPtr();
-
-  auto putCubeIntoStation = frc2::StartEndCommand{
-    [&] () { c_drivetrain->setMotion(0,-0.15,0); },
-    [&] () { c_drivetrain->setMotion(0,0,0); },
-    {c_drivetrain}
-  }.ToPtr();
-
-  auto driveOutOfSafeZone = frc2::StartEndCommand{
-    [&] () { c_drivetrain->setMotion(0,0.25,0); },
-    [&] () { c_drivetrain->setMotion(0,0,0); },
-    { c_drivetrain }
-  };
-
-  c_autoDumpCubeAndScore = std::move(orientWheels).WithTimeout(0.5_s)
-    .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
-    .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
-    .Unwrap();
-
-  c_autoDumpCubeScoreAndLeaveSafeZone = std::move(orientWheels).WithTimeout(0.5_s)
-    .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
-    .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
-    .AndThen(std::move(driveOutOfSafeZone).WithTimeout(2.0_s))
-    .Unwrap();
+  c_autoDumpCubeAndScore = makeAutoDumpCubeAndScore(c_drivetrain);
+  c_autoDumpCubeScoreAndLeaveSafeZone = makeAutoDumpCubeAndScoreAndLeaveSafeZone(c_drivetrain);
 }
 
 /**
@@ -123,10 +92,10 @@ void Robot::AutonomousInit() {
 
   //done this way to prevent branch misses (because there are none)
   if(m_autoSelected == c_autoNameDumpCubeAndScore){
-    c_autoDumpCubeAndScore->Schedule();
+    c_autoDumpCubeAndScore.Schedule();
   }
   if(m_autoSelected == c_autoNameDumpScoreAndLeave){
-    c_autoDumpCubeScoreAndLeaveSafeZone->Schedule();
+    c_autoDumpCubeScoreAndLeaveSafeZone.Schedule();
   }
   if(m_autoSelected == c_autoNameDefault){
     //default auto command
@@ -142,10 +111,10 @@ void Robot::TeleopInit() {
   // Make sure autonomous command is canceled first.
   // done this way to prevent branch misses (because there are no branches)
   if(m_autoSelected == c_autoNameDumpCubeAndScore){
-    c_autoDumpCubeAndScore->Schedule();
+    c_autoDumpCubeAndScore.Schedule();
   }
   if(m_autoSelected == c_autoNameDumpScoreAndLeave){
-    c_autoDumpCubeScoreAndLeaveSafeZone->Schedule();
+    c_autoDumpCubeScoreAndLeaveSafeZone.Schedule();
   }
   if(m_autoSelected == c_autoNameDefault){
     //default auto command
