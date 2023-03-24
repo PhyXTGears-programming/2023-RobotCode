@@ -26,6 +26,9 @@
 #include <frc2/command/CommandBase.h>
 #include <frc2/command/StartEndCommand.h>
 
+//auto chooser
+#include <frc/smartdashboard/SendableChooser.h>
+
 class Robot : public frc::TimedRobot {
  public:
   void RobotInit() override;
@@ -60,6 +63,13 @@ class Robot : public frc::TimedRobot {
   ArmTeleopCommand* c_armTeleopCommand = nullptr;
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;
   
+  //Auto Selector
+  std::string m_autoSelected;
+  frc::SendableChooser<std::string> c_chooser;
+  const std::string c_autoNameDefault = "Default";
+  const std::string c_autoNameDumpCubeAndScore = "Dump Cube and Score";
+  const std::string c_autoNameDumpScoreAndLeave = "Dump Cube, Score, Then Leave Safe Zone";
+
   //dump cube and put into scoring zone auto
   std::unique_ptr<frc2::CommandBase> c_autoDumpCubeAndScore{nullptr};
   

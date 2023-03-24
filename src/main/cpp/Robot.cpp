@@ -48,6 +48,13 @@ void Robot::RobotInit() {
   c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
 
+  //Auto chooser
+  c_chooser.SetDefaultOption(c_autoNameDefault, c_autoNameDefault);
+  c_chooser.AddOption(c_autoNameDumpCubeAndScore, c_autoNameDumpCubeAndScore);
+  c_chooser.AddOption(c_autoNameDumpScoreAndLeave, c_autoNameDumpScoreAndLeave);
+
+  frc::SmartDashboard::PutData("Auto Modes", &c_chooser);
+
   auto orientWheels = frc2::StartEndCommand{
   //dump cube and move auto
     [&] () { c_drivetrain->setMotion(0,0.05,0); },
@@ -112,7 +119,18 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
-  c_autoDumpCubeAndScore->Schedule();
+  m_autoSelected = c_chooser.GetSelected();
+
+  //done this way to prevent branch misses (because there are none)
+  if(m_autoSelected == c_autoNameDumpCubeAndScore){
+    c_autoDumpCubeAndScore->Schedule();
+  }
+  if(m_autoSelected == c_autoNameDumpScoreAndLeave){
+    c_autoDumpCubeScoreAndLeaveSafeZone->Schedule();
+  }
+  if(m_autoSelected == c_autoNameDefault){
+    //default auto command
+  }
   // TODO: Make sure to cancel autonomous command in teleop init.
 }
 
@@ -122,7 +140,16 @@ void Robot::AutonomousPeriodic() {
 
 void Robot::TeleopInit() {
   // Make sure autonomous command is canceled first.
-  c_autoDumpCubeAndScore->Cancel();
+  // done this way to prevent branch misses (because there are no branches)
+  if(m_autoSelected == c_autoNameDumpCubeAndScore){
+    c_autoDumpCubeAndScore->Schedule();
+  }
+  if(m_autoSelected == c_autoNameDumpScoreAndLeave){
+    c_autoDumpCubeScoreAndLeaveSafeZone->Schedule();
+  }
+  if(m_autoSelected == c_autoNameDefault){
+    //default auto command
+  }
 
   c_armTeleopCommand->Schedule();
   c_armTeleopCommand->resetTarget();
