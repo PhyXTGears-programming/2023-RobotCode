@@ -48,6 +48,8 @@ class RevSparkMaxBrushless : public MotorInterfaces {
          * Enable continous input on PID so motors (like steering) can turn full circle without reversing.
         */
         void enableContinuousInput() override;
+
+        void setBrakeMode(bool shallBrake) override;
     private:
         double m_currentSpeedPercentage = 0;
         bool c_pidControlled = false;
