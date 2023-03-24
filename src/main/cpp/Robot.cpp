@@ -66,9 +66,21 @@ void Robot::RobotInit() {
     {c_drivetrain}
   }.ToPtr();
 
+  auto driveOutOfSafeZone = frc2::StartEndCommand{
+    [&] () { c_drivetrain->setMotion(0,0.25,0); },
+    [&] () { c_drivetrain->setMotion(0,0,0); },
+    { c_drivetrain }
+  };
+
   c_autoDumpCubeAndScore = std::move(orientWheels).WithTimeout(0.5_s)
     .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
     .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
+    .Unwrap();
+
+  c_autoDumpCubeScoreAndLeaveSafeZone = std::move(orientWheels).WithTimeout(0.5_s)
+    .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
+    .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
+    .AndThen(std::move(driveOutOfSafeZone).WithTimeout(2.0_s))
     .Unwrap();
 }
 

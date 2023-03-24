@@ -62,4 +62,7 @@ class Robot : public frc::TimedRobot {
   
   //dump cube and put into scoring zone auto
   std::unique_ptr<frc2::CommandBase> c_autoDumpCubeAndScore{nullptr};
+  
+  //dump cube and put into scoring zone auto, then leave safe zone
+  std::unique_ptr<frc2::CommandBase> c_autoDumpCubeScoreAndLeaveSafeZone{nullptr};
 };
