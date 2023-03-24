@@ -92,6 +92,8 @@ public:
 
     void stopArm();
 
+    void resetShoulderAngle();
+
 private:
     void loadConfig(std::shared_ptr<cpptoml::table> toml);
 

@@ -35,7 +35,7 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     c_shoulderPid->SetTolerance(tolerance);
     c_shoulderPid->SetIntegratorRange(-0.01, 0.01);
 
-    c_shoulderPid->SetSetpoint(getShoulderAngle());
+    resetShoulderAngle();
 
     c_gripperRotateMotor.SetInverted(true); // CW is (+) speed
     c_gripperGraspMotor.SetInverted(false); // Grip open is (+) speed
@@ -557,6 +557,10 @@ std::optional<Point> ArmSubsystem::moveToPoint(Point const & target) {
 
 void ArmSubsystem::stopArm() {
     moveToPoint(getGripPoint());
+}
+
+void ArmSubsystem::resetShoulderAngle() {
+    c_shoulderPid->SetSetpoint(getShoulderAngle());
 }
 
 //          NOT IMPLEMENTED IN HARDWARE
