@@ -90,6 +90,10 @@ void Robot::DisabledPeriodic() {}
 void Robot::AutonomousInit() {
   m_autoSelected = c_chooser.GetSelected();
 
+  // Arm does not appear to get proper shoulder angle at startup.  Hopefully
+  // enough time elapsed before auto init for the sensor to send good data.
+  c_arm->resetShoulderAngle();
+
   //done this way to prevent branch misses (because there are none)
   if(m_autoSelected == c_autoNameDumpCubeAndScore){
     c_autoDumpCubeAndScore.Schedule();
@@ -108,6 +112,10 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
+  // Arm does not appear to get proper shoulder angle at startup.  Hopefully
+  // enough time elapsed before auto init for the sensor to send good data.
+  c_arm->resetShoulderAngle();
+
   // Make sure autonomous command is canceled first.
   // done this way to prevent branch misses (because there are no branches)
   if(m_autoSelected == c_autoNameDumpCubeAndScore){
