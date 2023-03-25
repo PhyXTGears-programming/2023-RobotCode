@@ -255,3 +255,20 @@ void Drivetrain::lockMovement(bool restrictMovement){
     }
     sendToSwerveModules();
 }
+
+double Drivetrain::getXTilt(){
+    return m_navX->GetPitch();
+}
+double Drivetrain::getYTilt(){
+    return m_navX->GetRoll();
+}
+
+double Drivetrain::getZAcceleration(){
+    return m_navX->GetWorldLinearAccelZ();
+}
+double Drivetrain::getYAcceleration(){
+    return m_navX->GetWorldLinearAccelY();
+}
+double Drivetrain::getXAcceleration(){
+    return m_navX->GetWorldLinearAccelX();
+}

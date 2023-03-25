@@ -19,6 +19,7 @@
 
 #include "commands/arm/ArmTeleopCommand.h"
 #include "commands/drivetrain/driveTeleopCommand.h"
+#include "commands/drivetrain/driveLevelOnChargeStation.h"
 
 #include "external/cpptoml.h"
 
@@ -69,10 +70,13 @@ class Robot : public frc::TimedRobot {
   const std::string c_autoNameDefault = "Default";
   const std::string c_autoNameDumpCubeAndScore = "Dump Cube and Score";
   const std::string c_autoNameDumpScoreAndLeave = "Dump Cube, Score, Then Leave Safe Zone";
+  const std::string c_autoTesting = "(BROKEN) DONT USE";
 
   //dump cube and put into scoring zone auto
   frc2::CommandPtr c_autoDumpCubeAndScore{nullptr};
   
   //dump cube and put into scoring zone auto, then leave safe zone
   frc2::CommandPtr c_autoDumpCubeScoreAndLeaveSafeZone{nullptr};
+
+  frc2::CommandPtr c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel{nullptr};
 };

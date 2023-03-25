@@ -53,11 +53,13 @@ void Robot::RobotInit() {
   c_chooser.SetDefaultOption(c_autoNameDefault, c_autoNameDefault);
   c_chooser.AddOption(c_autoNameDumpCubeAndScore, c_autoNameDumpCubeAndScore);
   c_chooser.AddOption(c_autoNameDumpScoreAndLeave, c_autoNameDumpScoreAndLeave);
+  c_chooser.AddOption(c_autoTesting, c_autoTesting);
 
   frc::SmartDashboard::PutData("Auto Modes", &c_chooser);
 
   c_autoDumpCubeAndScore = makeAutoDumpCubeAndScore(c_drivetrain);
   c_autoDumpCubeScoreAndLeaveSafeZone = makeAutoDumpCubeAndScoreAndLeaveSafeZone(c_drivetrain);
+  c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel = makeAutoDumpCubeAndScoreAndLeaveSafeZoneThenBalance(c_drivetrain);
 }
 
 /**
@@ -102,7 +104,10 @@ void Robot::AutonomousInit() {
     c_autoDumpCubeScoreAndLeaveSafeZone.Schedule();
   }
   if(m_autoSelected == c_autoNameDefault){
-    //default auto command
+    //do nothing
+  }
+  if(m_autoSelected == c_autoTesting){
+    c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel.Schedule();
   }
   // TODO: Make sure to cancel autonomous command in teleop init.
 }
@@ -119,13 +124,16 @@ void Robot::TeleopInit() {
   // Make sure autonomous command is canceled first.
   // done this way to prevent branch misses (because there are no branches)
   if(m_autoSelected == c_autoNameDumpCubeAndScore){
-    c_autoDumpCubeAndScore.Schedule();
+    c_autoDumpCubeAndScore.Cancel();
   }
   if(m_autoSelected == c_autoNameDumpScoreAndLeave){
-    c_autoDumpCubeScoreAndLeaveSafeZone.Schedule();
+    c_autoDumpCubeScoreAndLeaveSafeZone.Cancel();
   }
   if(m_autoSelected == c_autoNameDefault){
-    //default auto command
+    // dont do anything
+  }
+  if(m_autoSelected == c_autoTesting){
+    c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel.Cancel();
   }
 
   c_armTeleopCommand->Schedule();

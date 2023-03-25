@@ -3,6 +3,8 @@
 
 #include <cmath>
 
+#define DEGREES_TO_RADIANS(deg) ((deg/180)*M_PI)
+
 namespace Constants {
     const int k_NumberOfSwerveModules = 4;
 
@@ -10,6 +12,12 @@ namespace Constants {
     const double k_normalDriveSpeed = 0.50;
     const double k_maxDriveSpeed = 0.70;
     const double k_maxSpinSpeed = 1.00;
+    
+    const double k_levelTolerance = 0.1;
+    const double k_maxLevelSpeed = 0.4;
+    const double k_levelMaxDegreesPerSecondChange = 1;
+    const double k_levelMaxRadiansPerSecondChange = DEGREES_TO_RADIANS(k_levelMaxDegreesPerSecondChange);
+    const double k_levelMaxRadiansPerTickChange = k_levelMaxRadiansPerSecondChange*50; // 50 ticks per second
 
     namespace Arm {
         const double k_forearmLenMeters = 32.0 /*inch*/ * 0.0254;

@@ -125,6 +125,20 @@ class Drivetrain : public frc2::SubsystemBase {
          * @param restrictMovement whether the Drivetrain should lock out any movement
          */
         void lockMovement(bool restrictMovement);
+        
+        /**
+         * @returns the NavX X tilt
+         */
+        double getXTilt();
+        
+        /**
+         * @returns the NavX Y tilt
+         */
+        double getYTilt();
+
+        double getZAcceleration();
+        double getYAcceleration();
+        double getXAcceleration();
     private:
         void setupWheels();
 
