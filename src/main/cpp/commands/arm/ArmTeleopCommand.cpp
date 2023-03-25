@@ -40,7 +40,7 @@ void ArmTeleopCommand::Execute() {
         leftX = DEADZONE(leftX, 0.0, 1.0);
         if (0.0 != leftX) {
             // (+) leftX should move turret clockwise.
-            double dir = gripDir + (leftX * Constants::Arm::k_maxPointRotSpeed) / std::max(gripMag,1.0);
+            double dir = gripDir + (leftX * Constants::Arm::k_maxPointRotSpeed) / std::max(gripMag * 2.0,1.0);
             Point point1(
                 gripMag * std::sin(dir),
                 gripMag * std::cos(dir),
