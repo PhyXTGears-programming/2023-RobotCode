@@ -88,6 +88,14 @@ class Drivetrain : public frc2::SubsystemBase {
         void setMotion(double x, double y, double r);
 
         /**
+         */
+        double getForward();
+
+        /**
+         */
+        double getStrafe();
+
+        /**
          * @returns direction of movement (this is a calculation based on controller inputs)
         */
         double getCalculatedHeading();

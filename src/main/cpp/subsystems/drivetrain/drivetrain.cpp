@@ -209,6 +209,14 @@ void Drivetrain::setMotion(double x, double y, double r) {
     calculateWheelAnglesAndSpeeds();
 }
 
+double Drivetrain::getForward() {
+    return m_forwards;
+}
+
+double Drivetrain::getStrafe() {
+    return m_strife;
+}
+
 double Drivetrain::getCalculatedHeading() {
     return atan2(Drivetrain::m_strife, Drivetrain::m_forwards); //swapped x & y so forwards is 0 radians
 }
