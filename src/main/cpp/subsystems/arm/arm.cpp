@@ -80,11 +80,13 @@ void ArmSubsystem::Periodic() {
 
     {
         // Reset camera servo position to default.  Will eventually track grip position, if we're lucky.
-        //c_cameraServo.SetAngle(70.0);
+        // c_cameraServo.SetAngle(50.0);
+        // 29 -> 140
+        // 110 -> 50
 
         // Try to follow gripper mechanism based on elbow angle.
-        double elbowAngle = getElbowAngle();
-        double servoAngle = std::clamp(180.0 - elbowAngle * (70.0 - 110.0) / (90.0 - 54.0), 0.0, 180.0);
+        double elbowAngle = RAD_2_DEG(getElbowAngle());
+        double servoAngle = std::clamp(180.0 + elbowAngle * (140.0 - 50.0) / (29.0 - 110.0), 0.0, 180.0);
         c_cameraServo.SetAngle(servoAngle);
     }
 
