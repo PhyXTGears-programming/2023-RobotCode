@@ -117,6 +117,8 @@ namespace Interfaces
     const int k_drivetrainBackRightEncoder = k_CAN23;
     const int k_drivetrainBackLeftEncoder = k_CAN24;
 
+    const int k_kickstandServo = 1;
+
     namespace Arm {
         // Arm subsystem
         const int k_TurretMotor = k_CAN10;
