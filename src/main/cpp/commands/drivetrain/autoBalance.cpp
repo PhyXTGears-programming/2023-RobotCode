@@ -48,26 +48,28 @@ autoBalance::autoBalance(Drivetrain* drivetrain){
 }
 
 double autoBalance::getPitch(){ //return in radians
-    return  std::atan2((- c_drivetrain->getXAcceleration()) ,
-                    std::sqrt( std::pow(c_drivetrain->getYAcceleration(),2) + std::pow(c_drivetrain->getZAcceleration(),2) )
+    return  std::atan2((- c_drivetrain->getXTilt()) ,
+                    std::sqrt( std::pow(c_drivetrain->getYTilt(),2) + std::pow(c_drivetrain->getFieldHeading(),2) )
             ) * (180/M_PI);
 }
 
 double autoBalance::getRoll(){ // return in radians
-    return  std::atan2(c_drivetrain->getYAcceleration(),
-            c_drivetrain->getZAcceleration()) * (180/M_PI);
+    return  std::atan2(c_drivetrain->getYTilt(),
+            c_drivetrain->getFieldHeading()) * (180/M_PI);
 }
 
 //returns the magnititude of the robot's tilt calculated by the root of
 //pitch^2 + roll^2, used to compensate for diagonally mounted rio
 double autoBalance::getTilt(){
-	double pitch = getPitch();
-	double roll = getRoll();
-    if((pitch + roll)>= 0){
-        return std::sqrt(pitch*pitch + roll*roll);
-    } else {
-        return -std::sqrt(pitch*pitch + roll*roll);
-    }
+	// double pitch = getPitch();
+	// double roll = getRoll();
+    // double roll = 0;
+    // if((pitch + roll)>= 0){
+    //     return std::sqrt(pitch*pitch + roll*roll);
+    // } else {
+    //     return -std::sqrt(pitch*pitch + roll*roll);
+    // }
+    return c_drivetrain->getYTilt() + DEGREES_TO_RADIANS(2);
 }
 
 //routine for automatically driving onto and engaging the charge station.
