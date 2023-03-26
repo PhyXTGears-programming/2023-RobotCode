@@ -63,6 +63,7 @@ class Robot : public frc::TimedRobot {
   //Commands
   ArmTeleopCommand* c_armTeleopCommand = nullptr;
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;
+  DriveLevelCommand* c_driveLevelCommand = nullptr;
   
   //Auto Selector
   std::string m_autoSelected;

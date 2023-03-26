@@ -48,6 +48,7 @@ void Robot::RobotInit() {
   //Commands
   c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
+  c_driveLevelCommand = new DriveLevelCommand(c_drivetrain);
 
   //Auto chooser
   c_chooser.SetDefaultOption(c_autoNameDefault, c_autoNameDefault);
@@ -108,7 +109,8 @@ void Robot::AutonomousInit() {
     //do nothing
   }
   if(m_autoSelected == c_autoTesting){
-    c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel.Schedule();
+    // c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel.Schedule();
+    c_driveLevelCommand->Schedule();
   }
   // TODO: Make sure to cancel autonomous command in teleop init.
 }
@@ -134,7 +136,8 @@ void Robot::TeleopInit() {
     // dont do anything
   }
   if(m_autoSelected == c_autoTesting){
-    c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel.Cancel();
+    // c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel.Cancel();
+    c_driveLevelCommand->Cancel();
   }
 
   c_armTeleopCommand->Schedule();
