@@ -118,3 +118,7 @@ double autoBalance::autoBalanceRoutine(){
     }
     return 0;
 }
+
+void autoBalance::reset(){
+    state = 0;
+}

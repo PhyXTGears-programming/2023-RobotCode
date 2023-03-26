@@ -19,6 +19,7 @@ DriveLevelCommand::DriveLevelCommand(Drivetrain* drivetrain) {
 
 void DriveLevelCommand::Initialize() {
     c_drivetrain->setMotion(0, 0, 0); // make sure nothing is moving
+    c_autoBalance->reset();
 }
 /*
 void DriveLevelCommand::Execute() {

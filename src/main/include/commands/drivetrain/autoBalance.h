@@ -17,6 +17,7 @@ class autoBalance{
         double getTilt();
         double autoBalanceRoutine();
         double scoreAndBalance();
+        void reset();
         
     private:
         frc::BuiltInAccelerometer mAccel{};
