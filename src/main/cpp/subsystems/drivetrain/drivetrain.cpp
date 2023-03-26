@@ -7,6 +7,7 @@
 #include "subsystems/drivetrain/swerveWheel.h"
 #include "subsystems/drivetrain/swerveWheelTypes.h"
 
+#include <frc/smartdashboard/SmartDashboard.h>
 
 #define DEGREES_TO_RADIANS(deg) ((deg/180.0)*M_PI)
 #include <AHRS.h>
@@ -49,6 +50,10 @@ void Drivetrain::Periodic() {
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
         Drivetrain::c_wheels[i]->Periodic();
     }
+
+    frc::SmartDashboard::PutNumber("X Tilt: ", RAD_2_DEG(getXTilt()));
+    frc::SmartDashboard::PutNumber("Y Tilt: ", RAD_2_DEG(getYTilt()));
+    frc::SmartDashboard::PutNumber("Z Tilt: ", RAD_2_DEG(getFieldHeading()));
 }
 
 void Drivetrain::setupWheels() {
