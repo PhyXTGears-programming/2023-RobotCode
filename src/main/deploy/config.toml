@@ -30,7 +30,7 @@
 
     # Limits are in meters
     grip.limit.lo = -0.035
-    grip.limit.hi =  0.230
+    grip.limit.hi =  0.260
     # Grip closed is considered 0 meters.
     grip.zeroOffsetMeters = -0.811
     grip.sensorToMeters   = 1.693
