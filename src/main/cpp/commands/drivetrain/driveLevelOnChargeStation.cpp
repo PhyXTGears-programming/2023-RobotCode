@@ -20,7 +20,7 @@ DriveLevelCommand::DriveLevelCommand(Drivetrain* drivetrain) {
 void DriveLevelCommand::Initialize() {
     c_drivetrain->setMotion(0, 0, 0); // make sure nothing is moving
 }
-
+/*
 void DriveLevelCommand::Execute() {
     double tiltMagnitude = std::sqrt( std::pow(c_drivetrain->getXTilt(), 2)
         + std::pow(c_drivetrain->getYTilt(), 2) ); // gets the angle from the floor
@@ -60,11 +60,11 @@ void DriveLevelCommand::Execute() {
 
     c_drivetrain->setMotion(0, movementSpeed, 0);
 
-}
+}*/
 
-// void DriveLevelCommand::Execute() {
-//     c_drivetrain->setMotion(0, c_autoBalance->autoBalanceRoutine(), 0); // just move forwards
-// }
+void DriveLevelCommand::Execute() {
+    c_drivetrain->setMotion(0, c_autoBalance->autoBalanceRoutine(), 0); // just move forwards
+}
 
 void DriveLevelCommand::End(bool interrupted){
     // set the movement to 0 just as a safety
