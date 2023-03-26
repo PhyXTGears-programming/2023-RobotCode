@@ -44,11 +44,13 @@ void Robot::RobotInit() {
   c_drivetrain = new Drivetrain(true);
   c_odometry = new Odometry(c_drivetrain);
   c_arm = new ArmSubsystem(c_toml->get_table("arm"));
+  c_kickstand = new Kickstand();
 
   //Commands
   c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
   c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
   c_driveLevelCommand = new DriveLevelCommand(c_drivetrain);
+  c_kickstandReleaseCommand = new KickstandReleaseCommand(c_kickstand);
 
   //Auto chooser
   c_chooser.SetDefaultOption(c_autoNameDefault, c_autoNameDefault);
@@ -161,6 +163,10 @@ void Robot::TeleopPeriodic() {
 
   if(c_driverController->GetXButtonPressed()) {
     c_drivetrain->lockMovement(false);
+  }
+
+  if(c_driverController->GetYButtonPressed()){
+    c_kickstandReleaseCommand->Schedule();
   }
 }
 

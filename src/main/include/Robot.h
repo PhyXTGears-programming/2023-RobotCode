@@ -19,6 +19,7 @@
 
 #include "commands/arm/ArmTeleopCommand.h"
 #include "commands/drivetrain/driveTeleopCommand.h"
+#include "commands/kickstand/kickstandReleaseCommand.h"
 #include "commands/drivetrain/driveLevelOnChargeStation.h"
 
 #include "external/cpptoml.h"
@@ -59,10 +60,12 @@ class Robot : public frc::TimedRobot {
   Drivetrain* c_drivetrain = nullptr;
   Odometry* c_odometry = nullptr;
   ArmSubsystem* c_arm = nullptr;
+  Kickstand* c_kickstand = nullptr;
 
   //Commands
   ArmTeleopCommand* c_armTeleopCommand = nullptr;
   DriveTeleopCommand* c_driveTeleopCommand = nullptr;
+  KickstandReleaseCommand* c_kickstandReleaseCommand = nullptr;
   DriveLevelCommand* c_driveLevelCommand = nullptr;
   
   //Auto Selector
