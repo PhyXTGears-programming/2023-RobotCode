@@ -9,3 +9,4 @@
 frc2::CommandPtr makeAutoDumpCubeAndScore(Drivetrain * drivetrain);
 frc2::CommandPtr makeAutoDumpCubeAndScoreAndLeaveSafeZone(Drivetrain * drivetrain);
 frc2::CommandPtr makeAutoDumpCubeAndScoreAndLeaveSafeZoneThenBalance(Drivetrain * drivetrain);
+frc2::CommandPtr makeAutoDumpCubeAndScoreAndLeaveSafeZoneOverChargeStation(Drivetrain * drivetrain);

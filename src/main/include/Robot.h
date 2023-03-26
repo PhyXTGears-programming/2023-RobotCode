@@ -70,6 +70,7 @@ class Robot : public frc::TimedRobot {
   const std::string c_autoNameDefault = "Default";
   const std::string c_autoNameDumpCubeAndScore = "Dump Cube and Score";
   const std::string c_autoNameDumpScoreAndLeave = "Dump Cube, Score, Then Leave Safe Zone";
+  const std::string c_autoNameDumpScoreAndLeaveOverChargeStation = "Dump Cube, Score, Then leave over Charge Station";
   const std::string c_autoTesting = "(BROKEN) DONT USE";
 
   //dump cube and put into scoring zone auto

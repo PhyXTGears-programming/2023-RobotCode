@@ -53,6 +53,7 @@ void Robot::RobotInit() {
   c_chooser.SetDefaultOption(c_autoNameDefault, c_autoNameDefault);
   c_chooser.AddOption(c_autoNameDumpCubeAndScore, c_autoNameDumpCubeAndScore);
   c_chooser.AddOption(c_autoNameDumpScoreAndLeave, c_autoNameDumpScoreAndLeave);
+  c_chooser.AddOption(c_autoNameDumpScoreAndLeaveOverChargeStation, c_autoNameDumpScoreAndLeaveOverChargeStation);
   c_chooser.AddOption(c_autoTesting, c_autoTesting);
 
   frc::SmartDashboard::PutData("Auto Modes", &c_chooser);
