@@ -257,10 +257,10 @@ void Drivetrain::lockMovement(bool restrictMovement){
 }
 
 double Drivetrain::getXTilt(){
-    return m_navX->GetPitch();
+    return DEGREES_TO_RADIANS(m_navX->GetPitch());
 }
 double Drivetrain::getYTilt(){
-    return m_navX->GetRoll();
+    return DEGREES_TO_RADIANS(m_navX->GetRoll());
 }
 
 double Drivetrain::getZAcceleration(){

@@ -10,6 +10,9 @@ DriveLevelCommand::DriveLevelCommand(Drivetrain* drivetrain) {
     c_drivetrain = drivetrain;
 
     c_autoBalance = new autoBalance(c_drivetrain);
+
+    balancePID->SetTolerance(DEGREES_TO_RADIANS(2));
+    balancePID->SetSetpoint(0);
     AddRequirements(c_drivetrain);
 }
 
@@ -19,10 +22,43 @@ void DriveLevelCommand::Initialize() {
 }
 
 void DriveLevelCommand::Execute() {
-    double tiltMagnitude = std::sqrt( std::pow(c_drivetrain->getXTilt(), 2) + std::pow(c_drivetrain->getYTilt(), 2) ); // gets the angle from the floor
+    double tiltMagnitude = std::sqrt( std::pow(c_drivetrain->getXTilt(), 2)
+        + std::pow(c_drivetrain->getYTilt(), 2) ); // gets the angle from the floor
     double movementSpeed = 0;
 
-    c_drivetrain->setMotion(0, movementSpeed, 0)
+    switch(currentAutoStage){
+        case DRIVE_STATE::approachingChargingStation:
+            if(tiltMagnitude > DEGREES_TO_RADIANS(5)){
+                movementSpeed = 0;
+                currentAutoStage = DRIVE_STATE::engagingChargingStation;
+                break;
+            }
+            movementSpeed = 0.2;
+            break;
+        case DRIVE_STATE::engagingChargingStation:
+            if(tiltMagnitude > DEGREES_TO_RADIANS(15)){
+                movementSpeed = 0;
+                currentAutoStage = DRIVE_STATE::balancingOnStation;
+                break;
+            }
+            movementSpeed = 0.4;
+        case DRIVE_STATE::balancingOnStation:
+            if(tiltMagnitude < DEGREES_TO_RADIANS(2)){ // if less than 2 degrees, level
+                movementSpeed = 0;
+                currentAutoStage = DRIVE_STATE::done;
+                break;
+            }
+            movementSpeed = balancePID->Calculate(tiltMagnitude);
+            break;
+        default:
+            if(tiltMagnitude > DEGREES_TO_RADIANS(2)){
+                currentAutoStage = DRIVE_STATE::balancingOnStation;
+            }
+            movementSpeed = 0;
+            break;
+    }
+
+    c_drivetrain->setMotion(0, movementSpeed, 0);
 
 }
 

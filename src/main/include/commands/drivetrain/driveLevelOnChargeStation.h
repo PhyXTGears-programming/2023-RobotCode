@@ -8,6 +8,7 @@
 #include "subsystems/drivetrain/drivetrain.h"
 
 #include "commands/drivetrain/autoBalance.h"
+#include <frc2/command/PIDCommand.h>
 
 class DriveLevelCommand : public frc2::CommandHelper<frc2::CommandBase, DriveLevelCommand> {
 public:
@@ -21,9 +22,13 @@ private:
     Drivetrain* c_drivetrain;
     autoBalance* c_autoBalance;
 
-    enum driveState{
+    enum DRIVE_STATE{
         approachingChargingStation,
         engagingChargingStation,
-        balancingOnStation
+        balancingOnStation,
+        done
     };
+
+    DRIVE_STATE currentAutoStage = DRIVE_STATE::approachingChargingStation;
+    frc2::PIDController* balancePID = new frc2::PIDController(0.05,0,0);
 };
