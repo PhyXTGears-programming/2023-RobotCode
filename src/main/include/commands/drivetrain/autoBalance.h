@@ -12,6 +12,7 @@
 class autoBalance{
     public:
         autoBalance(Drivetrain* drivetrain);
+        void init();
         double getPitch();
         double getRoll();
         double getTilt();
@@ -24,6 +25,7 @@ class autoBalance{
         Drivetrain* c_drivetrain = nullptr;
         int state;
         int debounceCount;
+        double yTiltOffset;
         double robotSpeedSlow;
         double robotSpeedFast;
         double onChargeStationDegree;
@@ -32,4 +34,5 @@ class autoBalance{
         double singleTapTime;
         double scoringBackUpTime;
         double doubleTapTime;
+        double bangBangDegrees;
 };

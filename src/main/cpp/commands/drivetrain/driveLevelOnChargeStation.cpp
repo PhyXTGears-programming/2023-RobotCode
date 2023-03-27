@@ -6,6 +6,8 @@
 
 #include "commands/drivetrain/autoBalance.h"
 
+#include <frc/smartdashboard/SmartDashboard.h>
+
 DriveLevelCommand::DriveLevelCommand(Drivetrain* drivetrain) {
     c_drivetrain = drivetrain;
 
@@ -64,7 +66,9 @@ void DriveLevelCommand::Execute() {
 }*/
 
 void DriveLevelCommand::Execute() {
-    c_drivetrain->setMotion(0, c_autoBalance->autoBalanceRoutine(), 0); // just move forwards
+    double speed = c_autoBalance->autoBalanceRoutine();
+    c_drivetrain->setMotion(0, speed, 0); // just move forwards
+    frc::SmartDashboard::PutNumber("motorSpeed", speed);
 }
 
 void DriveLevelCommand::End(bool interrupted){
@@ -78,6 +82,7 @@ bool DriveLevelCommand::IsFinished(){
 }*/
 
 bool DriveLevelCommand::IsFinished(){
-    return c_autoBalance->autoBalanceRoutine() == 0;
+    // return c_autoBalance->autoBalanceRoutine() == 0;
+    return false;
 }
 

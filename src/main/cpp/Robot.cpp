@@ -64,6 +64,7 @@ void Robot::RobotInit() {
   c_autoDumpCubeAndScore = makeAutoDumpCubeAndScore(c_drivetrain);
   c_autoDumpCubeScoreAndLeaveSafeZone = makeAutoDumpCubeAndScoreAndLeaveSafeZone(c_drivetrain);
   c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel = makeAutoDumpCubeAndScoreAndLeaveSafeZoneThenBalance(c_drivetrain);
+
 }
 
 /**
@@ -94,6 +95,7 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
+  c_drivetrain->resetNavxHeading();
   m_autoSelected = c_chooser.GetSelected();
 
   // Arm does not appear to get proper shoulder angle at startup.  Hopefully
@@ -138,8 +140,8 @@ void Robot::TeleopInit() {
     // dont do anything
   }
   if(m_autoSelected == c_autoTesting){
-    // c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel.Cancel();
-    c_driveLevelCommand->Cancel();
+    c_autoDumpCubeScoreAndLeaveSafeZoneThenLevel.Cancel();
+    // c_driveLevelCommand->Cancel();
   }
 
   c_armTeleopCommand->Schedule();

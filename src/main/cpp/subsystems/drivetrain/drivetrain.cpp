@@ -51,9 +51,9 @@ void Drivetrain::Periodic() {
         Drivetrain::c_wheels[i]->Periodic();
     }
 
-    frc::SmartDashboard::PutNumber("X Tilt: ", RAD_2_DEG(getXTilt()));
-    frc::SmartDashboard::PutNumber("Y Tilt: ", RAD_2_DEG(getYTilt()));
-    frc::SmartDashboard::PutNumber("Z Tilt: ", RAD_2_DEG(getFieldHeading()));
+    frc::SmartDashboard::PutNumber("X Tilt", RAD_2_DEG(getXTilt()));
+    frc::SmartDashboard::PutNumber("Y Tilt", RAD_2_DEG(getYTilt()));
+    frc::SmartDashboard::PutNumber("Z Tilt", RAD_2_DEG(getFieldHeading()));
 }
 
 void Drivetrain::setupWheels() {
