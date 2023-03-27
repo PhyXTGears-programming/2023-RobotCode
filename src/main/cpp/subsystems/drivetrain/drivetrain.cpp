@@ -250,7 +250,7 @@ void Drivetrain::lockMovement(bool restrictMovement){
     m_forwards = 0;
     m_rotation = 0;
     for(int i=0;i<Constants::k_NumberOfSwerveModules;i++){
-        m_motorDirectionAngleSpeed[i].radian = atan2(c_wheelPositions[i].x,c_wheelPositions[i].y);
+        m_motorDirectionAngleSpeed[i].radian = atan2(-c_wheelPositions[i].x,c_wheelPositions[i].y);
         m_motorDirectionAngleSpeed[i].magnitude = 0;
     }
     sendToSwerveModules();
