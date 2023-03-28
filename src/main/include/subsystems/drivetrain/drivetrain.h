@@ -9,6 +9,7 @@
 
 #include <AHRS.h>
 #include <frc/SPI.h>
+#include <frc2/command/PIDCommand.h>
 /*
 NOTE ON UNITS:
 
@@ -125,6 +126,14 @@ class Drivetrain : public frc2::SubsystemBase {
          * @param restrictMovement whether the Drivetrain should lock out any movement
          */
         void lockMovement(bool restrictMovement);
+
+        void enableHeadingControl();
+        void disableHeadingControl();
+        void toggleHeadingControl();
+        bool getHeadingControlState();
+        void headingControl(bool blockRotationSets);
+        void setHeadingSetpoint(double setpoint);
+        double getHeadingSetpoint();
     private:
         void setupWheels();
 
@@ -154,4 +163,8 @@ class Drivetrain : public frc2::SubsystemBase {
 
         // class-wide so we can optimize turning path
         Polar m_motorDirectionAngleSpeed[Constants::k_NumberOfSwerveModules];
+
+        bool m_headingControlEnabled = false;
+        frc2::PIDController c_headingControlPID {0.01, 0, 0};
+        double m_headingControlSetpoint = 0.0;
 };

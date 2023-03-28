@@ -23,12 +23,16 @@ Drivetrain::Drivetrain(bool fieldOriented) {
     this->m_fieldOriented = fieldOriented;
     Drivetrain::setupWheels();
     Drivetrain::resetNavxHeading();
+    c_headingControlPID.SetTolerance(0.1); // set to be within 0.1 radians
+    c_headingControlPID.EnableContinuousInput(-M_PI, M_PI);
 }
 
 Drivetrain::Drivetrain() {
     this->m_fieldOriented = false;
     Drivetrain::setupWheels();
     Drivetrain::resetNavxHeading();
+    c_headingControlPID.SetTolerance(0.1); // set to be within 0.1 radians
+    c_headingControlPID.EnableContinuousInput(-M_PI, M_PI);
 }
 
 Drivetrain::~Drivetrain() {
@@ -49,6 +53,8 @@ void Drivetrain::Periodic() {
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
         Drivetrain::c_wheels[i]->Periodic();
     }
+    c_headingControlPID.SetTolerance(0.1); // set to be within 0.1 radians
+    c_headingControlPID.EnableContinuousInput(-M_PI, M_PI);
 }
 
 void Drivetrain::setupWheels() {
@@ -254,4 +260,41 @@ void Drivetrain::lockMovement(bool restrictMovement){
         m_motorDirectionAngleSpeed[i].magnitude = 0;
     }
     sendToSwerveModules();
+}
+
+void Drivetrain::enableHeadingControl(){
+    m_headingControlEnabled = true;
+}
+void Drivetrain::disableHeadingControl(){
+    m_headingControlEnabled = false;
+}
+void Drivetrain::toggleHeadingControl(){
+    m_headingControlEnabled = !m_headingControlEnabled;
+}
+bool Drivetrain::getHeadingControlState(){
+    return m_headingControlEnabled;
+}
+void Drivetrain::setHeadingSetpoint(double setpoint){
+    c_headingControlPID.SetSetpoint(setpoint);
+}
+double Drivetrain::getHeadingSetpoint(){
+    return c_headingControlPID.GetSetpoint();
+}
+void Drivetrain::headingControl(bool blockRotationSets){
+    if(!m_headingControlEnabled){
+        return;
+    }
+    // disabled until PID is tuned
+    // if(c_headingControlPID.AtSetpoint()){ // if it is at its setpoint, then dont bother calculating
+    //     disableHeadingControl();
+    //     return;
+    // }
+    if(blockRotationSets){ // useful if we have commands that want to rotate and we dont want this to take priority
+        if(m_rotation == 0){ // if the rotation is already set, dont do anything
+            m_rotation = c_headingControlPID.Calculate(getFieldHeading());
+            return;
+        }
+        return;
+    }
+    m_rotation = c_headingControlPID.Calculate(getFieldHeading());
 }
