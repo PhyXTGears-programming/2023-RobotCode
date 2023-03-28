@@ -26,40 +26,40 @@
 #include <frc/Timer.h>
 
 void Robot::RobotInit() {
-  try{
-    c_toml = cpptoml::parse_file(frc::filesystem::GetDeployDirectory()+"/config.toml");
-  } catch (cpptoml::parse_exception & ex){
-    std::cerr << "Unable to open file: config.toml"
-        << std::endl
-        << ex.what()
-        << std::endl;
-    exit(1);
-  }
-  
-  //HIDs
-  c_driverController = new frc::XboxController(Interfaces::k_driverXboxController);
-  c_operatorController = new frc::XboxController(Interfaces::k_operatorXboxController);
+    try{
+        c_toml = cpptoml::parse_file(frc::filesystem::GetDeployDirectory()+"/config.toml");
+    } catch (cpptoml::parse_exception & ex){
+        std::cerr << "Unable to open file: config.toml"
+            << std::endl
+            << ex.what()
+            << std::endl;
+        exit(1);
+    }
 
-  //Subsystems
-  c_drivetrain = new Drivetrain(true);
-  c_odometry = new Odometry(c_drivetrain);
-  c_arm = new ArmSubsystem(c_toml->get_table("arm"));
-  c_kickstand = new Kickstand();
+    //HIDs
+    c_driverController = new frc::XboxController(Interfaces::k_driverXboxController);
+    c_operatorController = new frc::XboxController(Interfaces::k_operatorXboxController);
 
-  //Commands
-  c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
-  c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
-  c_kickstandReleaseCommand = new KickstandReleaseCommand(c_kickstand);
+    //Subsystems
+    c_drivetrain = new Drivetrain(true);
+    c_odometry = new Odometry(c_drivetrain);
+    c_arm = new ArmSubsystem(c_toml->get_table("arm"));
+    c_kickstand = new Kickstand();
 
-  //Auto chooser
-  c_chooser.SetDefaultOption(c_autoNameDefault, c_autoNameDefault);
-  c_chooser.AddOption(c_autoNameDumpCubeAndScore, c_autoNameDumpCubeAndScore);
-  c_chooser.AddOption(c_autoNameDumpScoreAndLeave, c_autoNameDumpScoreAndLeave);
+    //Commands
+    c_armTeleopCommand = new ArmTeleopCommand(c_arm, c_operatorController);
+    c_driveTeleopCommand = new DriveTeleopCommand(c_drivetrain, c_driverController);
+    c_kickstandReleaseCommand = new KickstandReleaseCommand(c_kickstand);
 
-  frc::SmartDashboard::PutData("Auto Modes", &c_chooser);
+    //Auto chooser
+    c_chooser.SetDefaultOption(c_autoNameDefault, c_autoNameDefault);
+    c_chooser.AddOption(c_autoNameDumpCubeAndScore, c_autoNameDumpCubeAndScore);
+    c_chooser.AddOption(c_autoNameDumpScoreAndLeave, c_autoNameDumpScoreAndLeave);
 
-  c_autoDumpCubeAndScore = makeAutoDumpCubeAndScore(c_drivetrain);
-  c_autoDumpCubeScoreAndLeaveSafeZone = makeAutoDumpCubeAndScoreAndLeaveSafeZone(c_drivetrain);
+    frc::SmartDashboard::PutData("Auto Modes", &c_chooser);
+
+    c_autoDumpCubeAndScore = makeAutoDumpCubeAndScore(c_drivetrain);
+    c_autoDumpCubeScoreAndLeaveSafeZone = makeAutoDumpCubeAndScoreAndLeaveSafeZone(c_drivetrain);
 }
 
 /**
@@ -71,9 +71,9 @@ void Robot::RobotInit() {
  * LiveWindow and SmartDashboard integrated updating.
  */
 void Robot::RobotPeriodic() {
-  frc2::CommandScheduler::GetInstance().Run();
+    frc2::CommandScheduler::GetInstance().Run();
 
-  frc::SmartDashboard::PutBoolean("Field Centric Enabled",c_drivetrain->getFieldCentric());
+    frc::SmartDashboard::PutBoolean("Field Centric Enabled",c_drivetrain->getFieldCentric());
 }
 
 /**
@@ -90,72 +90,72 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
-  m_autoSelected = c_chooser.GetSelected();
+    m_autoSelected = c_chooser.GetSelected();
 
-  // Arm does not appear to get proper shoulder angle at startup.  Hopefully
-  // enough time elapsed before auto init for the sensor to send good data.
-  c_arm->resetShoulderAngle();
+    // Arm does not appear to get proper shoulder angle at startup.  Hopefully
+    // enough time elapsed before auto init for the sensor to send good data.
+    c_arm->resetShoulderAngle();
 
-  //done this way to prevent branch misses (because there are none)
-  if(m_autoSelected == c_autoNameDumpCubeAndScore){
-    c_autoDumpCubeAndScore.Schedule();
-  }
-  if(m_autoSelected == c_autoNameDumpScoreAndLeave){
-    c_autoDumpCubeScoreAndLeaveSafeZone.Schedule();
-  }
-  if(m_autoSelected == c_autoNameDefault){
-    //default auto command
-  }
-  // TODO: Make sure to cancel autonomous command in teleop init.
+    //done this way to prevent branch misses (because there are none)
+    if(m_autoSelected == c_autoNameDumpCubeAndScore){
+        c_autoDumpCubeAndScore.Schedule();
+    }
+    if(m_autoSelected == c_autoNameDumpScoreAndLeave){
+        c_autoDumpCubeScoreAndLeaveSafeZone.Schedule();
+    }
+    if(m_autoSelected == c_autoNameDefault){
+        //default auto command
+    }
+    // TODO: Make sure to cancel autonomous command in teleop init.
 }
 
 void Robot::AutonomousPeriodic() {
-  c_drivetrain->Periodic();// update drivetrain no matter what
+    c_drivetrain->Periodic();// update drivetrain no matter what
 }
 
 void Robot::TeleopInit() {
-  // Arm does not appear to get proper shoulder angle at startup.  Hopefully
-  // enough time elapsed before auto init for the sensor to send good data.
-  c_arm->resetShoulderAngle();
+    // Arm does not appear to get proper shoulder angle at startup.  Hopefully
+    // enough time elapsed before auto init for the sensor to send good data.
+    c_arm->resetShoulderAngle();
 
-  // Make sure autonomous command is canceled first.
-  // done this way to prevent branch misses (because there are no branches)
-  if(m_autoSelected == c_autoNameDumpCubeAndScore){
-    c_autoDumpCubeAndScore.Schedule();
-  }
-  if(m_autoSelected == c_autoNameDumpScoreAndLeave){
-    c_autoDumpCubeScoreAndLeaveSafeZone.Schedule();
-  }
-  if(m_autoSelected == c_autoNameDefault){
-    //default auto command
-  }
+    // Make sure autonomous command is canceled first.
+    // done this way to prevent branch misses (because there are no branches)
+    if(m_autoSelected == c_autoNameDumpCubeAndScore){
+        c_autoDumpCubeAndScore.Schedule();
+    }
+    if(m_autoSelected == c_autoNameDumpScoreAndLeave){
+        c_autoDumpCubeScoreAndLeaveSafeZone.Schedule();
+    }
+    if(m_autoSelected == c_autoNameDefault){
+        //default auto command
+    }
 
-  c_armTeleopCommand->Schedule();
-  c_armTeleopCommand->resetTarget();
-  c_driveTeleopCommand->Schedule();
-  c_drivetrain->enableFieldCentric();
+    c_armTeleopCommand->Schedule();
+    c_armTeleopCommand->resetTarget();
+    c_driveTeleopCommand->Schedule();
+    c_drivetrain->enableFieldCentric();
 }
 /**
  * This function is called periodically during operator control.
  */
 void Robot::TeleopPeriodic() {
-  // Driver A button -> toggle field centric.
-  if (c_driverController->GetAButtonPressed()) {
-    c_drivetrain->toggleFieldCentric();
-  }
+    // Driver A button -> toggle field centric.
+    if (c_driverController->GetAButtonPressed()) {
+        c_drivetrain->toggleFieldCentric();
+    }
 
-  // Driver B button -> reset navx heading.
-  if (c_driverController->GetBButtonPressed()) {
-    c_drivetrain->resetNavxHeading();
-  }
+    // Driver B button -> reset navx heading.
+    if (c_driverController->GetBButtonPressed()) {
+        c_drivetrain->resetNavxHeading();
+    }
 
-  if(c_driverController->GetXButtonPressed()) {
-    c_drivetrain->lockMovement(false);
-  }
+    if(c_driverController->GetXButtonPressed()) {
+        c_drivetrain->lockMovement(false);
+    }
 
-  if(c_driverController->GetYButtonPressed()){
-    c_kickstandReleaseCommand->Schedule();
-  }
+    if(c_driverController->GetYButtonPressed()){
+        c_kickstandReleaseCommand->Schedule();
+    }
 }
 
 /**
@@ -175,6 +175,6 @@ void Robot::SimulationPeriodic() {}
 
 #ifndef RUNNING_FRC_TESTS
 int main() {
-  return frc::StartRobot<Robot>();
+    return frc::StartRobot<Robot>();
 }
 #endif

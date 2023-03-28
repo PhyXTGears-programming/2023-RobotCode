@@ -31,51 +31,51 @@
 #include <frc/smartdashboard/SendableChooser.h>
 
 class Robot : public frc::TimedRobot {
- public:
-  void RobotInit() override;
-  void RobotPeriodic() override;
-  void DisabledInit() override;
-  void DisabledPeriodic() override;
-  void AutonomousInit() override;
-  void AutonomousPeriodic() override;
-  void TeleopInit() override;
-  void TeleopPeriodic() override;
-  void TestPeriodic() override;
-  void SimulationInit() override;
-  void SimulationPeriodic() override;
+    public:
+        void RobotInit() override;
+        void RobotPeriodic() override;
+        void DisabledInit() override;
+        void DisabledPeriodic() override;
+        void AutonomousInit() override;
+        void AutonomousPeriodic() override;
+        void TeleopInit() override;
+        void TeleopPeriodic() override;
+        void TestPeriodic() override;
+        void SimulationInit() override;
+        void SimulationPeriodic() override;
 
- private:
-  // Have it empty by default so that if testing teleop it
-  // doesn't have undefined behavior and potentially crash.
-  std::optional<frc2::CommandPtr> m_autonomousCommand;
+    private:
+        // Have it empty by default so that if testing teleop it
+        // doesn't have undefined behavior and potentially crash.
+        std::optional<frc2::CommandPtr> m_autonomousCommand;
 
-  std::shared_ptr<cpptoml::table> c_toml;
+        std::shared_ptr<cpptoml::table> c_toml;
 
-  //HIDs
-  frc::XboxController* c_driverController;
-  frc::XboxController* c_operatorController;
+        //HIDs
+        frc::XboxController* c_driverController;
+        frc::XboxController* c_operatorController;
 
-  //Subsystems
-  Drivetrain* c_drivetrain = nullptr;
-  Odometry* c_odometry = nullptr;
-  ArmSubsystem* c_arm = nullptr;
-  Kickstand* c_kickstand = nullptr;
+        //Subsystems
+        Drivetrain* c_drivetrain = nullptr;
+        Odometry* c_odometry = nullptr;
+        ArmSubsystem* c_arm = nullptr;
+        Kickstand* c_kickstand = nullptr;
 
-  //Commands
-  ArmTeleopCommand* c_armTeleopCommand = nullptr;
-  DriveTeleopCommand* c_driveTeleopCommand = nullptr;
-  KickstandReleaseCommand* c_kickstandReleaseCommand = nullptr;
-  
-  //Auto Selector
-  std::string m_autoSelected;
-  frc::SendableChooser<std::string> c_chooser;
-  const std::string c_autoNameDefault = "Default";
-  const std::string c_autoNameDumpCubeAndScore = "Dump Cube and Score";
-  const std::string c_autoNameDumpScoreAndLeave = "Dump Cube, Score, Then Leave Safe Zone";
+        //Commands
+        ArmTeleopCommand* c_armTeleopCommand = nullptr;
+        DriveTeleopCommand* c_driveTeleopCommand = nullptr;
+        KickstandReleaseCommand* c_kickstandReleaseCommand = nullptr;
 
-  //dump cube and put into scoring zone auto
-  frc2::CommandPtr c_autoDumpCubeAndScore{nullptr};
-  
-  //dump cube and put into scoring zone auto, then leave safe zone
-  frc2::CommandPtr c_autoDumpCubeScoreAndLeaveSafeZone{nullptr};
+        //Auto Selector
+        std::string m_autoSelected;
+        frc::SendableChooser<std::string> c_chooser;
+        const std::string c_autoNameDefault = "Default";
+        const std::string c_autoNameDumpCubeAndScore = "Dump Cube and Score";
+        const std::string c_autoNameDumpScoreAndLeave = "Dump Cube, Score, Then Leave Safe Zone";
+
+        //dump cube and put into scoring zone auto
+        frc2::CommandPtr c_autoDumpCubeAndScore{nullptr};
+
+        //dump cube and put into scoring zone auto, then leave safe zone
+        frc2::CommandPtr c_autoDumpCubeScoreAndLeaveSafeZone{nullptr};
 };
