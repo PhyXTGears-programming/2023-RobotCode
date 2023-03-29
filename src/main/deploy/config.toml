@@ -17,9 +17,9 @@
     shoulder.pid.tolerance = 0.10
 
     # Limits are in degrees
-    elbow.limit.lo =   5.0
+    elbow.limit.lo = 12.0
     elbow.limit.hi = 180.0
-    elbow.zeroOffsetRadians = -7.018
+    elbow.zeroOffsetRadians = -4.518
     elbow.sensorToRadians = 24.54
 
     # Limits are in degrees
