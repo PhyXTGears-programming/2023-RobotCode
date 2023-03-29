@@ -355,25 +355,35 @@ MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) 
 //  ============  Point  Grabbers:  ============  //|
 
 Point const & ArmSubsystem::getIntakePoint() {  //  | Intake
-    return ArmSubsystem::m_pointIntake;
+    return c_pointIntake;
 }
+
 Point const & ArmSubsystem::getHomePoint() {    //  | Home
-    return ArmSubsystem::m_pointHome;
+    return c_pointHome;
 }
+
+Point const & ArmSubsystem::getSubstationPoint() {  //  | Hybrid
+    return c_pointSubstation;
+}
+
 Point const & ArmSubsystem::getHybridPoint() {  //  | Hybrid
-    return ArmSubsystem::m_pointHybrid;
+    return c_pointHybrid;
 }
+
 Point const & ArmSubsystem::getLowPolePoint() { //  | Low Pole
-    return ArmSubsystem::m_pointLowPole;
+    return c_pointLowPole;
 }
+
 Point const & ArmSubsystem::getHighPolePoint() {//  | High Pole
-    return ArmSubsystem::m_pointHighPole;
+    return c_pointHighPole;
 }
+
 Point const & ArmSubsystem::getLowShelfPoint() {//  | Low Shelf
-    return ArmSubsystem::m_pointLowShelf;
+    return c_pointLowShelf;
 }
+
 Point const & ArmSubsystem::getHighShelfPoint() {// | High Shelf
-    return ArmSubsystem::m_pointHighShelf;
+    return c_pointHighShelf;
 }
 
 // Getting and setting arm angles:

@@ -63,11 +63,16 @@ public:
 
     Point const & getIntakePoint();
     Point const & getHomePoint();
+    Point const & getSubstationPoint();
     Point const & getHybridPoint();
     Point const & getLowPolePoint();
     Point const & getHighPolePoint();
     Point const & getLowShelfPoint();
     Point const & getHighShelfPoint();
+
+    Point const & getCenterSafePoint();
+    Point const & getIntakeSafePoint();
+    Point const & getGridSafePoint();
 
     void setTurretAngle(double angle);
     void setShoulderAngle(double angle);
@@ -219,13 +224,13 @@ private:
         } grip;
     } config;
 
-public:
     // Other Points
-    Point m_pointIntake{0.4064, 0, 0.1524};
-    Point m_pointHome{0.0, 0.0, 0.0}; //   ! !  Unknown  ! !
-    Point m_pointHybrid{-0.5715, 0.0, 0.2286};
-    Point m_pointLowPole{-0.9589, 0.0, 1.0668};
-    Point m_pointHighPole{-1.3907, 0.0, 1.2700};
-    Point m_pointLowShelf{-0.9398, 0.0, 0.7620};
-    Point m_pointHighShelf{-1.3335, 0.0, 1.0668};
+    Point c_pointIntake{0.4064, 0, 0.1524};
+    Point c_pointHome{0.0, 0.0, 0.0}; //   ! !  Unknown  ! !
+    Point c_pointSubstation{0.0, 0.0, 1.2700};
+    Point c_pointHybrid{-0.5715, 0.0, 0.2286};
+    Point c_pointLowPole{-0.9589, 0.0, 1.0668};
+    Point c_pointHighPole{-1.3907, 0.0, 1.2700};
+    Point c_pointLowShelf{-0.9398, 0.0, 0.7620};
+    Point c_pointHighShelf{-1.3335, 0.0, 1.0668};
 };

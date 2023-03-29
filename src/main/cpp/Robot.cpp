@@ -12,6 +12,7 @@
 
 #include <iostream>
 
+#include "commands/arm/MoveToPoint.h"
 #include "subsystems/auto/auto.h"
 #include "subsystems/drivetrain/drivetrain.h"
 #include "subsystems/drivetrain/odometry.h"
@@ -21,6 +22,8 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
+#include <frc2/command/InstantCommand.h>
+#include <frc2/command/ScheduleCommand.h>
 #include <frc2/command/SequentialCommandGroup.h>
 #include <frc2/command/Command.h>
 #include <frc/Timer.h>
@@ -60,6 +63,56 @@ void Robot::RobotInit() {
 
     c_autoDumpCubeAndScore = makeAutoDumpCubeAndScore(c_drivetrain);
     c_autoDumpCubeScoreAndLeaveSafeZone = makeAutoDumpCubeAndScoreAndLeaveSafeZone(c_drivetrain);
+
+
+    c_armMoveToHome = frc2::SequentialCommandGroup{
+        frc2::InstantCommand{ [&] () { c_armTeleopCommand->Cancel(); } },
+        MoveToPointCommand(c_arm, c_arm->getHomePoint()),
+        frc2::ScheduleCommand(c_armTeleopCommand)
+    }.ToPtr();
+
+    c_armMoveToIntake = frc2::SequentialCommandGroup{
+        frc2::InstantCommand{ [&] () { c_armTeleopCommand->Cancel(); } },
+        MoveToPointCommand(c_arm, c_arm->getIntakePoint()),
+        frc2::ScheduleCommand(c_armTeleopCommand)
+    }.ToPtr();
+
+    c_armMoveToSubstation = frc2::SequentialCommandGroup{
+        frc2::InstantCommand{ [&] () { c_armTeleopCommand->Cancel(); } },
+        MoveToPointCommand(c_arm, c_arm->getSubstationPoint()),
+        frc2::ScheduleCommand(c_armTeleopCommand)
+    }.ToPtr();
+
+    c_armMoveToHybrid = frc2::SequentialCommandGroup{
+        frc2::InstantCommand{ [&] () { c_armTeleopCommand->Cancel(); } },
+        MoveToPointCommand(c_arm, c_arm->getHybridPoint()),
+        frc2::ScheduleCommand(c_armTeleopCommand)
+    }.ToPtr();
+
+    c_armMoveToLowPole = frc2::SequentialCommandGroup{
+        frc2::InstantCommand{ [&] () { c_armTeleopCommand->Cancel(); } },
+        MoveToPointCommand(c_arm, c_arm->getLowPolePoint()),
+        frc2::ScheduleCommand(c_armTeleopCommand)
+    }.ToPtr();
+
+    c_armMoveToHighPole = frc2::SequentialCommandGroup{
+        frc2::InstantCommand{ [&] () { c_armTeleopCommand->Cancel(); } },
+        MoveToPointCommand(c_arm, c_arm->getHighPolePoint()),
+        frc2::ScheduleCommand(c_armTeleopCommand)
+    }.ToPtr();
+
+    c_armMoveToLowShelf = frc2::SequentialCommandGroup{
+        frc2::InstantCommand{ [&] () { c_armTeleopCommand->Cancel(); } },
+        MoveToPointCommand(c_arm, c_arm->getLowShelfPoint()),
+        frc2::ScheduleCommand(c_armTeleopCommand)
+    }.ToPtr();
+
+    c_armMoveToHighShelf = frc2::SequentialCommandGroup{
+        frc2::InstantCommand{ [&] () { c_armTeleopCommand->Cancel(); } },
+        MoveToPointCommand(c_arm, c_arm->getHighShelfPoint()),
+        frc2::ScheduleCommand(c_armTeleopCommand)
+    }.ToPtr();
+
 }
 
 /**
@@ -155,6 +208,66 @@ void Robot::TeleopPeriodic() {
 
     if(c_driverController->GetYButtonPressed()){
         c_kickstandReleaseCommand->Schedule();
+    }
+
+    if (0 == c_operatorController->GetPOV()) {
+        // If up d-pad pressed
+        c_armMoveToSubstation.Schedule();
+    } else if (c_armMoveToSubstation.IsScheduled()) {
+        c_armMoveToSubstation.Cancel();
+        c_armTeleopCommand->Schedule();
+    }
+
+    if (90 == c_operatorController->GetPOV()) {
+        // If right d-pad pressed
+        c_armMoveToHybrid.Schedule();
+    } else if (c_armMoveToHybrid.IsScheduled()) {
+        c_armMoveToHybrid.Cancel();
+        c_armTeleopCommand->Schedule();
+    }
+
+    if (180 == c_operatorController->GetPOV()) {
+        // If right d-pad pressed
+        c_armMoveToHome.Schedule();
+    } else if (c_armMoveToHome.IsScheduled()) {
+        c_armMoveToHome.Cancel();
+        c_armTeleopCommand->Schedule();
+    }
+
+    if (270 == c_operatorController->GetPOV()) {
+        // If right d-pad pressed
+        c_armMoveToIntake.Schedule();
+    } else if (c_armMoveToIntake.IsScheduled()) {
+        c_armMoveToIntake.Cancel();
+        c_armTeleopCommand->Schedule();
+    }
+
+    if (c_operatorController->GetAButton()) {
+        c_armMoveToLowShelf.Schedule();
+    } else if (c_armMoveToLowShelf.IsScheduled()) {
+        c_armMoveToLowShelf.Cancel();
+        c_armTeleopCommand->Schedule();
+    }
+
+    if (c_operatorController->GetBButton()) {
+        c_armMoveToHighShelf.Schedule();
+    } else if (c_armMoveToHighShelf.IsScheduled()) {
+        c_armMoveToHighShelf.Cancel();
+        c_armTeleopCommand->Schedule();
+    }
+
+    if (c_operatorController->GetXButton()) {
+        c_armMoveToLowPole.Schedule();
+    } else if (c_armMoveToLowPole.IsScheduled()) {
+        c_armMoveToLowPole.Cancel();
+        c_armTeleopCommand->Schedule();
+    }
+
+    if (c_operatorController->GetYButton()) {
+        c_armMoveToHighPole.Schedule();
+    } else if (c_armMoveToHighPole.IsScheduled()) {
+        c_armMoveToHighPole.Cancel();
+        c_armTeleopCommand->Schedule();
     }
 }
 

@@ -7,7 +7,6 @@
 #include <optional>
 
 #include <frc/TimedRobot.h>
-#include <frc2/command/CommandPtr.h>
 
 #include "Mandatory.h"
 
@@ -18,13 +17,14 @@
 #include "subsystems/drivetrain/odometry.h"
 
 #include "commands/arm/ArmTeleopCommand.h"
+#include "commands/arm/MoveToPoint.h"
 #include "commands/drivetrain/driveTeleopCommand.h"
 #include "commands/kickstand/kickstandReleaseCommand.h"
 
 #include "external/cpptoml.h"
 
 //temporary auto
-#include <frc2/command/CommandBase.h>
+#include <frc2/command/CommandPtr.h>
 #include <frc2/command/StartEndCommand.h>
 
 //auto chooser
@@ -65,6 +65,15 @@ class Robot : public frc::TimedRobot {
         ArmTeleopCommand* c_armTeleopCommand = nullptr;
         DriveTeleopCommand* c_driveTeleopCommand = nullptr;
         KickstandReleaseCommand* c_kickstandReleaseCommand = nullptr;
+
+        frc2::CommandPtr c_armMoveToHome{ nullptr };
+        frc2::CommandPtr c_armMoveToIntake{ nullptr };
+        frc2::CommandPtr c_armMoveToSubstation{ nullptr };
+        frc2::CommandPtr c_armMoveToHybrid{ nullptr };
+        frc2::CommandPtr c_armMoveToLowPole{ nullptr };
+        frc2::CommandPtr c_armMoveToHighPole{ nullptr };
+        frc2::CommandPtr c_armMoveToLowShelf{ nullptr };
+        frc2::CommandPtr c_armMoveToHighShelf{ nullptr };
 
         //Auto Selector
         std::string m_autoSelected;
