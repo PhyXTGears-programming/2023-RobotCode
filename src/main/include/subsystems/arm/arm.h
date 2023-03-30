@@ -106,6 +106,8 @@ private:
     void _setShoulderAngle(double angle);
     void _setElbowAngle(double angle);
 
+    void _updateElbowAverage();
+
     // Arm Diagram:
     // 1: Turret, 2: Shoulder, 3: Elbow, 4: Wrist
     //
@@ -156,6 +158,9 @@ private:
     frc::AnalogPotentiometer c_wristRollAngleSensor {k_WristRollSensor, 1.0, 0.0};
     frc::AnalogPotentiometer c_gripSensor {k_GripSensor, 1.0, 0.0};
     frc::DutyCycleEncoder c_shoulderAngleSensor{k_ShoulderSensor}; // Using Funky Fresh Encoder
+
+    double m_elbowSensorMeasurements[2] = { 0.0 };
+    double m_elbowSensorAverage = 0.0;
 
     frc2::PIDController * c_shoulderPid = nullptr;
 

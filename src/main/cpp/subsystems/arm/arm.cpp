@@ -52,12 +52,19 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     c_gripperRotateMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     c_gripperGraspMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
+    m_elbowSensorMeasurements[0] = c_elbowAngleSensor.Get();
+    m_elbowSensorMeasurements[1] = m_elbowSensorMeasurements[0];
+
+    m_elbowSensorAverage = m_elbowSensorMeasurements[0];
+
     initialiseBoundary();
 
     AddChild("Camera Servo", &c_cameraServo);
 }
 
 void ArmSubsystem::Periodic() {
+    _updateElbowAverage();
+
     m_computedGripPoint = calcGripPos(getTurretAngle(), getShoulderAngle(), getElbowAngle());
 
     // Move shoulder or hold position.
@@ -397,7 +404,8 @@ double ArmSubsystem::getShoulderAngle() {
 }
 
 double ArmSubsystem::getElbowAngle() {
-    return c_elbowAngleSensor.Get() * config.elbow.sensorToRadians + config.elbow.zeroOffset;
+    // Updated via Periodic.  Calculated in _updateElbowAverage.
+    return m_elbowSensorAverage;
 }
 
 double ArmSubsystem::getWristRollAngle() {
@@ -633,4 +641,12 @@ void ArmSubsystem::loadConfig(std::shared_ptr<cpptoml::table> toml) {
 
     config.grip.setpoint.open = requireTomlDouble(toml, "grip.setpoint.open");
     config.grip.setpoint.close = requireTomlDouble(toml, "grip.setpoint.close");
+}
+
+void ArmSubsystem::_updateElbowAverage() {
+    m_elbowSensorMeasurements[0] = m_elbowSensorMeasurements[1];
+    m_elbowSensorMeasurements[1] = c_elbowAngleSensor.Get()
+        * config.elbow.sensorToRadians + config.elbow.zeroOffset;
+
+    m_elbowSensorAverage = (m_elbowSensorMeasurements[0] + m_elbowSensorMeasurements[1]) / 2.0;
 }
