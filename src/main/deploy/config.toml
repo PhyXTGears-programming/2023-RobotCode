@@ -11,15 +11,15 @@
     shoulder.limit.hi = 110.0
     shoulder.zeroOffsetRadians = 0.131
 
-    shoulder.pid.p = 0.350
-    shoulder.pid.i = 0.002
+    shoulder.pid.p = 0.500
+    shoulder.pid.i = 0.004
     shoulder.pid.d = 0.000
     shoulder.pid.tolerance = 0.10
 
     # Limits are in degrees
-    elbow.limit.lo =   5.0
+    elbow.limit.lo = 12.0
     elbow.limit.hi = 180.0
-    elbow.zeroOffsetRadians = -7.018
+    elbow.zeroOffsetRadians = -4.518
     elbow.sensorToRadians = 24.54
 
     # Limits are in degrees
@@ -29,10 +29,10 @@
     wrist.sensorToRadians = 4.731
 
     # Limits are in meters
-    grip.limit.lo = -0.02
-    grip.limit.hi =  0.230
+    grip.limit.lo = -0.035
+    grip.limit.hi =  0.260
     # Grip closed is considered 0 meters.
-    grip.zeroOffsetMeters = 0.907
-    grip.sensorToMeters = -1.368
+    grip.zeroOffsetMeters = -0.811
+    grip.sensorToMeters   = 1.693
     grip.setpoint.open = 0
     grip.setpoint.close = 0

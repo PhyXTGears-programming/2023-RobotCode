@@ -11,6 +11,8 @@ namespace Constants {
     const double k_maxDriveSpeed = 0.70;
     const double k_maxSpinSpeed = 1.00;
 
+    const double k_kickstandServoReleaseAngle = 120;
+
     namespace Arm {
         const double k_forearmLenMeters = 32.0 /*inch*/ * 0.0254;
         const double k_bicepLenMeters   = 36.0 /*inch*/ * 0.0254;
@@ -26,8 +28,8 @@ namespace Constants {
         const double k_PickupZSize = 1.000;  // meters
 
         // These constants belong to ArmTeleopCommand.
-        const double k_maxPointSpeed    = 0.005;
-        const double k_maxPointRotSpeed = (2.0 * M_PI / 10.0) * 0.02;   // radians per second in 20ms.
+        const double k_maxPointSpeed    = 0.004;
+        const double k_maxPointRotSpeed = (2.0 * M_PI / 24.0) * 0.02;   // radians per second in 20ms.
         const double k_maxWristRotSpeed = (2.0 * M_PI / 2.0) * 0.02;
         const double k_maxGripSpeed     = 0.1;
     };

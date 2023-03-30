@@ -20,6 +20,7 @@ SwerveWheel::SwerveWheel(
             break;
         case VENDOR_CTRE_FALCON:
             c_movementMotor = new CtreFalcon(moveMotor.ID);
+            c_movementMotor->setBrakeMode(false);
             break;
     }
 
@@ -32,6 +33,7 @@ SwerveWheel::SwerveWheel(
                 frc2::PIDController{0.2, 0, 0}
             );
             c_turningMotor->enableContinuousInput();
+            c_turningMotor->setBrakeMode(true);
             break;
     }
 

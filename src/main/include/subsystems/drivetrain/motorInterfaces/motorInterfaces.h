@@ -17,6 +17,8 @@ class MotorInterfaces {
         */
         virtual void setRotation(double radians){};
 
+        virtual void setBrakeMode(bool shallBrake) {}
+
         /**
          * this will output the velocity that the motor is going at in radians/second
         */

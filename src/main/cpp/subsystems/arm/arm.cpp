@@ -35,13 +35,13 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     c_shoulderPid->SetTolerance(tolerance);
     c_shoulderPid->SetIntegratorRange(-0.01, 0.01);
 
-    c_shoulderPid->SetSetpoint(getShoulderAngle());
+    resetShoulderAngle();
 
     c_gripperRotateMotor.SetInverted(true); // CW is (+) speed
-    c_gripperGraspMotor.SetInverted(true); // Grip open is (+) speed
+    c_gripperGraspMotor.SetInverted(false); // Grip open is (+) speed
 
-    c_turretMotor.SetSmartCurrentLimit(5.0);
-    c_lowJointMotor.SetSmartCurrentLimit(10.0);
+    c_turretMotor.SetSmartCurrentLimit(20.0);
+    c_lowJointMotor.SetSmartCurrentLimit(25.0);
     c_midJointMotor.SetSmartCurrentLimit(20.0);
     c_gripperRotateMotor.SetSmartCurrentLimit(5.0);
     c_gripperGraspMotor.SetSmartCurrentLimit(30.0);
@@ -53,6 +53,8 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     c_gripperGraspMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
     initialiseBoundary();
+
+    AddChild("Camera Servo", &c_cameraServo);
 }
 
 void ArmSubsystem::Periodic() {
@@ -65,9 +67,61 @@ void ArmSubsystem::Periodic() {
         double output = c_shoulderPid->Calculate(getShoulderAngle());
         // Reverse motor direction.
         output = -output;
-        output = std::clamp(output, -0.2, 0.2);
+        output = std::clamp(output, -0.3, 0.25);
+
+        if (!isNearZero(output)) {
+            if (output < 0.0) {
+                output -= 0.08;
+            }
+        }
+
         c_lowJointMotor.Set(output);
     }
+
+    {
+        // Reset camera servo position to default.  Will eventually track grip position, if we're lucky.
+        // c_cameraServo.SetAngle(50.0);
+        // 29 -> 140
+        // 110 -> 50
+
+        // Try to follow gripper mechanism based on elbow angle.
+        double elbowAngle = RAD_2_DEG(getElbowAngle());
+        double servoAngle = std::clamp(180.0 + elbowAngle * (140.0 - 50.0) / (29.0 - 110.0), 0.0, 180.0);
+        c_cameraServo.SetAngle(servoAngle);
+    }
+
+    frc::SmartDashboard::PutNumber("Turret Angle (deg)",     RAD_2_DEG(getTurretAngle()));
+    frc::SmartDashboard::PutNumber("Shoulder Angle (deg)",   RAD_2_DEG(getShoulderAngle()));
+    frc::SmartDashboard::PutNumber("Elbow Angle (deg)",      RAD_2_DEG(getElbowAngle()));
+    frc::SmartDashboard::PutNumber("Wrist Roll Angle (deg)", RAD_2_DEG(getWristRollAngle()));
+    frc::SmartDashboard::PutNumber("Grip Distance (meters)", getGrip());
+
+#ifdef DEBUG_MODE
+    // Raw values
+    frc::SmartDashboard::PutNumber("Raw: Turret Angle (V)",     c_turretAngleSensor.Get());
+    frc::SmartDashboard::PutNumber("Raw: Shoulder Angle (deg)", c_shoulderAngleSensor.Get().value() * 360.0);
+    frc::SmartDashboard::PutNumber("Raw: Elbow Angle (V)",      c_elbowAngleSensor.Get());
+    frc::SmartDashboard::PutNumber("Raw: Wrist Roll Angle (V)", c_wristRollAngleSensor.Get());
+    frc::SmartDashboard::PutNumber("Raw: Grip Distance (V)",    c_gripSensor.Get());
+#endif
+
+    // Report calculated gripper position.
+    Point gripPos = getGripPoint();
+    {
+        static double gripCoords[3];
+        gripCoords[0] = gripPos.x;
+        gripCoords[1] = gripPos.y;
+        gripCoords[2] = gripPos.z;
+        frc::SmartDashboard::PutNumberArray("Grip Pos (m)", gripCoords);
+    }
+
+    // Report calculated arm pose angles.  What the robot thinks the angles
+    // should be to reach gripper position.
+
+    ArmPose pose = calcIKJointPoses(gripPos);
+    frc::SmartDashboard::PutNumber("IK Turret Angle (deg)",   RAD_2_DEG(pose.turretAngle));
+    frc::SmartDashboard::PutNumber("IK Shoulder Angle (deg)", RAD_2_DEG(pose.shoulderAngle));
+    frc::SmartDashboard::PutNumber("IK Elbow Angle (deg)",    RAD_2_DEG(pose.elbowAngle));
 }
 
 void ArmSubsystem::initialiseBoundary() {
@@ -374,6 +428,7 @@ void ArmSubsystem::_setTurretAngle(double angle) {
     if (isNearZero(da, 0.02)) {
         c_turretMotor.Set(0.0);
     } else {
+        da += std::copysign(0.05, da);
         c_turretMotor.Set(std::clamp(da, -0.1, 0.1));
     }
 }
@@ -410,7 +465,12 @@ void ArmSubsystem::_setElbowAngle(double angle) {
     if (isNearZero(da, 0.02)) {
         c_midJointMotor.Set(0.0);
     } else {
-        c_midJointMotor.Set(std::clamp(da, -0.05, 0.05) + std::copysign(0.1, da));
+        da += std::copysign(0.1, da);
+        if (da > 0.0) {
+            // Help arm move up.
+            da += 0.05;
+        }
+        c_midJointMotor.Set(std::clamp(da, -0.18, 0.30));
     }
 }
 
@@ -425,10 +485,8 @@ void ArmSubsystem::setWristRollAngle(double angle) {
     if (isNearZero(da, 0.01)) {
         c_gripperRotateMotor.Set(0.0);
     } else {
-        c_gripperRotateMotor.Set(std::clamp(
-            da + std::copysign(0.05, da),
-            -0.2, 0.2
-        ));
+        da += std::copysign(0.05, da);
+        c_gripperRotateMotor.Set(std::clamp(da, -0.2, 0.2));
     }
 }
 
@@ -443,10 +501,8 @@ void ArmSubsystem::setGrip(double grip) {
     if (isNearZero(dx, 0.015 /* meters */)) {
         c_gripperGraspMotor.Set(0.0);
     } else {
-        c_gripperGraspMotor.Set(std::clamp(
-            dx + std::copysign(0.15, dx),
-            -0.2, 0.2
-        ));
+        dx += std::copysign(0.15, dx);
+        c_gripperGraspMotor.Set(std::clamp(dx, -0.2, 0.2));
     }
 }
 
@@ -503,6 +559,10 @@ std::optional<Point> ArmSubsystem::moveToPoint(Point const & target) {
 
 void ArmSubsystem::stopArm() {
     moveToPoint(getGripPoint());
+}
+
+void ArmSubsystem::resetShoulderAngle() {
+    c_shoulderPid->SetSetpoint(getShoulderAngle());
 }
 
 //          NOT IMPLEMENTED IN HARDWARE

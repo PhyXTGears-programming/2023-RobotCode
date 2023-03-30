@@ -23,3 +23,12 @@
         #error Cannot have DEBUG_MODE enabled at the same time as TESTING_MODE
     #endif
 #endif
+
+//check to make sure that ONE mode IS defines (so things will work)
+#ifndef COMPETITION_MODE
+    #ifndef TESTING_MODE
+        #ifndef DEBUG_MODE
+            #error Must have COMPETITION_MODE or TESTING_MODE or DEBUG_MODE defined
+        #endif
+    #endif
+#endif
