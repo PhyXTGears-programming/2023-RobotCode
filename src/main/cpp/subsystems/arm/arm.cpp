@@ -86,7 +86,7 @@ void ArmSubsystem::Periodic() {
 
         // Try to follow gripper mechanism based on elbow angle.
         double elbowAngle = RAD_2_DEG(getElbowAngle());
-        double servoAngle = std::clamp(180.0 + elbowAngle * (140.0 - 50.0) / (29.0 - 110.0), 0.0, 180.0);
+        double servoAngle = std::clamp(180.0 + elbowAngle * (90 / -71.0) + 10.0, 0.0, 180.0);
         c_cameraServo.SetAngle(servoAngle);
     }
 
