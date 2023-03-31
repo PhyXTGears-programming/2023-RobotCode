@@ -84,7 +84,7 @@ frc2::CommandPtr makeAutoDumpCubeAndScoreAndLeaveSafeZone(Drivetrain * drivetrai
     auto autoDumpCubeScoreAndLeaveSafeZone = std::move(orientWheels).WithTimeout(1.0_s)
         .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
         .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
-        .AndThen(std::move(driveOutOfSafeZone).WithTimeout(3.25_s));
+        .AndThen(std::move(driveOutOfSafeZone).WithTimeout(3.5_s));
 
     return std::move(autoDumpCubeScoreAndLeaveSafeZone);
 }
