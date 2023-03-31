@@ -393,6 +393,18 @@ Point const & ArmSubsystem::getHighShelfPoint() {// | High Shelf
     return c_pointHighShelf;
 }
 
+Point const & ArmSubsystem::getCenterSafePoint() {
+    return c_safetyPointCenter;
+}
+
+Point const & ArmSubsystem::getIntakeSafePoint() {
+    return c_safetyPointIntake;
+}
+
+Point const & ArmSubsystem::getGridSafePoint() {
+    return c_safetyPointGrid;
+}
+
 // Getting and setting arm angles:
 
 double ArmSubsystem::getTurretAngle() {

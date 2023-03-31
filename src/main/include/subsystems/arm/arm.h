@@ -167,9 +167,9 @@ private:
     std::shared_ptr<Boundary> c_noGoZone = nullptr;
 
     // Safety Points
-    Point m_safetyPointGrid{-0.2540, 0.0, 0.9144};
-    Point m_safetyPointCenter{0.0, 0.254, 0.8635};
-    Point m_safetyPointIntake{0.254, 0.0, -0.8128};
+    Point c_safetyPointGrid{-0.2540, 0.0, 0.9144};
+    Point c_safetyPointCenter{0.0, 0.254, 0.8635};
+    Point c_safetyPointIntake{0.254, 0.0, -0.8128};
 
     Point m_computedGripPoint;
 
