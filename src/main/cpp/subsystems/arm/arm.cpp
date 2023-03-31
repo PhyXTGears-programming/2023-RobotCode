@@ -300,15 +300,15 @@ MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) 
             break;
 
         case ArmSubsystem::SafetyZone::MIDDLE:
-            path.push_back(m_safetyPointIntake);
-            path.push_back(m_safetyPointCenter);
+            path.push_back(c_safetyPointIntake);
+            path.push_back(c_safetyPointCenter);
             path.push_back(target);
             break;
 
         case ArmSubsystem::SafetyZone::RIGHT:
-            path.push_back(m_safetyPointIntake);
-            path.push_back(m_safetyPointCenter);
-            path.push_back(m_safetyPointGrid);
+            path.push_back(c_safetyPointIntake);
+            path.push_back(c_safetyPointCenter);
+            path.push_back(c_safetyPointGrid);
             path.push_back(target);
             break;
         }
@@ -317,8 +317,8 @@ MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) 
     case ArmSubsystem::SafetyZone::MIDDLE:
         switch (targetZone) {
         case ArmSubsystem::SafetyZone::LEFT:
-            path.push_back(m_safetyPointCenter);
-            path.push_back(m_safetyPointIntake);
+            path.push_back(c_safetyPointCenter);
+            path.push_back(c_safetyPointIntake);
             path.push_back(target);
             break;
 
@@ -327,8 +327,8 @@ MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) 
             break;
 
         case ArmSubsystem::SafetyZone::RIGHT:
-            path.push_back(m_safetyPointCenter);
-            path.push_back(m_safetyPointGrid);
+            path.push_back(c_safetyPointCenter);
+            path.push_back(c_safetyPointGrid);
             path.push_back(target);
             break;
         }
@@ -337,15 +337,15 @@ MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) 
     case ArmSubsystem::SafetyZone::RIGHT:
         switch (targetZone) {
         case ArmSubsystem::SafetyZone::LEFT:
-            path.push_back(m_safetyPointGrid);
-            path.push_back(m_safetyPointCenter);
-            path.push_back(m_safetyPointIntake);
+            path.push_back(c_safetyPointGrid);
+            path.push_back(c_safetyPointCenter);
+            path.push_back(c_safetyPointIntake);
             path.push_back(target);
             break;
 
         case ArmSubsystem::SafetyZone::MIDDLE:
-            path.push_back(m_safetyPointGrid);
-            path.push_back(m_safetyPointCenter);
+            path.push_back(c_safetyPointGrid);
+            path.push_back(c_safetyPointCenter);
             path.push_back(target);
             break;
 
