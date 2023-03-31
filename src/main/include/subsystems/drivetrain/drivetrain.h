@@ -165,6 +165,6 @@ class Drivetrain : public frc2::SubsystemBase {
         Polar m_motorDirectionAngleSpeed[Constants::k_NumberOfSwerveModules];
 
         bool m_headingControlEnabled = false;
-        frc2::PIDController c_headingControlPID {0.01, 0, 0};
+        frc2::PIDController c_headingControlPID {0.4, 0.0, 0};
         double m_headingControlSetpoint = 0.0;
 };
