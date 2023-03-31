@@ -151,6 +151,8 @@ void Robot::AutonomousInit() {
         //default auto command
     }
     // TODO: Make sure to cancel autonomous command in teleop init.
+    c_drivetrain->enableHeadingControl();
+    // c_drivetrain->resetNavxHeading();
 }
 
 void Robot::AutonomousPeriodic() {
@@ -178,6 +180,7 @@ void Robot::TeleopInit() {
     c_armTeleopCommand->resetTarget();
     c_driveTeleopCommand->Schedule();
     c_drivetrain->enableFieldCentric();
+    c_drivetrain->disableHeadingControl();
 }
 /**
  * This function is called periodically during operator control.
@@ -198,7 +201,8 @@ void Robot::TeleopPeriodic() {
     }
 
     if(c_driverController->GetYButtonPressed()){
-        c_kickstandReleaseCommand->Schedule();
+        // c_kickstandReleaseCommand->Schedule();
+        c_drivetrain->toggleHeadingControl();
     }
 
     if (0 == c_operatorController->GetPOV()) {
