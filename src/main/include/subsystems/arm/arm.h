@@ -166,11 +166,6 @@ private:
 
     std::shared_ptr<Boundary> c_noGoZone = nullptr;
 
-    // Safety Points
-    Point c_safetyPointGrid{-0.2540, 0.0, 0.9144};
-    Point c_safetyPointCenter{0.0, 0.254, 0.8635};
-    Point c_safetyPointIntake{0.254, 0.0, -0.8128};
-
     Point m_computedGripPoint;
 
     struct {
@@ -229,9 +224,14 @@ private:
         } grip;
     } config;
 
+    // Safety Points
+    Point c_safetyPointGrid{0.532, 0.025, 0.547};
+    Point c_safetyPointCenter{0.0, 0.657, 0.657};
+    Point c_safetyPointIntake{0.254, 0.0, -0.8128};
+
     // Other Points
     Point c_pointIntake{0.4064, 0, 0.1524};
-    Point c_pointHome{0.0, 0.0, 0.0}; //   ! !  Unknown  ! !
+    Point c_pointHome{0.017, 0.135, 0.386}; //   ! !  Unknown  ! !
     Point c_pointSubstation{0.0, 0.0, 1.2700};
     Point c_pointHybrid{-0.5715, 0.0, 0.2286};
     Point c_pointLowPole{-0.9589, 0.0, 1.0668};

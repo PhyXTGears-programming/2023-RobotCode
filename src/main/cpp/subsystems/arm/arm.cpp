@@ -74,9 +74,9 @@ void ArmSubsystem::Periodic() {
         double output = c_shoulderPid->Calculate(getShoulderAngle());
         // Reverse motor direction.
         output = -output;
-        output = std::clamp(output, -0.3, 0.25);
+        output = std::clamp(output, -0.15, 0.10);
 
-        if (!isNearZero(output)) {
+        if (!isNearZero(output, 0.006)) {
             if (output < 0.0) {
                 output -= 0.08;
             }
@@ -500,7 +500,7 @@ void ArmSubsystem::_setElbowAngle(double angle) {
             // Help arm move up.
             da += 0.05;
         }
-        c_midJointMotor.Set(std::clamp(da, -0.18, 0.30));
+        c_midJointMotor.Set(std::clamp(da, -0.13, 0.20));
     }
 }
 
