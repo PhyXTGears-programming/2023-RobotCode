@@ -108,7 +108,7 @@ void Robot::AutonomousInit() {
     }
     // TODO: Make sure to cancel autonomous command in teleop init.
     c_drivetrain->enableHeadingControl();
-    c_drivetrain->resetNavxHeading();
+    // c_drivetrain->resetNavxHeading();
 }
 
 void Robot::AutonomousPeriodic() {
