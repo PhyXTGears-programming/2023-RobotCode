@@ -52,12 +52,19 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     c_gripperRotateMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
     c_gripperGraspMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
+    m_elbowSensorMeasurements[0] = c_elbowAngleSensor.Get();
+    m_elbowSensorMeasurements[1] = m_elbowSensorMeasurements[0];
+
+    m_elbowSensorAverage = m_elbowSensorMeasurements[0];
+
     initialiseBoundary();
 
     AddChild("Camera Servo", &c_cameraServo);
 }
 
 void ArmSubsystem::Periodic() {
+    _updateElbowAverage();
+
     m_computedGripPoint = calcGripPos(getTurretAngle(), getShoulderAngle(), getElbowAngle());
 
     // Move shoulder or hold position.
@@ -67,13 +74,16 @@ void ArmSubsystem::Periodic() {
         double output = c_shoulderPid->Calculate(getShoulderAngle());
         // Reverse motor direction.
         output = -output;
-        output = std::clamp(output, -0.3, 0.25);
 
-        if (!isNearZero(output)) {
+        if (!isNearZero(output, 0.006)) {
             if (output < 0.0) {
-                output -= 0.08;
+                output -= 0.09;
+            } else {
+                output += 0.02;
             }
         }
+
+        output = std::clamp(output, -0.15, 0.10);
 
         c_lowJointMotor.Set(output);
     }
@@ -293,15 +303,15 @@ MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) 
             break;
 
         case ArmSubsystem::SafetyZone::MIDDLE:
-            path.push_back(m_safetyPointIntake);
-            path.push_back(m_safetyPointCenter);
+            path.push_back(c_safetyPointIntake);
+            path.push_back(c_safetyPointCenter);
             path.push_back(target);
             break;
 
         case ArmSubsystem::SafetyZone::RIGHT:
-            path.push_back(m_safetyPointIntake);
-            path.push_back(m_safetyPointCenter);
-            path.push_back(m_safetyPointGrid);
+            path.push_back(c_safetyPointIntake);
+            path.push_back(c_safetyPointCenter);
+            path.push_back(c_safetyPointGrid);
             path.push_back(target);
             break;
         }
@@ -310,8 +320,8 @@ MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) 
     case ArmSubsystem::SafetyZone::MIDDLE:
         switch (targetZone) {
         case ArmSubsystem::SafetyZone::LEFT:
-            path.push_back(m_safetyPointCenter);
-            path.push_back(m_safetyPointIntake);
+            path.push_back(c_safetyPointCenter);
+            path.push_back(c_safetyPointIntake);
             path.push_back(target);
             break;
 
@@ -320,8 +330,8 @@ MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) 
             break;
 
         case ArmSubsystem::SafetyZone::RIGHT:
-            path.push_back(m_safetyPointCenter);
-            path.push_back(m_safetyPointGrid);
+            path.push_back(c_safetyPointCenter);
+            path.push_back(c_safetyPointGrid);
             path.push_back(target);
             break;
         }
@@ -330,15 +340,15 @@ MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) 
     case ArmSubsystem::SafetyZone::RIGHT:
         switch (targetZone) {
         case ArmSubsystem::SafetyZone::LEFT:
-            path.push_back(m_safetyPointGrid);
-            path.push_back(m_safetyPointCenter);
-            path.push_back(m_safetyPointIntake);
+            path.push_back(c_safetyPointGrid);
+            path.push_back(c_safetyPointCenter);
+            path.push_back(c_safetyPointIntake);
             path.push_back(target);
             break;
 
         case ArmSubsystem::SafetyZone::MIDDLE:
-            path.push_back(m_safetyPointGrid);
-            path.push_back(m_safetyPointCenter);
+            path.push_back(c_safetyPointGrid);
+            path.push_back(c_safetyPointCenter);
             path.push_back(target);
             break;
 
@@ -355,25 +365,47 @@ MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) 
 //  ============  Point  Grabbers:  ============  //|
 
 Point const & ArmSubsystem::getIntakePoint() {  //  | Intake
-    return ArmSubsystem::m_pointIntake;
+    return c_pointIntake;
 }
+
 Point const & ArmSubsystem::getHomePoint() {    //  | Home
-    return ArmSubsystem::m_pointHome;
+    return c_pointHome;
 }
+
+Point const & ArmSubsystem::getSubstationPoint() {  //  | Hybrid
+    return c_pointSubstation;
+}
+
 Point const & ArmSubsystem::getHybridPoint() {  //  | Hybrid
-    return ArmSubsystem::m_pointHybrid;
+    return c_pointHybrid;
 }
+
 Point const & ArmSubsystem::getLowPolePoint() { //  | Low Pole
-    return ArmSubsystem::m_pointLowPole;
+    return c_pointLowPole;
 }
+
 Point const & ArmSubsystem::getHighPolePoint() {//  | High Pole
-    return ArmSubsystem::m_pointHighPole;
+    return c_pointHighPole;
 }
+
 Point const & ArmSubsystem::getLowShelfPoint() {//  | Low Shelf
-    return ArmSubsystem::m_pointLowShelf;
+    return c_pointLowShelf;
 }
+
 Point const & ArmSubsystem::getHighShelfPoint() {// | High Shelf
-    return ArmSubsystem::m_pointHighShelf;
+    return c_pointHighShelf;
+}
+
+Point const & ArmSubsystem::getCenterSafePoint() {
+    return c_safetyPointCenter;
+}
+
+Point const & ArmSubsystem::getIntakeSafePoint() {
+    return c_safetyPointIntake;
+}
+
+Point const & ArmSubsystem::getGridSafePoint() {
+    return c_safetyPointGrid;
 }
 
 // Getting and setting arm angles:
@@ -387,7 +419,8 @@ double ArmSubsystem::getShoulderAngle() {
 }
 
 double ArmSubsystem::getElbowAngle() {
-    return c_elbowAngleSensor.Get() * config.elbow.sensorToRadians + config.elbow.zeroOffset;
+    // Updated via Periodic.  Calculated in _updateElbowAverage.
+    return m_elbowSensorAverage;
 }
 
 double ArmSubsystem::getWristRollAngle() {
@@ -462,15 +495,16 @@ void ArmSubsystem::_setElbowAngle(double angle) {
     }
 
     double da = angle - getElbowAngle();
-    if (isNearZero(da, 0.02)) {
+    if (isNearZero(da, 0.01)) {
         c_midJointMotor.Set(0.0);
     } else {
-        da += std::copysign(0.1, da);
         if (da > 0.0) {
             // Help arm move up.
-            da += 0.05;
+            da += 0.15;
+        } else {
+            da += -0.1;
         }
-        c_midJointMotor.Set(std::clamp(da, -0.18, 0.30));
+        c_midJointMotor.Set(std::clamp(da, -0.13, 0.20));
     }
 }
 
@@ -623,4 +657,12 @@ void ArmSubsystem::loadConfig(std::shared_ptr<cpptoml::table> toml) {
 
     config.grip.setpoint.open = requireTomlDouble(toml, "grip.setpoint.open");
     config.grip.setpoint.close = requireTomlDouble(toml, "grip.setpoint.close");
+}
+
+void ArmSubsystem::_updateElbowAverage() {
+    m_elbowSensorMeasurements[0] = m_elbowSensorMeasurements[1];
+    m_elbowSensorMeasurements[1] = c_elbowAngleSensor.Get()
+        * config.elbow.sensorToRadians + config.elbow.zeroOffset;
+
+    m_elbowSensorAverage = (m_elbowSensorMeasurements[0] + m_elbowSensorMeasurements[1]) / 2.0;
 }
