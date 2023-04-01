@@ -214,14 +214,14 @@ void Robot::TeleopPeriodic() {
         c_armTeleopCommand->Schedule();
     }
 
-    if (90 == c_operatorController->GetPOV()) {
-        // If right d-pad pressed
-        c_armTeleopCommand->Cancel();
-        c_armMoveToHybrid.Schedule();
-    } else if (c_armMoveToHybrid.IsScheduled()) {
-        c_armMoveToHybrid.Cancel();
-        c_armTeleopCommand->Schedule();
-    }
+    // if (90 == c_operatorController->GetPOV()) {
+    //     // If right d-pad pressed
+    //     c_armTeleopCommand->Cancel();
+    //     c_armMoveToHybrid.Schedule();
+    // } else if (c_armMoveToHybrid.IsScheduled()) {
+    //     c_armMoveToHybrid.Cancel();
+    //     c_armTeleopCommand->Schedule();
+    // }
 
     if (180 == c_operatorController->GetPOV()) {
         // If right d-pad pressed
@@ -232,46 +232,46 @@ void Robot::TeleopPeriodic() {
         c_armTeleopCommand->Schedule();
     }
 
-    if (270 == c_operatorController->GetPOV()) {
-        // If right d-pad pressed
-        c_armTeleopCommand->Cancel();
-        c_armMoveToIntake.Schedule();
-    } else if (c_armMoveToIntake.IsScheduled()) {
-        c_armMoveToIntake.Cancel();
-        c_armTeleopCommand->Schedule();
-    }
+    // if (270 == c_operatorController->GetPOV()) {
+    //     // If right d-pad pressed
+    //     c_armTeleopCommand->Cancel();
+    //     c_armMoveToIntake.Schedule();
+    // } else if (c_armMoveToIntake.IsScheduled()) {
+    //     c_armMoveToIntake.Cancel();
+    //     c_armTeleopCommand->Schedule();
+    // }
 
-    if (c_operatorController->GetAButton()) {
-        c_armTeleopCommand->Cancel();
-        c_armMoveToLowShelf.Schedule();
-    } else if (c_armMoveToLowShelf.IsScheduled()) {
-        c_armMoveToLowShelf.Cancel();
-        c_armTeleopCommand->Schedule();
-    }
+    // if (c_operatorController->GetAButton()) {
+    //     c_armTeleopCommand->Cancel();
+    //     c_armMoveToLowShelf.Schedule();
+    // } else if (c_armMoveToLowShelf.IsScheduled()) {
+    //     c_armMoveToLowShelf.Cancel();
+    //     c_armTeleopCommand->Schedule();
+    // }
 
-    if (c_operatorController->GetBButton()) {
-        c_armTeleopCommand->Cancel();
-        c_armMoveToHighShelf.Schedule();
-    } else if (c_armMoveToHighShelf.IsScheduled()) {
-        c_armMoveToHighShelf.Cancel();
-        c_armTeleopCommand->Schedule();
-    }
+    // if (c_operatorController->GetBButton()) {
+    //     c_armTeleopCommand->Cancel();
+    //     c_armMoveToHighShelf.Schedule();
+    // } else if (c_armMoveToHighShelf.IsScheduled()) {
+    //     c_armMoveToHighShelf.Cancel();
+    //     c_armTeleopCommand->Schedule();
+    // }
 
-    if (c_operatorController->GetXButton()) {
-        c_armTeleopCommand->Cancel();
-        c_armMoveToLowPole.Schedule();
-    } else if (c_armMoveToLowPole.IsScheduled()) {
-        c_armMoveToLowPole.Cancel();
-        c_armTeleopCommand->Schedule();
-    }
+    // if (c_operatorController->GetXButton()) {
+    //     c_armTeleopCommand->Cancel();
+    //     c_armMoveToLowPole.Schedule();
+    // } else if (c_armMoveToLowPole.IsScheduled()) {
+    //     c_armMoveToLowPole.Cancel();
+    //     c_armTeleopCommand->Schedule();
+    // }
 
-    if (c_operatorController->GetYButton()) {
-        c_armTeleopCommand->Cancel();
-        c_armMoveToHighPole.Schedule();
-    } else if (c_armMoveToHighPole.IsScheduled()) {
-        c_armMoveToHighPole.Cancel();
-        c_armTeleopCommand->Schedule();
-    }
+    // if (c_operatorController->GetYButton()) {
+    //     c_armTeleopCommand->Cancel();
+    //     c_armMoveToHighPole.Schedule();
+    // } else if (c_armMoveToHighPole.IsScheduled()) {
+    //     c_armMoveToHighPole.Cancel();
+    //     c_armTeleopCommand->Schedule();
+    // }
 }
 
 /**
