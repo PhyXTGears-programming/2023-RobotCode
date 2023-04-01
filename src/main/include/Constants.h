@@ -8,7 +8,7 @@ namespace Constants {
 
     const double k_minDriveSpeed = 0.25;
     const double k_normalDriveSpeed = 0.50;
-    const double k_maxDriveSpeed = 0.70;
+    const double k_maxDriveSpeed = 1.00;
     const double k_maxSpinSpeed = 1.00;
 
     const double k_kickstandServoReleaseAngle = 120;
