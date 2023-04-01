@@ -223,7 +223,7 @@ void Robot::TeleopPeriodic() {
     //     c_armTeleopCommand->Schedule();
     // }
 
-    if (180 == c_operatorController->GetPOV()) {
+    if (c_operatorController->GetAButton()) {
         // If right d-pad pressed
         c_armTeleopCommand->Cancel();
         c_armMoveToHome.Schedule();
