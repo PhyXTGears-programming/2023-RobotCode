@@ -76,7 +76,7 @@ void Robot::RobotInit() {
     }.ToPtr();
 
     c_armMoveToSubstation = frc2::SequentialCommandGroup{
-        MoveToPointCommand(c_arm, c_arm->getSubstationPoint()),
+        MoveToPointCommand(c_arm, c_arm->getCenterSafePoint()),
         frc2::ScheduleCommand(c_armTeleopCommand)
     }.ToPtr();
 
