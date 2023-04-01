@@ -536,7 +536,7 @@ void ArmSubsystem::setGrip(double grip) {
         c_gripperGraspMotor.Set(0.0);
     } else {
         dx += std::copysign(0.15, dx);
-        c_gripperGraspMotor.Set(std::clamp(dx, -0.2, 0.2));
+        c_gripperGraspMotor.Set(std::clamp(dx, -1.0, 1.0));
     }
 }
 
