@@ -10,6 +10,10 @@
 
 #define DEGREES_TO_RADIANS(deg) ((deg/180.0)*M_PI)
 #include <AHRS.h>
+
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <iostream>
+
 /*
 NOTE ON UNITS:
 
@@ -23,12 +27,18 @@ Drivetrain::Drivetrain(bool fieldOriented) {
     this->m_fieldOriented = fieldOriented;
     Drivetrain::setupWheels();
     Drivetrain::resetNavxHeading();
+    c_headingControlPID.SetTolerance(0.1); // set to be within 0.1 radians
+    c_headingControlPID.EnableContinuousInput(-M_PI, M_PI);
+    setHeadingSetpoint(0.0);
 }
 
 Drivetrain::Drivetrain() {
     this->m_fieldOriented = false;
     Drivetrain::setupWheels();
     Drivetrain::resetNavxHeading();
+    c_headingControlPID.SetTolerance(0.1); // set to be within 0.1 radians
+    c_headingControlPID.EnableContinuousInput(-M_PI, M_PI);
+    setHeadingSetpoint(0.0);
 }
 
 Drivetrain::~Drivetrain() {
@@ -49,6 +59,9 @@ void Drivetrain::Periodic() {
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
         Drivetrain::c_wheels[i]->Periodic();
     }
+    headingControl(true);
+
+    frc::SmartDashboard::PutNumber("Drive Heading (deg)", m_navX->GetYaw());
 }
 
 void Drivetrain::setupWheels() {
@@ -84,6 +97,7 @@ void Drivetrain::calculateWheelAnglesAndSpeeds() {
     if(m_forceLockMovement){
         return;
     }
+    headingControl(false);
     if ((abs(Drivetrain::m_strife) <= 0.001) && (abs(Drivetrain::m_forwards) <= 0.001)) {
         if(abs(Drivetrain::m_rotation) <= 0.001){
             for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
@@ -254,4 +268,44 @@ void Drivetrain::lockMovement(bool restrictMovement){
         m_motorDirectionAngleSpeed[i].magnitude = 0;
     }
     sendToSwerveModules();
+}
+
+void Drivetrain::enableHeadingControl(){
+    m_headingControlEnabled = true;
+}
+void Drivetrain::disableHeadingControl(){
+    m_headingControlEnabled = false;
+}
+void Drivetrain::toggleHeadingControl(){
+    m_headingControlEnabled = !m_headingControlEnabled;
+}
+bool Drivetrain::getHeadingControlState(){
+    return m_headingControlEnabled;
+}
+void Drivetrain::setHeadingSetpoint(double setpoint){
+    c_headingControlPID.SetSetpoint(setpoint);
+}
+double Drivetrain::getHeadingSetpoint(){
+    return c_headingControlPID.GetSetpoint();
+}
+void Drivetrain::headingControl(bool blockRotationSets){
+    // std::cout << "hi" << std::endl;
+    if(!m_headingControlEnabled){
+        return;
+    }
+    // disabled until PID is tuned
+    // if(c_headingControlPID.AtSetpoint()){ // if it is at its setpoint, then dont bother calculating
+    //     disableHeadingControl();
+    //     return;
+    // }
+    if(!blockRotationSets){ // useful if we have commands that want to rotate and we dont want this to take priority
+        if(m_rotation == 0){ // if the rotation is already set, dont do anything
+            m_rotation = c_headingControlPID.Calculate(getFieldHeading());
+            calculateWheelAnglesAndSpeeds();
+            return;
+        }
+        return;
+    }
+    m_rotation = std::clamp(c_headingControlPID.Calculate(getFieldHeading()), -1.0, 1.0);
+    calculateWheelAnglesAndSpeeds();
 }

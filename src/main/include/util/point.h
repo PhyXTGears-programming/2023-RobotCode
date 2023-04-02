@@ -4,7 +4,7 @@
 
 #include <cmath>
 
-static const double NEAR_ZERO_METERS = 0.005;
+static const double NEAR_ZERO_METERS = 0.01;
 
 class Point {
     public:

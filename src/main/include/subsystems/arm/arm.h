@@ -63,11 +63,16 @@ public:
 
     Point const & getIntakePoint();
     Point const & getHomePoint();
+    Point const & getSubstationPoint();
     Point const & getHybridPoint();
     Point const & getLowPolePoint();
     Point const & getHighPolePoint();
     Point const & getLowShelfPoint();
     Point const & getHighShelfPoint();
+
+    Point const & getCenterSafePoint();
+    Point const & getIntakeSafePoint();
+    Point const & getGridSafePoint();
 
     void setTurretAngle(double angle);
     void setShoulderAngle(double angle);
@@ -100,6 +105,8 @@ private:
     void _setTurretAngle(double angle);
     void _setShoulderAngle(double angle);
     void _setElbowAngle(double angle);
+
+    void _updateElbowAverage();
 
     // Arm Diagram:
     // 1: Turret, 2: Shoulder, 3: Elbow, 4: Wrist
@@ -152,14 +159,12 @@ private:
     frc::AnalogPotentiometer c_gripSensor {k_GripSensor, 1.0, 0.0};
     frc::DutyCycleEncoder c_shoulderAngleSensor{k_ShoulderSensor}; // Using Funky Fresh Encoder
 
+    double m_elbowSensorMeasurements[2] = { 0.0 };
+    double m_elbowSensorAverage = 0.0;
+
     frc2::PIDController * c_shoulderPid = nullptr;
 
     std::shared_ptr<Boundary> c_noGoZone = nullptr;
-
-    // Safety Points
-    Point m_safetyPointGrid{-0.2540, 0.0, 0.9144};
-    Point m_safetyPointCenter{0.0, 0.254, 0.8635};
-    Point m_safetyPointIntake{0.254, 0.0, -0.8128};
 
     Point m_computedGripPoint;
 
@@ -219,13 +224,18 @@ private:
         } grip;
     } config;
 
-public:
+    // Safety Points
+    Point c_safetyPointGrid{0.53, 0.03, 0.70};
+    Point c_safetyPointCenter{0.0, 0.657, 0.68};
+    Point c_safetyPointIntake{-0.53, 0.03, 0.68};
+
     // Other Points
-    Point m_pointIntake{0.4064, 0, 0.1524};
-    Point m_pointHome{0.0, 0.0, 0.0}; //   ! !  Unknown  ! !
-    Point m_pointHybrid{-0.5715, 0.0, 0.2286};
-    Point m_pointLowPole{-0.9589, 0.0, 1.0668};
-    Point m_pointHighPole{-1.3907, 0.0, 1.2700};
-    Point m_pointLowShelf{-0.9398, 0.0, 0.7620};
-    Point m_pointHighShelf{-1.3335, 0.0, 1.0668};
+    Point c_pointIntake{0.4064, 0, 0.1524};
+    Point c_pointHome{0.020, 0.140, 0.386};
+    Point c_pointSubstation{0.0, 0.0, 1.2700};
+    Point c_pointHybrid{-0.5715, 0.0, 0.2286};
+    Point c_pointLowPole{-0.9589, 0.0, 1.0668};
+    Point c_pointHighPole{-1.3907, 0.0, 1.2700};
+    Point c_pointLowShelf{-0.9398, 0.0, 0.7620};
+    Point c_pointHighShelf{-1.3335, 0.0, 1.0668};
 };
