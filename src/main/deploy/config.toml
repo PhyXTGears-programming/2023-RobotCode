@@ -29,10 +29,10 @@
     wrist.sensorToRadians = 4.731
 
     # Limits are in meters
-    grip.limit.lo = -0.035
-    grip.limit.hi =  0.260
+    grip.limit.lo =  0.07
+    grip.limit.hi =  0.35
     # Grip closed is considered 0 meters.
-    grip.zeroOffsetMeters = -0.811
-    grip.sensorToMeters   = 1.693
+    grip.zeroOffsetMeters = 1.04
+    grip.sensorToMeters   = -1.693
     grip.setpoint.open = 0
     grip.setpoint.close = 0
