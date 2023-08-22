@@ -4,20 +4,23 @@
 
 #include "Robot.h"
 
-#include <frc/XboxController.h>
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <frc2/command/CommandScheduler.h>
-
 #include "Mandatory.h"
-#include "subsystems/arm/arm.h"
 
 #include <frc/Filesystem.h>
+#include <frc/XboxController.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+
+#include <frc2/command/CommandScheduler.h>
+
+#include <wpinet/uv/Timer.h>
 
 #include <iostream>
 
 #include "commands/drivetrain/driveTeleopCommand.h"
+#include "subsystems/arm/arm.h"
 #include "subsystems/drivetrain/drivetrain.h"
 #include "subsystems/drivetrain/odometry.h"
+#include "util/calibrate/RemoteCalibrateService.h"
 
 #include "external/cpptoml.h"
 
@@ -70,6 +73,67 @@ void Robot::RobotInit() {
                        .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
                        .Unwrap();
 #endif
+
+    /// Configure remote calibration service.
+    std::shared_ptr<RemoteCalibrationService> mCalibrationService =
+        RemoteCalibrationService::Create(wpi::uv::Loop::GetDefault());
+
+    static CalibrationState calibrationState;
+
+    mCalibrationService->onSetVelocityRequest = [&calibrationState](SetVelocityPayload && payload) {
+        // Update velocities, and reset safety counters.
+        // Timeouts will automatically stop motors/actuators if a set velocity payload fails to
+        // arrive within the expected window of time.  If comms are lost, we don't want the robot to
+        // run amok.
+        calibrationState.lowJoint.velocity        = payload.lowJointVelocity;
+        calibrationState.lowJoint.ticksUntilReset = (payload.lowJointVelocity != 0.0) ? 3 : 0;
+
+        calibrationState.midJoint.velocity        = payload.midJointVelocity;
+        calibrationState.midJoint.ticksUntilReset = (payload.midJointVelocity != 0.0) ? 3 : 0;
+
+        calibrationState.wristRoll.velocity        = payload.wristRollVelocity;
+        calibrationState.wristRoll.ticksUntilReset = (payload.wristRollVelocity != 0.0) ? 3 : 0;
+
+        calibrationState.gripper.velocity        = payload.gripperVelocity;
+        calibrationState.gripper.ticksUntilReset = (payload.gripperVelocity != 0.0) ? 3 : 0;
+    };
+
+    std::shared_ptr<wpi::uv::Timer> mTickResetTimer =
+        wpi::uv::Timer::Create(wpi::uv::Loop::GetDefault());
+
+    mTickResetTimer->timeout.connect([&calibrationState]() {
+        // Decrement safety counters.  When safety counters reach zero, stop the motor.  This is a
+        // safety mechanism to automatically stop motors in the event the remote control software
+        // requests movement, but then loses comms and cannot tell the robot to stop the motor.
+        if (0 == calibrationState.lowJoint.ticksUntilReset) {
+            calibrationState.lowJoint.velocity = 0.0;
+        } else {
+            calibrationState.lowJoint.ticksUntilReset -= 1;
+        }
+
+        if (0 == calibrationState.midJoint.ticksUntilReset) {
+            calibrationState.midJoint.velocity = 0.0;
+        } else {
+            calibrationState.midJoint.ticksUntilReset -= 1;
+        }
+
+        if (0 == calibrationState.wristRoll.ticksUntilReset) {
+            calibrationState.wristRoll.velocity = 0.0;
+        } else {
+            calibrationState.wristRoll.ticksUntilReset -= 1;
+        }
+
+        if (0 == calibrationState.gripper.ticksUntilReset) {
+            calibrationState.gripper.velocity = 0.0;
+        } else {
+            calibrationState.gripper.ticksUntilReset -= 1;
+        }
+    });
+
+    mTickResetTimer->Start(
+        std::chrono::duration<uint64_t, std::milli>(20),
+        std::chrono::duration<uint64_t, std::milli>(20)
+    );
 }
 
 /**
@@ -109,6 +173,11 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
+    // TODO: Make sure autonomous command is canceled first.
+    // c_driveTeleopCommand->Schedule();
+}
+
+void Robot::TeleopInit() {
     // Make sure autonomous command is canceled first.
     c_simpleAuto->Cancel();
 
@@ -123,8 +192,10 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
     static const double DEAD_ZONE = 0.05;
 
+    // (+) is right on x axis.
     double leftX = c_driverController->GetLeftX();
-    double leftY = c_driverController->GetLeftY();
+    // Invert y axis so (+) is up.
+    double leftY = -c_driverController->GetLeftY();
 
     // 1. Run first
     frc::SmartDashboard::PutNumber("Left X", leftX);
