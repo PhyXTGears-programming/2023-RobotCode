@@ -109,11 +109,6 @@ void Robot::AutonomousPeriodic() {
 }
 
 void Robot::TeleopInit() {
-    // TODO: Make sure autonomous command is canceled first.
-    // c_driveTeleopCommand->Schedule();
-}
-
-void Robot::TeleopInit() {
     // Make sure autonomous command is canceled first.
     c_simpleAuto->Cancel();
 
