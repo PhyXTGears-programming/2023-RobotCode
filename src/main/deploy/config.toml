@@ -3,13 +3,13 @@
     # Limits are in raw sensors units
     turret.limit.lo = -85.0
     turret.limit.hi =  90.0
-    turret.zeroOffsetRadians = -7.673
-    turret.sensorToRadians = 13.156
+    turret.zeroOffsetRadians = -8.044
+    turret.sensorToRadians = 13.541
 
     # Limits are in degrees
-    shoulder.limit.lo =  40.0
-    shoulder.limit.hi = 110.0
-    shoulder.zeroOffsetRadians = 0.131
+    shoulder.limit.lo =  45.0
+    shoulder.limit.hi = 100.0
+    shoulder.zeroOffsetRadians = 0.112
 
     shoulder.pid.p = 0.500
     shoulder.pid.i = 0.004
@@ -17,22 +17,22 @@
     shoulder.pid.tolerance = 0.10
 
     # Limits are in degrees
-    elbow.limit.lo = 12.0
-    elbow.limit.hi = 180.0
-    elbow.zeroOffsetRadians = -4.518
-    elbow.sensorToRadians = 24.54
+    elbow.limit.lo = 25.0
+    elbow.limit.hi = 130.0
+    elbow.zeroOffsetRadians = -12.219
+    elbow.sensorToRadians = 23.445
 
     # Limits are in degrees
     wrist.limit.lo =   3.0
     wrist.limit.hi = 177.0
-    wrist.zeroOffsetRadians = -0.530
-    wrist.sensorToRadians = 4.731
+    wrist.zeroOffsetRadians = -0.327
+    wrist.sensorToRadians = 4.363
 
     # Limits are in meters
-    grip.limit.lo =  0.07
-    grip.limit.hi =  0.35
+    grip.limit.lo = 0.01
+    grip.limit.hi = 0.20
     # Grip closed is considered 0 meters.
-    grip.zeroOffsetMeters = 1.04
-    grip.sensorToMeters   = -1.693
+    grip.zeroOffsetMeters = -0.55
+    grip.sensorToMeters = 1.163
     grip.setpoint.open = 0
     grip.setpoint.close = 0

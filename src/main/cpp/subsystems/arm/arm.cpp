@@ -37,8 +37,7 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
 
     resetShoulderAngle();
 
-    c_gripperRotateMotor.SetInverted(true); // CW is (+) speed
-    c_gripperGraspMotor.SetInverted(true); // Grip open is (-) speed
+    c_lowJointMotor.SetInverted(true);
 
     c_turretMotor.SetSmartCurrentLimit(20.0);
     c_lowJointMotor.SetSmartCurrentLimit(25.0);
