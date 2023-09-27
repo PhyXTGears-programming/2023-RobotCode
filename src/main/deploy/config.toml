@@ -8,7 +8,7 @@
 
     # Limits are in degrees
     shoulder.limit.lo =  45.0
-    shoulder.limit.hi = 100.0
+    shoulder.limit.hi = 110.0
     shoulder.zeroOffsetRadians = 0.112
 
     shoulder.pid.p = 0.900
