@@ -134,15 +134,25 @@ void ArmTeleopCommand::Execute() {
             (c_operatorController->GetRightBumper() ? 1.0 : 0.0)
             - (c_operatorController->GetLeftBumper() ? 1.0 : 0.0);
 
-        // Use current position as default so grip doesn't move wildly upon enable.
-        double gripTargetPos = c_arm->getGrip();
+        // Disabled 2023 (jcc) - Position sensor broke.  Will not replace.
+        if (false) {
+            // Use current position as default so grip doesn't move wildly upon enable.
+            double gripTargetPos = c_arm->getGrip();
 
-        if (0.0 != bumper) {
-            gripTargetPos += bumper * Constants::Arm::k_maxGripSpeed;
+            if (0.0 != bumper) {
+                gripTargetPos += bumper * Constants::Arm::k_maxGripSpeed;
+            }
+
+            // Move/hold grip.
+            c_arm->setGrip(gripTargetPos);
         }
 
-        // Move/hold grip.
-        c_arm->setGrip(gripTargetPos);
+        if (NEAR_ZERO_METERS < std::abs(bumper)) {
+            c_arm->setGripSpeed(bumper * Constants::Arm::k_maxGripSpeed);
+        } else {
+            // Stop motor
+            c_arm->setGripSpeed(0.0);
+        }
     }
 }
 
