@@ -11,7 +11,7 @@
     shoulder.limit.hi = 100.0
     shoulder.zeroOffsetRadians = 0.112
 
-    shoulder.pid.p = 0.500
+    shoulder.pid.p = 0.900
     shoulder.pid.i = 0.004
     shoulder.pid.d = 0.000
     shoulder.pid.tolerance = 0.10
