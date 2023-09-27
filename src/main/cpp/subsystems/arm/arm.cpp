@@ -37,7 +37,7 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
 
     resetShoulderAngle();
 
-    c_lowJointMotor.SetInverted(true);
+    //c_lowJointMotor.SetInverted(true);
 
     c_turretMotor.SetSmartCurrentLimit(20.0);
     c_lowJointMotor.SetSmartCurrentLimit(25.0);
@@ -71,18 +71,16 @@ void ArmSubsystem::Periodic() {
     // gravity.
     if (nullptr != c_shoulderPid) {
         double output = c_shoulderPid->Calculate(getShoulderAngle());
-        // Reverse motor direction.
-        output = -output;
 
         if (!isNearZero(output, 0.006)) {
             if (output < 0.0) {
-                output -= 0.09;
+                output -= 0.01;
             } else {
-                output += 0.02;
+                output += 0.03;
             }
         }
 
-        output = std::clamp(output, -0.15, 0.10);
+        output = std::clamp(output, -0.10, 0.15);
 
         c_lowJointMotor.Set(output);
     }
