@@ -2,7 +2,6 @@
 
 #include "Mandatory.h"
 #include "subsystems/arm/armPose.h"
-#include "subsystems/arm/boundary.h"
 #include "subsystems/arm/motionPath.h"
 #include "util/geom.h"
 
@@ -37,9 +36,9 @@ public:
     void initialiseBoundary();
 
     // Calulating Functions:
-    Point calcElbowPos(double turretAng, double angShoulder);
+    Point calcElbowPos(double angShoulder);
 
-    Point calcGripPos(double turretAng, double shoulderAng, double elbowAng);
+    Point calcGripPos(double shoulderAng, double elbowAng);
 
     ArmPose calcIKJointPoses(const Point & pt);
 
@@ -59,19 +58,6 @@ public:
     Point getGripPoint();
 
     SafetyZone getSafetyZone(const Point & pt);
-
-    Point const & getIntakePoint();
-    Point const & getHomePoint();
-    Point const & getSubstationPoint();
-    Point const & getHybridPoint();
-    Point const & getLowPolePoint();
-    Point const & getHighPolePoint();
-    Point const & getLowShelfPoint();
-    Point const & getHighShelfPoint();
-
-    Point const & getCenterSafePoint();
-    Point const & getIntakeSafePoint();
-    Point const & getGridSafePoint();
 
     void setTurretAngle(double angle);
     void setShoulderAngle(double angle);
@@ -153,8 +139,6 @@ private:
 
     frc2::PIDController * c_shoulderPid = nullptr;
 
-    std::shared_ptr<Boundary> c_noGoZone = nullptr;
-
     Point m_computedGripPoint;
 
     struct {
@@ -212,19 +196,4 @@ private:
             } setpoint;
         } grip;
     } config;
-
-    // Safety Points
-    Point c_safetyPointGrid{0.53, 0.03, 0.70};
-    Point c_safetyPointCenter{0.0, 0.657, 0.68};
-    Point c_safetyPointIntake{-0.53, 0.03, 0.68};
-
-    // Other Points
-    Point c_pointIntake{0.4064, 0, 0.1524};
-    Point c_pointHome{0.020, 0.140, 0.386};
-    Point c_pointSubstation{0.0, 0.0, 1.2700};
-    Point c_pointHybrid{-0.5715, 0.0, 0.2286};
-    Point c_pointLowPole{-0.9589, 0.0, 1.0668};
-    Point c_pointHighPole{-1.3907, 0.0, 1.2700};
-    Point c_pointLowShelf{-0.9398, 0.0, 0.7620};
-    Point c_pointHighShelf{-1.3335, 0.0, 1.0668};
 };

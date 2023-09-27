@@ -66,15 +66,6 @@ private:
     DriveTeleopCommand * c_driveTeleopCommand           = nullptr;
     KickstandReleaseCommand * c_kickstandReleaseCommand = nullptr;
 
-    frc2::CommandPtr c_armMoveToHome{ nullptr };
-    frc2::CommandPtr c_armMoveToIntake{ nullptr };
-    frc2::CommandPtr c_armMoveToSubstation{ nullptr };
-    frc2::CommandPtr c_armMoveToHybrid{ nullptr };
-    frc2::CommandPtr c_armMoveToLowPole{ nullptr };
-    frc2::CommandPtr c_armMoveToHighPole{ nullptr };
-    frc2::CommandPtr c_armMoveToLowShelf{ nullptr };
-    frc2::CommandPtr c_armMoveToHighShelf{ nullptr };
-
     // Auto Selector
     std::string m_autoSelected;
     frc::SendableChooser<std::string> c_chooser;

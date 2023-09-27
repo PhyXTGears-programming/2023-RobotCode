@@ -9,7 +9,6 @@
 Odometry::Odometry(Drivetrain * drivetrain) {
     m_position.x   = 0;
     m_position.y   = 0;
-    m_position.z   = 0;
     c_drivetrain   = drivetrain;
     m_previousTime = 0;
 }

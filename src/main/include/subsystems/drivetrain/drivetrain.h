@@ -154,14 +154,10 @@ private:
     SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = { nullptr };
 
     Point c_wheelPositions[Constants::k_NumberOfSwerveModules] = {
-        Point{ /*y=*/(float)(-0.4953 / 2),
-               /*x=*/(float)(-0.4445 / 2),
-               /*z=*/0.0F }, // -8.75in, -9.75in
-        Point{
-            /*y=*/(float)(0.4953 / 2), /*x=*/(float)(-0.4445 / 2), /*z=*/0.0F }, // -8.75in, 9.75in
-        Point{ /*y=*/(float)(0.4953 / 2), /*x=*/(float)(0.4445 / 2), /*z=*/0.0F }, // 8.75in, 9.75in
-        Point{
-            /*y=*/(float)(-0.4953 / 2), /*x=*/(float)(0.4445 / 2), /*z=*/0.0F } // 8.75in, -9.75in
+        Point{ /*y=*/(float)(-0.4953 / 2), /*x=*/(float)(-0.4445 / 2) }, // -8.75in, -9.75in
+        Point{ /*y=*/(float)(0.4953 / 2), /*x=*/(float)(-0.4445 / 2) },  // -8.75in, 9.75in
+        Point{ /*y=*/(float)(0.4953 / 2), /*x=*/(float)(0.4445 / 2) },   // 8.75in, 9.75in
+        Point{ /*y=*/(float)(-0.4953 / 2), /*x=*/(float)(0.4445 / 2) }   // 8.75in, -9.75in
     };
 
     AHRS * m_navX = new AHRS(frc::SPI::Port::kMXP);

@@ -30,8 +30,7 @@ void ArmTeleopCommand::Execute() {
         Vector offsetLX;
         Vector offsetLY;
         Vector offsetRY;
-        double gripMag = std::sqrt(std::pow(m_target.x,2)+std::pow(m_target.y,2));
-        double gripDir = std::atan2(m_target.x, m_target.y);  // 0 deg == y axis
+        double armExtension = std::sqrt(std::pow(m_target.x, 2) + std::pow(m_target.y, 2));
 
         // Rotate turret. Speed of rotation is reduced the further the arm reaches.
         double leftX = c_operatorController->GetLeftX();
@@ -39,13 +38,18 @@ void ArmTeleopCommand::Execute() {
         leftX = DEADZONE(leftX, 0.0, 1.0);
         if (0.0 != leftX) {
             // (+) leftX should move turret clockwise.
-            double dir = gripDir + (leftX * Constants::Arm::k_maxPointRotSpeed) / std::max(gripMag * 2.0,1.0);
-            Point point1(
-                gripMag * std::sin(dir),
-                gripMag * std::cos(dir),
-                m_target.z
-            );
-            offsetLX = point1 - m_target;
+            double rotSpeed =
+                (leftX * Constants::Arm::k_maxPointRotSpeed) / std::max(armExtension * 2.0, 1.0);
+
+            if (isNearZero(rotSpeed, 0.05)) {
+                // Stop turret.
+                c_arm->setTurretSpeed(0.0);
+            } else {
+                c_arm->setTurretSpeed(rotSpeed);
+            }
+        } else {
+            // Stop turret.
+            c_arm->setTurretSpeed(0.0);
         }
 
         // Extend/retract gripper from/to turret.
