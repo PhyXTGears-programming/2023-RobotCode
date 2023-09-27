@@ -14,8 +14,8 @@
 
 #include <frc/AnalogPotentiometer.h>
 #include <frc/DutyCycleEncoder.h>
-#include <frc/controller/PIDController.h>
 #include <frc/Servo.h>
+#include <frc/controller/PIDController.h>
 #include <frc2/command/SubsystemBase.h>
 
 #include <rev/CANSparkMax.h>
@@ -24,7 +24,6 @@ using namespace Interfaces::Arm;
 
 class ArmSubsystem : public frc2::SubsystemBase {
 public:
-
     enum class SafetyZone {
         LEFT,
         MIDDLE,
@@ -42,12 +41,12 @@ public:
 
     Point calcGripPos(double turretAng, double shoulderAng, double elbowAng);
 
-    ArmPose calcIKJointPoses(Point const & pt);
+    ArmPose calcIKJointPoses(const Point & pt);
 
-    bool isPointSafe(Point const & point);
-    bool isNearPoint(Point const & point);
+    bool isPointSafe(const Point & point);
+    bool isNearPoint(const Point & point);
 
-    MotionPath getPathTo(Point const & current, Point const & target);
+    MotionPath getPathTo(const Point & current, const Point & target);
 
     // Reading Functions:
     double getTurretAngle();
@@ -59,7 +58,7 @@ public:
     // Getting Points:
     Point getGripPoint();
 
-    SafetyZone getSafetyZone(Point const & pt);
+    SafetyZone getSafetyZone(const Point & pt);
 
     Point const & getIntakePoint();
     Point const & getHomePoint();
@@ -93,7 +92,7 @@ public:
      *
      * @return false if point is within the no-go zone, true if point is safe.
      */
-    std::optional<Point> moveToPoint(Point const & target);
+    std::optional<Point> moveToPoint(const Point & target);
 
     void stopArm();
 
@@ -130,37 +129,27 @@ private:
     //          │          │
     //          └──────────┘
 
-    rev::CANSparkMax c_turretMotor {
-        k_TurretMotor,
-        rev::CANSparkMaxLowLevel::MotorType::kBrushless
-    };
-    rev::CANSparkMax c_lowJointMotor {
-        k_LowJointMotor,
-        rev::CANSparkMaxLowLevel::MotorType::kBrushless
-    };
-    rev::CANSparkMax c_midJointMotor {
-        k_MidJointMotor,
-        rev::CANSparkMaxLowLevel::MotorType::kBrushless
-    };
-    rev::CANSparkMax c_gripperRotateMotor {
-        k_GripperRotateMotor,
-        rev::CANSparkMaxLowLevel::MotorType::kBrushless
-    };
-    rev::CANSparkMax c_gripperGraspMotor {
-        k_GripperGraspMotor,
-        rev::CANSparkMaxLowLevel::MotorType::kBrushless
-    };
+    rev::CANSparkMax c_turretMotor{ k_TurretMotor,
+                                    rev::CANSparkMaxLowLevel::MotorType::kBrushless };
+    rev::CANSparkMax c_lowJointMotor{ k_LowJointMotor,
+                                      rev::CANSparkMaxLowLevel::MotorType::kBrushless };
+    rev::CANSparkMax c_midJointMotor{ k_MidJointMotor,
+                                      rev::CANSparkMaxLowLevel::MotorType::kBrushless };
+    rev::CANSparkMax c_gripperRotateMotor{ k_GripperRotateMotor,
+                                           rev::CANSparkMaxLowLevel::MotorType::kBrushless };
+    rev::CANSparkMax c_gripperGraspMotor{ k_GripperGraspMotor,
+                                          rev::CANSparkMaxLowLevel::MotorType::kBrushless };
 
-    frc::Servo c_cameraServo { k_CameraServo };
+    frc::Servo c_cameraServo{ k_CameraServo };
 
-    frc::AnalogPotentiometer c_turretAngleSensor {k_TurretSensor, 1.0, 0.0};
-    frc::AnalogPotentiometer c_elbowAngleSensor {k_ElbowSensor, 1.0, 0.0};
-    frc::AnalogPotentiometer c_wristRollAngleSensor {k_WristRollSensor, 1.0, 0.0};
-    frc::AnalogPotentiometer c_gripSensor {k_GripSensor, 1.0, 0.0};
-    frc::DutyCycleEncoder c_shoulderAngleSensor{k_ShoulderSensor}; // Using Funky Fresh Encoder
+    frc::AnalogPotentiometer c_turretAngleSensor{ k_TurretSensor, 1.0, 0.0 };
+    frc::AnalogPotentiometer c_elbowAngleSensor{ k_ElbowSensor, 1.0, 0.0 };
+    frc::AnalogPotentiometer c_wristRollAngleSensor{ k_WristRollSensor, 1.0, 0.0 };
+    frc::AnalogPotentiometer c_gripSensor{ k_GripSensor, 1.0, 0.0 };
+    frc::DutyCycleEncoder c_shoulderAngleSensor{ k_ShoulderSensor }; // Using Funky Fresh Encoder
 
     double m_elbowSensorMeasurements[2] = { 0.0 };
-    double m_elbowSensorAverage = 0.0;
+    double m_elbowSensorAverage         = 0.0;
 
     frc2::PIDController * c_shoulderPid = nullptr;
 

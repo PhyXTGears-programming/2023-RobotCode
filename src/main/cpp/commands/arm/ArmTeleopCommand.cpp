@@ -6,16 +6,15 @@
 #include <cmath>
 
 #define JOYSTICK_DEADZONE 0.15
-#define DEADZONE(x, min, max) ((std::abs((x)) < JOYSTICK_DEADZONE) \
-    ? 0.0 \
-    : ((x) + std::copysign(1.0 - JOYSTICK_DEADZONE, (x))) \
-        / (1.0 - JOYSTICK_DEADZONE) \
-        * ((max) - (min)) \
-        + std::copysign((min), (x)))
+#define DEADZONE(x, min, max)                                                                      \
+    ((std::abs((x)) < JOYSTICK_DEADZONE) ? 0.0                                                     \
+                                         : ((x) + std::copysign(1.0 - JOYSTICK_DEADZONE, (x)))     \
+                                                   / (1.0 - JOYSTICK_DEADZONE) * ((max) - (min))   \
+                                               + std::copysign((min), (x)))
 
-ArmTeleopCommand::ArmTeleopCommand(ArmSubsystem* arm, frc::XboxController* operatorController) {
+ArmTeleopCommand::ArmTeleopCommand(ArmSubsystem * arm, frc::XboxController * operatorController) {
     c_operatorController = operatorController;
-    c_arm = arm;
+    c_arm                = arm;
 
     AddRequirements(c_arm);
 }
@@ -55,36 +54,26 @@ void ArmTeleopCommand::Execute() {
         leftY = DEADZONE(leftY, 0.0, 1.0);
         if (0.0 != leftY) {
             // (+) leftY should move away from turret.
-            double mag = gripMag + (leftY * Constants::Arm::k_maxPointSpeed);
-            Point point1(
-                mag * std::sin(gripDir),
-                mag * std::cos(gripDir),
-                m_target.z
-            );
-            offsetLY = point1 - m_target;
+            offsetLY = Vector(leftY * Constants::Arm::k_maxPointSpeed, 0.0);
         }
 
         // Move gripper up or down.
-        double rightY = -c_operatorController->GetRightY();    /* Invert so + is up */
+        double rightY = -c_operatorController->GetRightY(); /* Invert so + is up */
         // Square input to improve fidelity.
         rightY = DEADZONE(rightY, 0.0, 1.0);
         if (0.0 != rightY) {
             // (+) rightY should move gripper up.
-            offsetRY = Vector(
-                0.0,
-                0.0,
-                rightY * Constants::Arm::k_maxPointSpeed
-            );
+            offsetRY = Vector(0.0, rightY * Constants::Arm::k_maxPointSpeed);
         }
 
         Point desiredTarget = m_target + offsetLX + offsetLY + offsetRY;
         // Clamp max distance from current position.
         {
             Point currentPos = c_arm->getGripPoint();
-            Vector offset = desiredTarget - currentPos;
-            double mag = offset.len();
-            offset = offset * (std::min(mag, 0.0254 * 4.0 /* 2 inches */) / mag);
-            desiredTarget = currentPos + offset;
+            Vector offset    = desiredTarget - currentPos;
+            double mag       = offset.len();
+            offset           = offset * (std::min(mag, 0.0254 * 4.0 /* 2 inches */) / mag);
+            desiredTarget    = currentPos + offset;
         }
 
         // Attempt to move to desired target, and ignore point if deemed unsafe.
@@ -101,9 +90,9 @@ void ArmTeleopCommand::Execute() {
     // Rotate wrist clockwise or counterclockwise.
     if (false) {
         /// TODO: Fix analog sensor
-        double leftTrigger = c_operatorController->GetLeftTriggerAxis();
+        double leftTrigger  = c_operatorController->GetLeftTriggerAxis();
         double rightTrigger = c_operatorController->GetRightTriggerAxis();
-        double trigger = leftTrigger - rightTrigger;
+        double trigger      = leftTrigger - rightTrigger;
         // Square input to improve fidelity.
         trigger = DEADZONE(trigger, 0.0, 1.0);
 
@@ -119,9 +108,9 @@ void ArmTeleopCommand::Execute() {
         c_arm->setWristRollAngle(wristTargetAngle);
     } else {
         // Fallback: manual operation
-        double leftTrigger = c_operatorController->GetLeftTriggerAxis();
+        double leftTrigger  = c_operatorController->GetLeftTriggerAxis();
         double rightTrigger = c_operatorController->GetRightTriggerAxis();
-        double trigger = rightTrigger - leftTrigger;
+        double trigger      = rightTrigger - leftTrigger;
         // Square input to improve fidelity.
         trigger = DEADZONE(trigger, 0.0, 0.1);
 
@@ -130,9 +119,8 @@ void ArmTeleopCommand::Execute() {
 
     // Open and close gripper.
     {
-        double bumper =
-            (c_operatorController->GetRightBumper() ? 1.0 : 0.0)
-            - (c_operatorController->GetLeftBumper() ? 1.0 : 0.0);
+        double bumper = (c_operatorController->GetRightBumper() ? 1.0 : 0.0)
+                        - (c_operatorController->GetLeftBumper() ? 1.0 : 0.0);
 
         // Disabled 2023 (jcc) - Position sensor broke.  Will not replace.
         if (false) {
@@ -161,12 +149,14 @@ void ArmTeleopCommand::End(bool interrupted) {
     // Cannot stop motors because shoulder will backdrive and fall.
     m_target = c_arm->getGripPoint();
     c_arm->moveToPoint(m_target);
+    // Stop turret.
+    c_arm->setTurretSpeed(0.0);
 }
 
 bool ArmTeleopCommand::IsFinished() {
     return false; // dont end because then we wont be able to move the arm
 }
 
-void ArmTeleopCommand::resetTarget(){
+void ArmTeleopCommand::resetTarget() {
     m_target = c_arm->getGripPoint();
 }

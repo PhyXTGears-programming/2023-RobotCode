@@ -1,33 +1,21 @@
 #include "util/geom.h"
 
-Vector operator- (Point const & lhs, Point const & rhs) {
-    return Vector(
-        lhs.x - rhs.x,
-        lhs.y - rhs.y,
-        lhs.z - rhs.z
-    );
+Vector operator-(const Point & lhs, const Point & rhs) {
+    return Vector(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z);
 }
 
-Point operator+ (Point const & lhs, Vector const & rhs) {
-    return Point {
-        lhs.x + rhs.x,
-        lhs.y + rhs.y,
-        lhs.z + rhs.z
-    };
+Point operator+(const Point & lhs, const Vector & rhs) {
+    return Point{ lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z };
 }
 
-Point operator- (Point const & lhs, Vector const & rhs) {
-    return Point {
-        lhs.x - rhs.x,
-        lhs.y - rhs.y,
-        lhs.z - rhs.z
-    };
+Point operator-(const Point & lhs, const Vector & rhs) {
+    return Point{ lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z };
 }
 
-Vector operator*(Vector const & a, double b) {
+Vector operator*(const Vector & a, double b) {
     return Vector(a.x * b, a.y * b, a.z * b);
 }
 
-Vector operator*(double a, Vector const & b) {
+Vector operator*(double a, const Vector & b) {
     return Vector(a * b.x, a * b.y, a * b.z);
 }

@@ -20,151 +20,156 @@ it should be removed or put in a debug preprocessor.
 */
 
 class Drivetrain : public frc2::SubsystemBase {
-    public:
-        /**
-         * Used to have the swerve drive setup with how ever many drive wheels you need
-         * 
-         * @param fieldOriented wether the robot should be in field oriented mode (non-functional)
-        */
-        Drivetrain(bool fieldOriented);
+public:
+    /**
+     * Used to have the swerve drive setup with how ever many drive wheels you need
+     *
+     * @param fieldOriented wether the robot should be in field oriented mode (non-functional)
+     */
+    Drivetrain(bool fieldOriented);
 
-        /**
-         * Used to have the swerve drive setup with how ever many drive wheels you need without field oriented
-        */
-        Drivetrain();
+    /**
+     * Used to have the swerve drive setup with how ever many drive wheels you need without field
+     * oriented
+     */
+    Drivetrain();
 
-        ~Drivetrain();
+    ~Drivetrain();
 
-        void Periodic() override;
+    void Periodic() override;
 
-        /**
-         * Turns Field Oriented Driving on regardless of whether it was on or off previously
-        */
-        void enableFieldCentric();
+    /**
+     * Turns Field Oriented Driving on regardless of whether it was on or off previously
+     */
+    void enableFieldCentric();
 
+    /**
+     * Turns Field Oriented Driving on regardless of whether it was on or off previously
+     */
+    void disableFieldCentric();
 
-        /**
-         * Turns Field Oriented Driving on regardless of whether it was on or off previously
-        */
-        void disableFieldCentric();
+    /**
+     * Sets field oriented driving to the other setting
+     *
+     * - if Field Oriented Driving was off, it will now be on
+     * - if Field Oriented Driving was on, it will not be off
+     */
+    void toggleFieldCentric();
 
-        /**
-         * Sets field oriented driving to the other setting
-         * 
-         * - if Field Oriented Driving was off, it will now be on
-         * - if Field Oriented Driving was on, it will not be off
-        */
-        void toggleFieldCentric();
+    /**
+     * returns current state of Field Oriented Driving
+     *
+     * - if TRUE, then Field Oriented Driving is enabled
+     * - if FALSE, then Field Oriented Driving is disabled
+     */
+    bool getFieldCentric();
 
-        /**
-         * returns current state of Field Oriented Driving
-         * 
-         * - if TRUE, then Field Oriented Driving is enabled
-         * - if FALSE, then Field Oriented Driving is disabled
-        */
-        bool getFieldCentric();
+    /**
+     * sets the left/right percentage of the max speed
+     */
+    void setStrife(double x);
 
-        /**
-         * sets the left/right percentage of the max speed
-        */
-        void setStrife(double x);
+    /**
+     * sets the forward/backwards percentage of the max speed
+     */
+    void setForward(double y);
 
-        /**
-         * sets the forward/backwards percentage of the max speed
-        */
-        void setForward(double y);
+    /**
+     * sets the percentage of the max rotation speed
+     */
+    void setRotation(double r);
 
-        /**
-         * sets the percentage of the max rotation speed
-        */
-        void setRotation(double r);
+    /**
+     * sets all parameters of the robot movement
+     *
+     * @param x sets the left/right percentage of the max speed
+     * @param y sets the forward/backwards percentage of the max speed
+     * @param r sets the percentage of the max rotation speed
+     */
+    void setMotion(double x, double y, double r);
 
-        /**
-         * sets all parameters of the robot movement
-         * 
-         * @param x sets the left/right percentage of the max speed
-         * @param y sets the forward/backwards percentage of the max speed
-         * @param r sets the percentage of the max rotation speed
-        */
-        void setMotion(double x, double y, double r);
+    /**
+     * @returns direction of movement (this is a calculation based on controller inputs)
+     */
+    double getCalculatedHeading();
 
-        /**
-         * @returns direction of movement (this is a calculation based on controller inputs)
-        */
-        double getCalculatedHeading();
+    /**
+     * @returns the field heading from the NavX
+     */
+    double getFieldHeading();
 
-        /**
-         * @returns the field heading from the NavX
-        */
-       double getFieldHeading();
+    /**
+     * @returns velocity of movement (this is a calculation based on controller inputs)
+     */
+    double getCalculatedVelocity();
 
-        /**
-         * @returns velocity of movement (this is a calculation based on controller inputs)
-        */
-       double getCalculatedVelocity();
-       
-        /**
-         * @param module the module to get the heading from
-         * 
-         * @returns the field heading from the modules
-        */
-       double getMovementHeading(int module);
+    /**
+     * @param module the module to get the heading from
+     *
+     * @returns the field heading from the modules
+     */
+    double getMovementHeading(int module);
 
-        /**
-         * @param module the module to get the heading from
-         * 
-         * @returns velocity of movement calculated from the Talon built-in encoders
-        */
-       double getMovementVelocity(int module);
+    /**
+     * @param module the module to get the heading from
+     *
+     * @returns velocity of movement calculated from the Talon built-in encoders
+     */
+    double getMovementVelocity(int module);
 
-        /**
-         * resets the yaw to be 0 in the NavX (parallel to the field floor)
-        */
-        void resetNavxHeading();
+    /**
+     * resets the yaw to be 0 in the NavX (parallel to the field floor)
+     */
+    void resetNavxHeading();
 
-        /**
-         * @param restrictMovement whether the Drivetrain should lock out any movement
-         */
-        void lockMovement(bool restrictMovement);
+    /**
+     * @param restrictMovement whether the Drivetrain should lock out any movement
+     */
+    void lockMovement(bool restrictMovement);
 
-        void enableHeadingControl();
-        void disableHeadingControl();
-        void toggleHeadingControl();
-        bool getHeadingControlState();
-        void headingControl(bool blockRotationSets);
-        void setHeadingSetpoint(double setpoint);
-        double getHeadingSetpoint();
-    private:
-        void setupWheels();
+    void enableHeadingControl();
+    void disableHeadingControl();
+    void toggleHeadingControl();
+    bool getHeadingControlState();
+    void headingControl(bool blockRotationSets);
+    void setHeadingSetpoint(double setpoint);
+    double getHeadingSetpoint();
 
-        void calculateWheelAnglesAndSpeeds();
+private:
+    void setupWheels();
 
-        void sendToSwerveModules();
+    void calculateWheelAnglesAndSpeeds();
 
-        bool m_fieldOriented = false;
-        double m_fieldOrientedOffset = 0;
+    void sendToSwerveModules();
 
-        double m_strife = 0;
-        double m_forwards = 0;
-        double m_rotation = 0;
+    bool m_fieldOriented         = false;
+    double m_fieldOrientedOffset = 0;
 
-        bool m_forceLockMovement = false;
+    double m_strife   = 0;
+    double m_forwards = 0;
+    double m_rotation = 0;
 
-        SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = {nullptr};
+    bool m_forceLockMovement = false;
 
-        Point c_wheelPositions[Constants::k_NumberOfSwerveModules] = {
-            Point{/*y=*/(float)(-0.4953/2), /*x=*/(float)(-0.4445/2), /*z=*/0.0F}, // -8.75in, -9.75in
-            Point{/*y=*/(float)( 0.4953/2), /*x=*/(float)(-0.4445/2), /*z=*/0.0F},  // -8.75in, 9.75in
-            Point{/*y=*/(float)( 0.4953/2), /*x=*/(float)( 0.4445/2), /*z=*/0.0F}, // 8.75in, 9.75in
-            Point{/*y=*/(float)(-0.4953/2), /*x=*/(float)( 0.4445/2), /*z=*/0.0F} // 8.75in, -9.75in
-        };
+    SwerveWheel * c_wheels[Constants::k_NumberOfSwerveModules] = { nullptr };
 
-        AHRS * m_navX = new AHRS(frc::SPI::Port::kMXP);
+    Point c_wheelPositions[Constants::k_NumberOfSwerveModules] = {
+        Point{ /*y=*/(float)(-0.4953 / 2),
+               /*x=*/(float)(-0.4445 / 2),
+               /*z=*/0.0F }, // -8.75in, -9.75in
+        Point{
+            /*y=*/(float)(0.4953 / 2), /*x=*/(float)(-0.4445 / 2), /*z=*/0.0F }, // -8.75in, 9.75in
+        Point{ /*y=*/(float)(0.4953 / 2), /*x=*/(float)(0.4445 / 2), /*z=*/0.0F }, // 8.75in, 9.75in
+        Point{
+            /*y=*/(float)(-0.4953 / 2), /*x=*/(float)(0.4445 / 2), /*z=*/0.0F } // 8.75in, -9.75in
+    };
 
-        // class-wide so we can optimize turning path
-        Polar m_motorDirectionAngleSpeed[Constants::k_NumberOfSwerveModules];
+    AHRS * m_navX = new AHRS(frc::SPI::Port::kMXP);
 
-        bool m_headingControlEnabled = false;
-        frc2::PIDController c_headingControlPID {0.4, 0.0, 0};
-        double m_headingControlSetpoint = 0.0;
+    // class-wide so we can optimize turning path
+    Polar m_motorDirectionAngleSpeed[Constants::k_NumberOfSwerveModules];
+
+    bool m_headingControlEnabled = false;
+    frc2::PIDController c_headingControlPID{ 0.4, 0.0, 0 };
+    double m_headingControlSetpoint = 0.0;
 };

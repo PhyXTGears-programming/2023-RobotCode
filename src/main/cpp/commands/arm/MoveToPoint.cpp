@@ -1,11 +1,11 @@
 #include "commands/arm/MoveToPoint.h"
 
-#include "subsystems/arm/motionPath.h"
 #include "subsystems/arm/arm.h"
 #include "subsystems/arm/armPose.h"
+#include "subsystems/arm/motionPath.h"
 
 MoveToPointCommand::MoveToPointCommand(ArmSubsystem * arm, Point finalPoint) {
-    c_arm = arm;
+    c_arm         = arm;
     c_finalTarget = finalPoint;
 
     AddRequirements(c_arm);
@@ -19,22 +19,21 @@ void MoveToPointCommand::Initialize() {
 }
 
 void MoveToPointCommand::Execute() {
-    if(c_finalTarget.isNear(m_target) && c_arm->isNearPoint(c_finalTarget)) {
+    if (c_finalTarget.isNear(m_target) && c_arm->isNearPoint(c_finalTarget)) {
         return;
     } else if (c_arm->isNearPoint(m_target)) {
         m_target = m_path->getNextPoint();
     }
 
     c_arm->moveToPoint(m_target);
-
 }
 
 void MoveToPointCommand::End(bool isInterrupted) {
-    //heeyaw
+    // heeyaw
     c_arm->stopArm();
 }
 
 bool MoveToPointCommand::IsFinished() {
     return !c_arm->isPointSafe(m_target)
-        || (c_finalTarget.isNear(m_target) && c_arm->isNearPoint(c_finalTarget));
+           || (c_finalTarget.isNear(m_target) && c_arm->isNearPoint(c_finalTarget));
 }
