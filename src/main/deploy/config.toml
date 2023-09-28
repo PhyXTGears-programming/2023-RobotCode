@@ -18,7 +18,7 @@
 
     # Limits are in degrees
     elbow.limit.lo = 25.0
-    elbow.limit.hi = 130.0
+    elbow.limit.hi = 140.0
     elbow.zeroOffsetRadians = -12.219
     elbow.sensorToRadians = 23.445
 
