@@ -17,7 +17,6 @@
 #include "subsystems/drivetrain/odometry.h"
 
 #include "commands/arm/ArmTeleopCommand.h"
-#include "commands/arm/MoveToPoint.h"
 #include "commands/drivetrain/driveTeleopCommand.h"
 #include "commands/kickstand/kickstandReleaseCommand.h"
 

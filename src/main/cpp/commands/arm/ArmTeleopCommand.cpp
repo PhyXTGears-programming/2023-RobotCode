@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-#define JOYSTICK_DEADZONE 0.15
+#define JOYSTICK_DEADZONE 0.2
 #define DEADZONE(x, min, max)                                                                      \
     ((std::abs((x)) < JOYSTICK_DEADZONE) ? 0.0                                                     \
                                          : ((x) + std::copysign(1.0 - JOYSTICK_DEADZONE, (x)))     \
@@ -39,7 +39,7 @@ void ArmTeleopCommand::Execute() {
         if (0.0 != leftX) {
             // (+) leftX should move turret clockwise.
             double rotSpeed =
-                (leftX * Constants::Arm::k_maxPointRotSpeed) / std::max(armExtension * 2.0, 1.0);
+                (leftX * Constants::Arm::k_maxTurnSpeed) / std::max(armExtension * 2.0, 1.0);
 
             if (isNearZero(rotSpeed, 0.05)) {
                 // Stop turret.

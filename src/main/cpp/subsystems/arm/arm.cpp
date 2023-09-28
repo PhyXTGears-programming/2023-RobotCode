@@ -27,7 +27,7 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
 
     resetShoulderAngle();
 
-    // c_lowJointMotor.SetInverted(true);
+    c_lowJointMotor.SetInverted(true);
 
     c_turretMotor.SetSmartCurrentLimit(20.0);
     c_lowJointMotor.SetSmartCurrentLimit(25.0);
@@ -43,10 +43,9 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
 
     m_elbowSensorMeasurements[0] = c_elbowAngleSensor.Get();
     m_elbowSensorMeasurements[1] = m_elbowSensorMeasurements[0];
+    m_elbowSensorMeasurements[2] = m_elbowSensorMeasurements[0];
 
     m_elbowSensorAverage = m_elbowSensorMeasurements[0];
-
-    initialiseBoundary();
 
     AddChild("Camera Servo", &c_cameraServo);
 }
@@ -64,13 +63,16 @@ void ArmSubsystem::Periodic() {
 
         if (!isNearZero(output, 0.006)) {
             if (output < 0.0) {
-                output -= 0.01;
+                output -= 0.005;
             } else {
-                output += 0.03;
+                output += 0.01;
             }
         }
 
         output = std::clamp(output, -0.10, 0.15);
+
+        frc::SmartDashboard::PutNumber("shoulder pid output", output);
+        frc::SmartDashboard::PutNumber("shoulder pid error", c_shoulderPid->GetPositionError());
 
         c_lowJointMotor.Set(output);
     }
@@ -417,8 +419,9 @@ void ArmSubsystem::loadConfig(std::shared_ptr<cpptoml::table> toml) {
 
 void ArmSubsystem::_updateElbowAverage() {
     m_elbowSensorMeasurements[0] = m_elbowSensorMeasurements[1];
-    m_elbowSensorMeasurements[1] =
+    m_elbowSensorMeasurements[1] = m_elbowSensorMeasurements[2];
+    m_elbowSensorMeasurements[2] =
         c_elbowAngleSensor.Get() * config.elbow.sensorToRadians + config.elbow.zeroOffset;
 
-    m_elbowSensorAverage = (m_elbowSensorMeasurements[0] + m_elbowSensorMeasurements[1]) / 2.0;
+    m_elbowSensorAverage = 0.15 * m_elbowSensorMeasurements[0] + 0.25 * m_elbowSensorMeasurements[1] + 0.6 * m_elbowSensorMeasurements[2];
 }
