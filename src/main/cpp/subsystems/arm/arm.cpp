@@ -1,6 +1,7 @@
 #include "subsystems/arm/arm.h"
 #include "Constants.h"
 #include "Mandatory.h"
+#include "util/geom.h"
 #include "util/math.h"
 
 #include <cmath>
@@ -51,6 +52,8 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
 }
 
 void ArmSubsystem::Periodic() {
+    static Vector i{1.0, 0.0};
+
     _updateElbowAverage();
 
     m_computedGripPoint = calcGripPos(getShoulderAngle(), getElbowAngle());
@@ -61,15 +64,19 @@ void ArmSubsystem::Periodic() {
     if (nullptr != c_shoulderPid) {
         double output = c_shoulderPid->Calculate(getShoulderAngle());
 
+        // Adjust feed forward gravity compensation depending on arm extension.
+        Vector gripVec = Vector{ m_computedGripPoint.x, m_computedGripPoint.y }.unit();
+        double gravityCompensationFactor = gripVec.unit().dot(i) / std::max(gripVec.len(), 1.0);
+
         if (!isNearZero(output, 0.006)) {
             if (output < 0.0) {
                 output -= 0.005;
             } else {
-                output += 0.01;
+                output += 0.06 * gravityCompensationFactor;
             }
         }
 
-        output = std::clamp(output, -0.10, 0.15);
+        output = std::clamp(output, -0.15, 0.20);
 
         frc::SmartDashboard::PutNumber("shoulder pid output", output);
         frc::SmartDashboard::PutNumber("shoulder pid error", c_shoulderPid->GetPositionError());
