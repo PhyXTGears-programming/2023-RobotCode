@@ -7,21 +7,19 @@
 static const double NEAR_ZERO_METERS = 0.01;
 
 class Point {
-    public:
-        Point(double x, double y, double z) : x(x), y(y), z(z) {}
-        Point() { // default constructor
-            x = 0;
-            y = 0;
-            z = 0;
-        } // default constructor
+public:
+    Point(double x, double y)
+        : x(x)
+        , y(y) {}
+    Point() { // default constructor
+        x = 0;
+        y = 0;
+    } // default constructor
 
-        double x;
-        double y;
-        double z;
+    double x;
+    double y;
 
-    bool isNear(Point const & rhs) const {
-        return std::abs(x - rhs.x) < NEAR_ZERO_METERS
-            && std::abs(y - rhs.y) < NEAR_ZERO_METERS
-            && std::abs(z - rhs.z) < NEAR_ZERO_METERS;
+    bool isNear(const Point & rhs) const {
+        return std::abs(x - rhs.x) < NEAR_ZERO_METERS && std::abs(y - rhs.y) < NEAR_ZERO_METERS;
     }
 };

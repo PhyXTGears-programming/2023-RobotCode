@@ -1,13 +1,11 @@
 #pragma once
 
 class ArmPose {
-    public:
-        ArmPose(double turretAngle, double shoulderAngle, double elbowAngle)
-            : turretAngle(turretAngle),
-            shoulderAngle(shoulderAngle),
-            elbowAngle(elbowAngle) {}
+public:
+    ArmPose(double shoulderAngle, double elbowAngle)
+        : shoulderAngle(shoulderAngle)
+        , elbowAngle(elbowAngle) {}
 
-        double turretAngle;
-        double shoulderAngle;
-        double elbowAngle;
+    double shoulderAngle;
+    double elbowAngle;
 };

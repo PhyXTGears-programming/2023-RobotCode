@@ -1,34 +1,25 @@
+#include "subsystems/arm/arm.h"
 #include "Constants.h"
 #include "Mandatory.h"
-#include "subsystems/arm/arm.h"
+#include "util/geom.h"
 #include "util/math.h"
 
-#include <numbers>
 #include <cmath>
+#include <numbers>
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
 // PROTOTYPES
-static double requireTomlDouble (std::shared_ptr<cpptoml::table> toml, std::string const & name);
-
-// CONSTANTS
-using Constants::Arm::k_ChassisXSize;
-using Constants::Arm::k_ChassisYSize;
-using Constants::Arm::k_ChassisZSize;
-
-using Constants::Arm::k_TurretZOffset;
-
-using Constants::Arm::k_PickupXSize;
-using Constants::Arm::k_PickupYSize;
+static double requireTomlDouble(std::shared_ptr<cpptoml::table> toml, const std::string & name);
 
 ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
     loadConfig(toml);
 
     double kp, ki, kd, tolerance;
 
-    kp = requireTomlDouble(toml, "shoulder.pid.p");
-    ki = requireTomlDouble(toml, "shoulder.pid.i");
-    kd = requireTomlDouble(toml, "shoulder.pid.d");
+    kp        = requireTomlDouble(toml, "shoulder.pid.p");
+    ki        = requireTomlDouble(toml, "shoulder.pid.i");
+    kd        = requireTomlDouble(toml, "shoulder.pid.d");
     tolerance = requireTomlDouble(toml, "shoulder.pid.tolerance");
 
     c_shoulderPid = new frc2::PIDController(kp, ki, kd);
@@ -37,7 +28,7 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
 
     resetShoulderAngle();
 
-    //c_lowJointMotor.SetInverted(true);
+    c_lowJointMotor.SetInverted(true);
 
     c_turretMotor.SetSmartCurrentLimit(20.0);
     c_lowJointMotor.SetSmartCurrentLimit(25.0);
@@ -53,18 +44,19 @@ ArmSubsystem::ArmSubsystem(std::shared_ptr<cpptoml::table> toml) {
 
     m_elbowSensorMeasurements[0] = c_elbowAngleSensor.Get();
     m_elbowSensorMeasurements[1] = m_elbowSensorMeasurements[0];
+    m_elbowSensorMeasurements[2] = m_elbowSensorMeasurements[0];
 
     m_elbowSensorAverage = m_elbowSensorMeasurements[0];
-
-    initialiseBoundary();
 
     AddChild("Camera Servo", &c_cameraServo);
 }
 
 void ArmSubsystem::Periodic() {
+    static Vector i{1.0, 0.0};
+
     _updateElbowAverage();
 
-    m_computedGripPoint = calcGripPos(getTurretAngle(), getShoulderAngle(), getElbowAngle());
+    m_computedGripPoint = calcGripPos(getShoulderAngle(), getElbowAngle());
 
     // Move shoulder or hold position.
     // Must update motor output here to hold shoulder position because arm backdrives due to
@@ -72,24 +64,33 @@ void ArmSubsystem::Periodic() {
     if (nullptr != c_shoulderPid) {
         double output = c_shoulderPid->Calculate(getShoulderAngle());
 
+        // Adjust feed forward gravity compensation depending on arm extension.
+        Vector gripVec = Vector{ m_computedGripPoint.x, m_computedGripPoint.y }.unit();
+        double gravityCompensationFactor = gripVec.unit().dot(i) / std::max(gripVec.len(), 1.0);
+
         if (!isNearZero(output, 0.006)) {
             if (output < 0.0) {
-                output -= 0.01;
+                output -= 0.005;
             } else {
-                output += 0.03;
+                output += 0.06 * gravityCompensationFactor;
             }
         }
 
-        output = std::clamp(output, -0.10, 0.15);
+        output = std::clamp(output, -0.15, 0.20);
+
+        frc::SmartDashboard::PutNumber("shoulder pid output", output);
+        frc::SmartDashboard::PutNumber("shoulder pid error", c_shoulderPid->GetPositionError());
 
         c_lowJointMotor.Set(output);
     }
 
     {
+        // clang-format off
         // Reset camera servo position to default.  Will eventually track grip position, if we're lucky.
         // c_cameraServo.SetAngle(50.0);
         // 29 -> 140
         // 110 -> 50
+        // clang-format on
 
         // Try to follow gripper mechanism based on elbow angle.
         double elbowAngle = RAD_2_DEG(getElbowAngle());
@@ -97,19 +98,21 @@ void ArmSubsystem::Periodic() {
         c_cameraServo.SetAngle(servoAngle);
     }
 
-    frc::SmartDashboard::PutNumber("Turret Angle (deg)",     RAD_2_DEG(getTurretAngle()));
-    frc::SmartDashboard::PutNumber("Shoulder Angle (deg)",   RAD_2_DEG(getShoulderAngle()));
-    frc::SmartDashboard::PutNumber("Elbow Angle (deg)",      RAD_2_DEG(getElbowAngle()));
+    frc::SmartDashboard::PutNumber("Turret Angle (deg)", RAD_2_DEG(getTurretAngle()));
+    frc::SmartDashboard::PutNumber("Shoulder Angle (deg)", RAD_2_DEG(getShoulderAngle()));
+    frc::SmartDashboard::PutNumber("Elbow Angle (deg)", RAD_2_DEG(getElbowAngle()));
     frc::SmartDashboard::PutNumber("Wrist Roll Angle (deg)", RAD_2_DEG(getWristRollAngle()));
     frc::SmartDashboard::PutNumber("Grip Distance (meters)", getGrip());
 
 #ifdef DEBUG_MODE
     // Raw values
-    frc::SmartDashboard::PutNumber("Raw: Turret Angle (V)",     c_turretAngleSensor.Get());
-    frc::SmartDashboard::PutNumber("Raw: Shoulder Angle (deg)", c_shoulderAngleSensor.Get().value() * 360.0);
-    frc::SmartDashboard::PutNumber("Raw: Elbow Angle (V)",      c_elbowAngleSensor.Get());
+    frc::SmartDashboard::PutNumber("Raw: Turret Angle (V)", c_turretAngleSensor.Get());
+    frc::SmartDashboard::PutNumber(
+        "Raw: Shoulder Angle (deg)",
+        c_shoulderAngleSensor.Get().value() * 360.0);
+    frc::SmartDashboard::PutNumber("Raw: Elbow Angle (V)", c_elbowAngleSensor.Get());
     frc::SmartDashboard::PutNumber("Raw: Wrist Roll Angle (V)", c_wristRollAngleSensor.Get());
-    frc::SmartDashboard::PutNumber("Raw: Grip Distance (V)",    c_gripSensor.Get());
+    frc::SmartDashboard::PutNumber("Raw: Grip Distance (V)", c_gripSensor.Get());
 #endif
 
     // Report calculated gripper position.
@@ -118,7 +121,6 @@ void ArmSubsystem::Periodic() {
         static double gripCoords[3];
         gripCoords[0] = gripPos.x;
         gripCoords[1] = gripPos.y;
-        gripCoords[2] = gripPos.z;
         frc::SmartDashboard::PutNumberArray("Grip Pos (m)", gripCoords);
     }
 
@@ -126,283 +128,74 @@ void ArmSubsystem::Periodic() {
     // should be to reach gripper position.
 
     ArmPose pose = calcIKJointPoses(gripPos);
-    frc::SmartDashboard::PutNumber("IK Turret Angle (deg)",   RAD_2_DEG(pose.turretAngle));
     frc::SmartDashboard::PutNumber("IK Shoulder Angle (deg)", RAD_2_DEG(pose.shoulderAngle));
-    frc::SmartDashboard::PutNumber("IK Elbow Angle (deg)",    RAD_2_DEG(pose.elbowAngle));
+    frc::SmartDashboard::PutNumber("IK Elbow Angle (deg)", RAD_2_DEG(pose.elbowAngle));
 }
 
-void ArmSubsystem::initialiseBoundary() {
-    // Geometric Conventions:
-    //  x-axis 0 :: center of arm turret.
-    //  y-axis 0 :: center of arm turret.
-    //  z-axis 0 :: floor.
-    //
-    //  x+ :: robot right side (with pickup gap in bumpers).
-    //  y+ :: robot front (furthest side from turret).
-    //  z+ :: up.
-
-    // Only create boundaries for no-go zones.
-    // Otherwise, the code gets really complicated later
-    // to check for collisions.
-
-    std::shared_ptr<Boundary> chassisNoGoBounds = std::make_shared<ComposeBoundary>(std::vector<std::shared_ptr<Boundary>>{
-        std::make_shared<BoxBoundary>(
-            -(k_ChassisXSize / 2.0), (k_ChassisXSize / 2.0),
-             (k_PickupYSize / 2.0) , (k_ChassisYSize / 2.0),
-              0.0                  , (k_ChassisZSize)
-        ),
-        std::make_shared<BoxBoundary>(
-            -(k_ChassisXSize / 2.0), (k_ChassisXSize / 2.0) - k_PickupXSize,
-            -(k_PickupYSize / 2.0) , (k_PickupYSize / 2.0),
-              0.0                  , (k_ChassisZSize)
-        ),
-        std::make_shared<BoxBoundary>(
-            -(k_ChassisXSize / 2.0),  (k_ChassisXSize / 2.0),
-            -(k_ChassisYSize / 2.0), -(k_PickupYSize / 2.0),
-              0.0                  ,  (k_ChassisZSize)
-        )
-    });
-
-    std::shared_ptr<Boundary> cannotReachNoGoBounds = std::make_shared<NotBoundary>(
-        std::make_unique<SphereBoundary>(
-            Point { 0.0, 0.0, k_ChassisZSize }, /* center of turret */
-            (Constants::Arm::k_forearmLenMeters
-                + Constants::Arm::k_bicepLenMeters
-            ) * 0.95 /* 95% of max length of arm */
-        )
-    );
-
-    std::shared_ptr<Boundary> turretNoGoZone = std::make_shared<CylinderBoundary>(
-        Point { 0.0, 0.0, 0.0 },
-        0.08, /* radius meters */
-        0.0, 1.0
-    );
-
-    std::shared_ptr<Boundary> floorNoGoZone = std::make_shared<BoxBoundary>(
-        -5.0,     5.0,
-        -5.0,     5.0,
-        -5.0,     0.0254   /* keep gripper 1 inch from floor. 1 inch = 0.0254 meters */
-    );
-
-    std::shared_ptr<ComposeBoundary> defNoGoZone = std::make_shared<ComposeBoundary>(std::vector{
-        std::move(cannotReachNoGoBounds),
-        std::move(chassisNoGoBounds),
-        std::move(turretNoGoZone),
-        std::move(floorNoGoZone),
-    });
-
-    c_noGoZone = std::move(defNoGoZone);
-}
-
-Point ArmSubsystem::calcElbowPos(double turretAng, double shoulderAng) {
+Point ArmSubsystem::calcElbowPos(double shoulderAng) {
     // Origin z is floor level.  Add turret z offset to calculated point.
     Point pt = Point(
-        Constants::Arm::k_bicepLenMeters * std::cos(shoulderAng) * std::sin(turretAng),
-        Constants::Arm::k_bicepLenMeters * std::cos(shoulderAng) * std::cos(turretAng),
-        Constants::Arm::k_bicepLenMeters * std::sin(shoulderAng)
-    ) + Vector(0.0, 0.0, k_TurretZOffset);
+        Constants::Arm::k_bicepLenMeters * std::cos(shoulderAng),
+        Constants::Arm::k_bicepLenMeters * std::sin(shoulderAng));
 
     return pt;
 }
 
-Point ArmSubsystem::calcGripPos(
-    double turretAng,
-    double shoulderAng,
-    double elbowAng
-) {
-    Point elbowPos = calcElbowPos(turretAng, shoulderAng);
+Point ArmSubsystem::calcGripPos(double shoulderAng, double elbowAng) {
+    Point elbowPos = calcElbowPos(shoulderAng);
     Point pt(
-        Constants::Arm::k_forearmLenMeters * std::cos(shoulderAng + elbowAng) * std::sin(turretAng),
-        Constants::Arm::k_forearmLenMeters * std::cos(shoulderAng + elbowAng) * std::cos(turretAng),
-        Constants::Arm::k_forearmLenMeters * std::sin(shoulderAng + elbowAng)
-    );
+        Constants::Arm::k_forearmLenMeters * std::cos(shoulderAng + elbowAng),
+        Constants::Arm::k_forearmLenMeters * std::sin(shoulderAng + elbowAng));
 
-    return Point(elbowPos.x - pt.x, elbowPos.y - pt.y, elbowPos.z - pt.z);
+    return Point(elbowPos.x - pt.x, elbowPos.y - pt.y);
 }
 
-ArmPose ArmSubsystem::calcIKJointPoses(Point const & pt) {
+ArmPose ArmSubsystem::calcIKJointPoses(const Point & pt) {
     // See arm.h for diagram of robot arm angle reference conventions.
     // desmos 2d IK solver demo: https://www.desmos.com/calculator/p3uouu2un2
 
     // IK solver assumes base of turret is origin.  Adjust target point from
     // robot origin to turret origin.
-    Point turretPt = pt - Vector(0.0, 0.0, k_TurretZOffset);
+    Point turretPt = pt;
 
-    double targetLen =  std::sqrt(
-        std::pow(turretPt.x, 2)
-        + std::pow(turretPt.y, 2)
-        + std::pow(turretPt.z, 2)
-    ); // Line from shoulder to target
+    double targetLen = std::sqrt(
+        std::pow(turretPt.x, 2) + std::pow(turretPt.y, 2)); // Line from shoulder to target
 
     // Constrain target point.
     double constrainLen = std::min(
-        Constants::Arm::k_forearmLenMeters + Constants::Arm::k_bicepLenMeters * 0.95,   /* Safety margin. Limit length to 95% of max. */
-        targetLen
-    );
+        Constants::Arm::k_forearmLenMeters
+            + Constants::Arm::k_bicepLenMeters
+                  * 0.95, /* Safety margin. Limit length to 95% of max. */
+        targetLen);
 
-    Point cp = Point(0.0, 0.0, 0.0) + Vector(turretPt.x, turretPt.y, turretPt.z).unit() * constrainLen;
+    Point cp = Point(0.0, 0.0) + Vector(turretPt.x, turretPt.y).unit() * constrainLen;
 
-    double c3 = atan2(cp.z, std::sqrt(cp.x * cp.x + cp.y * cp.y));
+    double c3 = atan2(cp.y, cp.x);
 
     double c1 = std::acos(
         (Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
-        - Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
-        + constrainLen * constrainLen)
-        / (2.0 * Constants::Arm::k_bicepLenMeters * constrainLen)
-    );
+         - Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
+         + constrainLen * constrainLen)
+        / (2.0 * Constants::Arm::k_bicepLenMeters * constrainLen));
 
     // Solve IK:
     double shoulderAngle = c1 + c3;
 
-    double elbowAngle =
-        std::numbers::pi
-        - std::acos(
-            (
-                Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
-                - Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
-                + constrainLen * constrainLen
-            )
-            / (2.0 * Constants::Arm::k_forearmLenMeters * constrainLen)
-        )
-        - c1;
+    double elbowAngle = std::numbers::pi
+                        - std::acos(
+                            (Constants::Arm::k_forearmLenMeters * Constants::Arm::k_forearmLenMeters
+                             - Constants::Arm::k_bicepLenMeters * Constants::Arm::k_bicepLenMeters
+                             + constrainLen * constrainLen)
+                            / (2.0 * Constants::Arm::k_forearmLenMeters * constrainLen))
+                        - c1;
 
-    double turretAngle = std::atan2(cp.x, cp.y);
-
-    return ArmPose(turretAngle, shoulderAngle, elbowAngle);
-
+    return ArmPose(shoulderAngle, elbowAngle);
 }
 
-bool ArmSubsystem::isPointSafe(Point const & point) {
-    if (nullptr == c_noGoZone) {
-        return false;
-    } else {
-        return c_noGoZone->isOutside(point);
-    }
-}
-
-bool ArmSubsystem::isNearPoint(Point const & point) {
+bool ArmSubsystem::isNearPoint(const Point & point) {
     Point currentPosition = getGripPoint();
 
     return point.isNear(currentPosition);
-}
-
-MotionPath ArmSubsystem::getPathTo(Point const & current, Point const & target) {
-    std::vector<Point> path;
-
-    SafetyZone startZone  = getSafetyZone(current);
-    SafetyZone targetZone = getSafetyZone(target);
-
-    switch (startZone) {
-    case ArmSubsystem::SafetyZone::LEFT:
-        switch (targetZone) {
-        case ArmSubsystem::SafetyZone::LEFT:
-            path.push_back(target);
-            break;
-
-        case ArmSubsystem::SafetyZone::MIDDLE:
-            path.push_back(c_safetyPointIntake);
-            path.push_back(c_safetyPointCenter);
-            path.push_back(target);
-            break;
-
-        case ArmSubsystem::SafetyZone::RIGHT:
-            path.push_back(c_safetyPointIntake);
-            path.push_back(c_safetyPointCenter);
-            path.push_back(c_safetyPointGrid);
-            path.push_back(target);
-            break;
-        }
-        break;
-
-    case ArmSubsystem::SafetyZone::MIDDLE:
-        switch (targetZone) {
-        case ArmSubsystem::SafetyZone::LEFT:
-            path.push_back(c_safetyPointCenter);
-            path.push_back(c_safetyPointIntake);
-            path.push_back(target);
-            break;
-
-        case ArmSubsystem::SafetyZone::MIDDLE:
-            path.push_back(target);
-            break;
-
-        case ArmSubsystem::SafetyZone::RIGHT:
-            path.push_back(c_safetyPointCenter);
-            path.push_back(c_safetyPointGrid);
-            path.push_back(target);
-            break;
-        }
-        break;
-
-    case ArmSubsystem::SafetyZone::RIGHT:
-        switch (targetZone) {
-        case ArmSubsystem::SafetyZone::LEFT:
-            path.push_back(c_safetyPointGrid);
-            path.push_back(c_safetyPointCenter);
-            path.push_back(c_safetyPointIntake);
-            path.push_back(target);
-            break;
-
-        case ArmSubsystem::SafetyZone::MIDDLE:
-            path.push_back(c_safetyPointGrid);
-            path.push_back(c_safetyPointCenter);
-            path.push_back(target);
-            break;
-
-        case ArmSubsystem::SafetyZone::RIGHT:
-            path.push_back(target);
-            break;
-        }
-        break;
-    }
-
-    return MotionPath(path);
-}
-
-//  ============  Point  Grabbers:  ============  //|
-
-Point const & ArmSubsystem::getIntakePoint() {  //  | Intake
-    return c_pointIntake;
-}
-
-Point const & ArmSubsystem::getHomePoint() {    //  | Home
-    return c_pointHome;
-}
-
-Point const & ArmSubsystem::getSubstationPoint() {  //  | Hybrid
-    return c_pointSubstation;
-}
-
-Point const & ArmSubsystem::getHybridPoint() {  //  | Hybrid
-    return c_pointHybrid;
-}
-
-Point const & ArmSubsystem::getLowPolePoint() { //  | Low Pole
-    return c_pointLowPole;
-}
-
-Point const & ArmSubsystem::getHighPolePoint() {//  | High Pole
-    return c_pointHighPole;
-}
-
-Point const & ArmSubsystem::getLowShelfPoint() {//  | Low Shelf
-    return c_pointLowShelf;
-}
-
-Point const & ArmSubsystem::getHighShelfPoint() {// | High Shelf
-    return c_pointHighShelf;
-}
-
-Point const & ArmSubsystem::getCenterSafePoint() {
-    return c_safetyPointCenter;
-}
-
-Point const & ArmSubsystem::getIntakeSafePoint() {
-    return c_safetyPointIntake;
-}
-
-Point const & ArmSubsystem::getGridSafePoint() {
-    return c_safetyPointGrid;
 }
 
 // Getting and setting arm angles:
@@ -432,23 +225,12 @@ Point ArmSubsystem::getGripPoint() {
     return m_computedGripPoint;
 }
 
-ArmSubsystem::SafetyZone ArmSubsystem::getSafetyZone(Point const & pt) {
-    if (-k_ChassisXSize / 2.0 > pt.x) {
-        return SafetyZone::LEFT;
-    } else if (k_ChassisXSize / 2.0 < pt.x) {
-        return SafetyZone::RIGHT;
-    } else {
-        return SafetyZone::MIDDLE;
-    }
-}
-
 void ArmSubsystem::setTurretAngle(double angle) {
-    angle = std::clamp(angle, config.turret.limit.lo, config.turret.limit.hi);
-    _setTurretAngle(angle);
+    // WARNING. IK for turret is removed.  Use setTurretSpeed() instead.
 }
 
 /// @brief DO NOT USE without clamping angle between limits.
-/// @param angle 
+/// @param angle
 void ArmSubsystem::_setTurretAngle(double angle) {
     if (std::isnan(angle)) {
         return;
@@ -469,7 +251,7 @@ void ArmSubsystem::setShoulderAngle(double angle) {
 }
 
 /// @brief DO NOT USE without clamping angle between limits.
-/// @param angle 
+/// @param angle
 void ArmSubsystem::_setShoulderAngle(double angle) {
     if (std::isnan(angle)) {
         return;
@@ -485,7 +267,7 @@ void ArmSubsystem::setElbowAngle(double angle) {
 }
 
 /// @brief DO NOT USE without clamping angle between limits.
-/// @param angle 
+/// @param angle
 void ArmSubsystem::_setElbowAngle(double angle) {
     if (std::isnan(angle)) {
         return;
@@ -557,33 +339,22 @@ void ArmSubsystem::setGripSpeed(double speed) {
     c_gripperGraspMotor.Set(speed);
 }
 
-std::optional<Point> ArmSubsystem::moveToPoint(Point const & target) {
-    // FIXME: Disabled check for safe point until testing resolves issue with all points unsafe.
-    // Lean on angle and speed limits for safety in the meantime.
-    frc::SmartDashboard::PutBoolean("Is target point safe?", isPointSafe(target));
-    //if (!isPointSafe(target)) {
-    //    return std::nullopt;
-    //}
-
+std::optional<Point> ArmSubsystem::moveToPoint(const Point & target) {
     ArmPose pose = calcIKJointPoses(target);
 
-    pose.turretAngle = std::clamp(pose.turretAngle, config.turret.limit.lo, config.turret.limit.hi);
-    pose.shoulderAngle = std::clamp(pose.shoulderAngle, config.shoulder.limit.lo, config.shoulder.limit.hi);
+    pose.shoulderAngle =
+        std::clamp(pose.shoulderAngle, config.shoulder.limit.lo, config.shoulder.limit.hi);
     pose.elbowAngle = std::clamp(pose.elbowAngle, config.elbow.limit.lo, config.elbow.limit.hi);
 
     // If any angle is Not a Number (NaN), target point is unsafe.
-    if (std::isnan(pose.turretAngle)
-        || std::isnan(pose.shoulderAngle)
-        || std::isnan(pose.elbowAngle))
-    {
+    if (std::isnan(pose.shoulderAngle) || std::isnan(pose.elbowAngle)) {
         return std::nullopt;
     }
 
-    _setTurretAngle(pose.turretAngle);
     _setShoulderAngle(pose.shoulderAngle);
     _setElbowAngle(pose.elbowAngle);
 
-    Point checkTarget = calcGripPos(pose.turretAngle, pose.shoulderAngle, pose.elbowAngle);
+    Point checkTarget = calcGripPos(pose.shoulderAngle, pose.elbowAngle);
 
     return checkTarget;
 }
@@ -602,10 +373,7 @@ void ArmSubsystem::resetShoulderAngle() {
 // }
 
 /// LOCAL FREE
-static double requireTomlDouble (
-    std::shared_ptr<cpptoml::table> toml,
-    std::string const & name
-) {
+static double requireTomlDouble(std::shared_ptr<cpptoml::table> toml, const std::string & name) {
     auto val = toml->get_qualified_as<double>(name);
 
     if (val) {
@@ -631,9 +399,9 @@ void ArmSubsystem::loadConfig(std::shared_ptr<cpptoml::table> toml) {
 
     config.turret.sensorToRadians = requireTomlDouble(toml, "turret.sensorToRadians");
     // No conversion factor for shoulder since sensor units are units::turns_t.
-    config.elbow.sensorToRadians  = requireTomlDouble(toml, "elbow.sensorToRadians");
-    config.wrist.sensorToRadians  = requireTomlDouble(toml, "wrist.sensorToRadians");
-    config.grip.sensorToMeters    = requireTomlDouble(toml, "grip.sensorToMeters");
+    config.elbow.sensorToRadians = requireTomlDouble(toml, "elbow.sensorToRadians");
+    config.wrist.sensorToRadians = requireTomlDouble(toml, "wrist.sensorToRadians");
+    config.grip.sensorToMeters   = requireTomlDouble(toml, "grip.sensorToMeters");
 
     // Load raw limits and convert to radians or meters.
 
@@ -652,14 +420,15 @@ void ArmSubsystem::loadConfig(std::shared_ptr<cpptoml::table> toml) {
     config.grip.limit.lo = requireTomlDouble(toml, "grip.limit.lo");
     config.grip.limit.hi = requireTomlDouble(toml, "grip.limit.hi");
 
-    config.grip.setpoint.open = requireTomlDouble(toml, "grip.setpoint.open");
+    config.grip.setpoint.open  = requireTomlDouble(toml, "grip.setpoint.open");
     config.grip.setpoint.close = requireTomlDouble(toml, "grip.setpoint.close");
 }
 
 void ArmSubsystem::_updateElbowAverage() {
     m_elbowSensorMeasurements[0] = m_elbowSensorMeasurements[1];
-    m_elbowSensorMeasurements[1] = c_elbowAngleSensor.Get()
-        * config.elbow.sensorToRadians + config.elbow.zeroOffset;
+    m_elbowSensorMeasurements[1] = m_elbowSensorMeasurements[2];
+    m_elbowSensorMeasurements[2] =
+        c_elbowAngleSensor.Get() * config.elbow.sensorToRadians + config.elbow.zeroOffset;
 
-    m_elbowSensorAverage = (m_elbowSensorMeasurements[0] + m_elbowSensorMeasurements[1]) / 2.0;
+    m_elbowSensorAverage = 0.15 * m_elbowSensorMeasurements[0] + 0.25 * m_elbowSensorMeasurements[1] + 0.6 * m_elbowSensorMeasurements[2];
 }
