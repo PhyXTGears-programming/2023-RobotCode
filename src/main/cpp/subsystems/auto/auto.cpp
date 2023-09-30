@@ -44,7 +44,7 @@ frc2::CommandPtr makeAutoDumpCubeAndScore(Drivetrain * drivetrain) {
                                     .AndThen(std::move(forceOffCube).WithTimeout(0.3_s))
                                     .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s));
 
-    return std::move(autoDumpCubeAndScore);
+    return autoDumpCubeAndScore;
 }
 
 frc2::CommandPtr makeAutoDumpCubeAndScoreAndLeaveSafeZone(Drivetrain * drivetrain) {
@@ -88,5 +88,5 @@ frc2::CommandPtr makeAutoDumpCubeAndScoreAndLeaveSafeZone(Drivetrain * drivetrai
             .AndThen(std::move(putCubeIntoStation).WithTimeout(2.0_s))
             .AndThen(std::move(driveOutOfSafeZone).WithTimeout(3.5_s));
 
-    return std::move(autoDumpCubeScoreAndLeaveSafeZone);
+    return autoDumpCubeScoreAndLeaveSafeZone;
 }
