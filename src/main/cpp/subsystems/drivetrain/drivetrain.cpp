@@ -53,7 +53,7 @@ Drivetrain::~Drivetrain() {
 void Drivetrain::Periodic() {
     if (m_fieldOriented) {
         //gets the current angle of the NavX (reported in degrees, converted to radians)
-        m_fieldOrientedOffset = DEGREES_TO_RADIANS(m_navX->GetYaw());
+        m_fieldOrientedOffset = DEGREES_TO_RADIANS(m_navX->GetYaw()) - M_PI / 2.0;
     }
     //just tell the motor abstractions to pet the watchdog and update the motors
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
