@@ -130,15 +130,16 @@ public:
     void enableHeadingControl();
     void disableHeadingControl();
     void toggleHeadingControl();
-    bool getHeadingControlState();
-    void headingControl(bool blockRotationSets);
+    bool isHeadingControlEnabled();
+    void setHeadingControlEnabled(bool isEnabled);
+    double headingControl(double teleopRotation);
     void setHeadingSetpoint(double setpoint);
     double getHeadingSetpoint();
 
 private:
     void setupWheels();
 
-    void calculateWheelAnglesAndSpeeds();
+    void calculateWheelAnglesAndSpeeds(double strafe, double forwards, double rotation);
 
     void sendToSwerveModules();
 

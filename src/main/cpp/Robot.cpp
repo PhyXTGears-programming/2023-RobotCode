@@ -93,6 +93,9 @@ void Robot::DisabledPeriodic() {}
  * RobotContainer} class.
  */
 void Robot::AutonomousInit() {
+    c_drivetrain->enableHeadingControl();
+    c_drivetrain->setHeadingSetpoint(c_drivetrain->getFieldHeading());
+
     m_autoSelected = c_chooser.GetSelected();
 
     // Arm does not appear to get proper shoulder angle at startup.  Hopefully

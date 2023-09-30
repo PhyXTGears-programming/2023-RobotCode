@@ -21,6 +21,8 @@ void DriveTeleopCommand::Initialize() {
 }
 
 void DriveTeleopCommand::Execute() {
+    static bool recallHeadingControlEnabled = c_drivetrain->isHeadingControlEnabled();
+
     // compresses the range of the driving speed to be within the max speed and
     // the minimum, but have the normal speed be the default if no trigger is
     // being pressed (so both register 0)
@@ -33,13 +35,27 @@ void DriveTeleopCommand::Execute() {
 
     double speedFactor = Constants::k_normalDriveSpeed + gain - reduce;
 
+    // Reverse rotation so right is clockwise robot motion.
+    double rotation =
+        DEADZONE(c_driverController->GetRightX()) * Constants::k_maxSpinSpeed * speedFactor;
+
+    // Disable heading control when user steers.  Restore when user not steering.
+    if (0.0 == rotation) {
+        c_drivetrain->setHeadingSetpoint(c_drivetrain->getFieldHeading());
+        c_drivetrain->setHeadingControlEnabled(recallHeadingControlEnabled);
+    } else {
+        // Heading control may already be turned off by driver, so let's remember it's current state
+        // before disabling.
+        recallHeadingControlEnabled = c_drivetrain->isHeadingControlEnabled();
+        c_drivetrain->setHeadingControlEnabled(false);
+    }
+
     // the rotation limit is there in case the driver does not want to spin as fast while driving
     // (specifically limiting the controller input)
     c_drivetrain->setMotion(
         DEADZONE(c_driverController->GetLeftX()) * speedFactor,
         -DEADZONE(c_driverController->GetLeftY()) * speedFactor,
-        // Reverse rotation so right is clockwise robot motion.
-        DEADZONE(c_driverController->GetRightX()) * Constants::k_maxSpinSpeed * speedFactor);
+        rotation);
 }
 
 void DriveTeleopCommand::End(bool interrupted) {

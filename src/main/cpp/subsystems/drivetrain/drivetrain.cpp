@@ -54,11 +54,16 @@ void Drivetrain::Periodic() {
         // gets the current angle of the NavX (reported in degrees, converted to radians)
         m_fieldOrientedOffset = DEGREES_TO_RADIANS(m_navX->GetYaw()) - M_PI / 2.0;
     }
+
+    if (m_headingControlEnabled) {
+        double rotation = headingControl(m_rotation);
+        calculateWheelAnglesAndSpeeds(m_strife, m_forwards, rotation);
+    }
+
     // just tell the motor abstractions to pet the watchdog and update the motors
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
         Drivetrain::c_wheels[i]->Periodic();
     }
-    headingControl(true);
 
     frc::SmartDashboard::PutNumber("Drive Heading (deg)", m_navX->GetYaw());
 }
@@ -113,13 +118,13 @@ void Drivetrain::setupWheels() {
     }
 }
 
-void Drivetrain::calculateWheelAnglesAndSpeeds() {
+void Drivetrain::calculateWheelAnglesAndSpeeds(double strafe, double forwards, double rotation) {
     if (m_forceLockMovement) {
         return;
     }
-    headingControl(false);
-    if ((abs(Drivetrain::m_strife) <= 0.001) && (abs(Drivetrain::m_forwards) <= 0.001)) {
-        if (abs(Drivetrain::m_rotation) <= 0.001) {
+
+    if ((abs(strafe) <= 0.001) && (abs(forwards) <= 0.001)) {
+        if (abs(rotation) <= 0.001) {
             for (int i = 0; i < Constants::k_NumberOfSwerveModules; i++) {
                 Drivetrain::m_motorDirectionAngleSpeed[i].magnitude = 0;
             }
@@ -131,21 +136,13 @@ void Drivetrain::calculateWheelAnglesAndSpeeds() {
     double maxSpeed = 0.0;
     for (int i = 0; i < Constants::k_NumberOfSwerveModules; i += 1) {
         // combine the movement and turning vectors
-        double strife;
-        double forwards;
         if (m_fieldOriented) {
-            strife =
-                -m_forwards * sin(m_fieldOrientedOffset) + m_strife * cos(m_fieldOrientedOffset);
-            forwards =
-                m_forwards * cos(m_fieldOrientedOffset) + m_strife * sin(m_fieldOrientedOffset);
-        } else {
-            strife   = m_strife;
-            forwards = m_forwards;
+            strafe   = -forwards * sin(m_fieldOrientedOffset) + strafe * cos(m_fieldOrientedOffset);
+            forwards = forwards * cos(m_fieldOrientedOffset) + strafe * sin(m_fieldOrientedOffset);
         }
-        double horizontal_motion =
-            (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].x) + strife;
-        double vertical_motion =
-            (Drivetrain::m_rotation * Drivetrain::c_wheelPositions[i].y) + forwards;
+
+        double horizontal_motion = (rotation * Drivetrain::c_wheelPositions[i].x) + strafe;
+        double vertical_motion   = (rotation * Drivetrain::c_wheelPositions[i].y) + forwards;
 
         // calculate the change in radians
         double newRadians = atan2(
@@ -232,24 +229,24 @@ bool Drivetrain::getFieldCentric() {
 
 void Drivetrain::setStrife(double x) {
     Drivetrain::m_strife = x;
-    calculateWheelAnglesAndSpeeds();
+    calculateWheelAnglesAndSpeeds(m_strife, m_forwards, m_rotation);
 }
 
 void Drivetrain::setForward(double y) {
     Drivetrain::m_forwards = y;
-    calculateWheelAnglesAndSpeeds();
+    calculateWheelAnglesAndSpeeds(m_strife, m_forwards, m_rotation);
 }
 
 void Drivetrain::setRotation(double r) {
     Drivetrain::m_rotation = r;
-    calculateWheelAnglesAndSpeeds();
+    calculateWheelAnglesAndSpeeds(m_strife, m_forwards, m_rotation);
 }
 
 void Drivetrain::setMotion(double x, double y, double r) {
     Drivetrain::m_strife   = x;
     Drivetrain::m_forwards = y;
     Drivetrain::m_rotation = r;
-    calculateWheelAnglesAndSpeeds();
+    calculateWheelAnglesAndSpeeds(m_strife, m_forwards, m_rotation);
 }
 
 double Drivetrain::getCalculatedHeading() {
@@ -259,7 +256,7 @@ double Drivetrain::getCalculatedHeading() {
 }
 
 double Drivetrain::getCalculatedVelocity() {
-    // using pythagorean to find the magnitude of the vector components (forwards and strife)
+    // using pythagorean to find the magnitude of the vector components (forwards and strafe)
     return std::sqrt((std::pow(Drivetrain::m_strife, 2) + std::pow(Drivetrain::m_forwards, 2)));
 }
 
@@ -310,8 +307,11 @@ void Drivetrain::disableHeadingControl() {
 void Drivetrain::toggleHeadingControl() {
     m_headingControlEnabled = !m_headingControlEnabled;
 }
-bool Drivetrain::getHeadingControlState() {
+bool Drivetrain::isHeadingControlEnabled() {
     return m_headingControlEnabled;
+}
+void Drivetrain::setHeadingControlEnabled(bool isEnabled) {
+    m_headingControlEnabled = isEnabled;
 }
 void Drivetrain::setHeadingSetpoint(double setpoint) {
     c_headingControlPID.SetSetpoint(setpoint);
@@ -319,26 +319,10 @@ void Drivetrain::setHeadingSetpoint(double setpoint) {
 double Drivetrain::getHeadingSetpoint() {
     return c_headingControlPID.GetSetpoint();
 }
-void Drivetrain::headingControl(bool blockRotationSets) {
-    // std::cout << "hi" << std::endl;
-    if (!m_headingControlEnabled) {
-        return;
+double Drivetrain::headingControl(double teleopRotation) {
+    if (0.0 == teleopRotation) {
+        return std::clamp(c_headingControlPID.Calculate(getFieldHeading()), -1.0, 1.0);
+    } else {
+        return teleopRotation;
     }
-    // disabled until PID is tuned
-    // if(c_headingControlPID.AtSetpoint()){ // if it is at its setpoint, then dont bother
-    // calculating
-    //     disableHeadingControl();
-    //     return;
-    // }
-    if (!blockRotationSets) {  // useful if we have commands that want to rotate and we dont want
-                               // this to take priority
-        if (m_rotation == 0) { // if the rotation is already set, dont do anything
-            m_rotation = c_headingControlPID.Calculate(getFieldHeading());
-            calculateWheelAnglesAndSpeeds();
-            return;
-        }
-        return;
-    }
-    m_rotation = std::clamp(c_headingControlPID.Calculate(getFieldHeading()), -1.0, 1.0);
-    calculateWheelAnglesAndSpeeds();
 }
