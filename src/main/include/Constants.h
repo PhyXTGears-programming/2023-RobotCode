@@ -32,6 +32,6 @@ namespace Constants {
         const double k_maxPointRotSpeed = (2.0 * M_PI / 24.0) * 0.02;   // radians per second in 20ms.
         const double k_maxTurnSpeed     = 0.1;  // % motor speed.
         const double k_maxWristRotSpeed = (2.0 * M_PI / 2.0) * 0.02;
-        const double k_maxGripSpeed     = 0.1;
+        const double k_maxGripSpeed     = 0.2;
     };
 };
